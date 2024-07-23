@@ -16,6 +16,36 @@
 		300A530F2C4E4C5D005CA9BB /* IntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A530E2C4E4C5D005CA9BB /* IntervalTests.swift */; };
 		300A53192C4E4C5D005CA9BB /* IntervalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53182C4E4C5D005CA9BB /* IntervalUITests.swift */; };
 		300A531B2C4E4C5D005CA9BB /* IntervalUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A531A2C4E4C5D005CA9BB /* IntervalUITestsLaunchTests.swift */; };
+		300A53292C4E60ED005CA9BB /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53282C4E60ED005CA9BB /* AppAppearance.swift */; };
+		300A532C2C4E6170005CA9BB /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A532B2C4E6170005CA9BB /* AppConfiguration.swift */; };
+		300A532E2C4E6185005CA9BB /* AppFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A532D2C4E6185005CA9BB /* AppFlowCoordinator.swift */; };
+		300A53302C4E619B005CA9BB /* AppDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A532F2C4E619B005CA9BB /* AppDIContainer.swift */; };
+		300A53342C4E6229005CA9BB /* DataTransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53332C4E6229005CA9BB /* DataTransferService.swift */; };
+		300A53362C4E623F005CA9BB /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53352C4E623F005CA9BB /* NetworkService.swift */; };
+		300A53382C4E6257005CA9BB /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53372C4E6257005CA9BB /* Endpoint.swift */; };
+		300A533A2C4E6269005CA9BB /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53392C4E6269005CA9BB /* NetworkConfig.swift */; };
+		300A533C2C4E62F7005CA9BB /* IntervalSceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A533B2C4E62F7005CA9BB /* IntervalSceneDIContainer.swift */; };
+		300A53412C4E6360005CA9BB /* IntervalFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53402C4E6360005CA9BB /* IntervalFlowCoordinator.swift */; };
+		300A53452C4E6404005CA9BB /* IntervalSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53442C4E6404005CA9BB /* IntervalSetting.swift */; };
+		300A53492C4E6671005CA9BB /* GuidesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53482C4E6671005CA9BB /* GuidesListViewModel.swift */; };
+		300A534B2C4F3D6A005CA9BB /* GuideQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A534A2C4F3D6A005CA9BB /* GuideQuery.swift */; };
+		300A53502C4F3E24005CA9BB /* GuidesQueriesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A534F2C4F3E24005CA9BB /* GuidesQueriesStorage.swift */; };
+		300A53532C4F3F2B005CA9BB /* UserDefaultsGuidesQueriesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53522C4F3F2B005CA9BB /* UserDefaultsGuidesQueriesStorage.swift */; };
+		300A53562C4F3F8A005CA9BB /* DispatchQueueType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53552C4F3F8A005CA9BB /* DispatchQueueType.swift */; };
+		300A53592C4F3FD0005CA9BB /* GuideQueryUDS+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53582C4F3FD0005CA9BB /* GuideQueryUDS+Mapping.swift */; };
+		300A535C2C4F4152005CA9BB /* GuidesResponseStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A535B2C4F4152005CA9BB /* GuidesResponseStorage.swift */; };
+		300A535F2C4F41A4005CA9BB /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A535E2C4F41A4005CA9BB /* APIEndpoints.swift */; };
+		300A53622C4F41B8005CA9BB /* GuidesResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53612C4F41B8005CA9BB /* GuidesResponseDTO+Mapping.swift */; };
+		300A53642C4F45D1005CA9BB /* GuidesRequestDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53632C4F45D1005CA9BB /* GuidesRequestDTO+Mapping.swift */; };
+		300A53672C4F50B8005CA9BB /* FetchRecentGuideQueriesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53662C4F50B8005CA9BB /* FetchRecentGuideQueriesUseCase.swift */; };
+		300A536A2C4F50F9005CA9BB /* GuidesQueriesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53692C4F50F9005CA9BB /* GuidesQueriesRepository.swift */; };
+		300A536D2C4F5131005CA9BB /* UseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A536C2C4F5131005CA9BB /* UseCase.swift */; };
+		300A536F2C4F514D005CA9BB /* Cancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A536E2C4F514D005CA9BB /* Cancellable.swift */; };
+		300A53722C4F51B4005CA9BB /* DefaultGuidesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53712C4F51B4005CA9BB /* DefaultGuidesRepository.swift */; };
+		300A53742C4F526A005CA9BB /* UserDefaultsGuidesResponseStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53732C4F526A005CA9BB /* UserDefaultsGuidesResponseStorage.swift */; };
+		300A53762C4F698B005CA9BB /* GuidesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53752C4F698B005CA9BB /* GuidesRepository.swift */; };
+		300A53792C4F69C4005CA9BB /* RepositoryTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53782C4F69C4005CA9BB /* RepositoryTask.swift */; };
+		300A537B2C4F6BC4005CA9BB /* DefaultGuidesQueriesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A537A2C4F6BC4005CA9BB /* DefaultGuidesQueriesRepository.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +79,36 @@
 		300A53142C4E4C5D005CA9BB /* IntervalUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntervalUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		300A53182C4E4C5D005CA9BB /* IntervalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalUITests.swift; sourceTree = "<group>"; };
 		300A531A2C4E4C5D005CA9BB /* IntervalUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		300A53282C4E60ED005CA9BB /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppAppearance.swift; path = ../../../AppAppearance.swift; sourceTree = "<group>"; };
+		300A532B2C4E6170005CA9BB /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppConfiguration.swift; path = ../../../AppConfiguration.swift; sourceTree = "<group>"; };
+		300A532D2C4E6185005CA9BB /* AppFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppFlowCoordinator.swift; path = ../../../AppFlowCoordinator.swift; sourceTree = "<group>"; };
+		300A532F2C4E619B005CA9BB /* AppDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDIContainer.swift; path = ../../../../AppDIContainer.swift; sourceTree = "<group>"; };
+		300A53332C4E6229005CA9BB /* DataTransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DataTransferService.swift; path = ../../../../DataTransferService.swift; sourceTree = "<group>"; };
+		300A53352C4E623F005CA9BB /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkService.swift; path = ../../../../NetworkService.swift; sourceTree = "<group>"; };
+		300A53372C4E6257005CA9BB /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Endpoint.swift; path = ../../../../Endpoint.swift; sourceTree = "<group>"; };
+		300A53392C4E6269005CA9BB /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkConfig.swift; path = ../../../../NetworkConfig.swift; sourceTree = "<group>"; };
+		300A533B2C4E62F7005CA9BB /* IntervalSceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IntervalSceneDIContainer.swift; path = ../../../../IntervalSceneDIContainer.swift; sourceTree = "<group>"; };
+		300A53402C4E6360005CA9BB /* IntervalFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IntervalFlowCoordinator.swift; path = ../../../../../IntervalFlowCoordinator.swift; sourceTree = "<group>"; };
+		300A53442C4E6404005CA9BB /* IntervalSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IntervalSetting.swift; path = ../../../../IntervalSetting.swift; sourceTree = "<group>"; };
+		300A53482C4E6671005CA9BB /* GuidesListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuidesListViewModel.swift; path = ../../../../../../GuidesListViewModel.swift; sourceTree = "<group>"; };
+		300A534A2C4F3D6A005CA9BB /* GuideQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuideQuery.swift; path = ../../../../GuideQuery.swift; sourceTree = "<group>"; };
+		300A534F2C4F3E24005CA9BB /* GuidesQueriesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuidesQueriesStorage.swift; path = ../../../../GuidesQueriesStorage.swift; sourceTree = "<group>"; };
+		300A53522C4F3F2B005CA9BB /* UserDefaultsGuidesQueriesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserDefaultsGuidesQueriesStorage.swift; path = ../../../../../UserDefaultsGuidesQueriesStorage.swift; sourceTree = "<group>"; };
+		300A53552C4F3F8A005CA9BB /* DispatchQueueType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DispatchQueueType.swift; path = ../../../DispatchQueueType.swift; sourceTree = "<group>"; };
+		300A53582C4F3FD0005CA9BB /* GuideQueryUDS+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "GuideQueryUDS+Mapping.swift"; path = "../../../../../../GuideQueryUDS+Mapping.swift"; sourceTree = "<group>"; };
+		300A535B2C4F4152005CA9BB /* GuidesResponseStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuidesResponseStorage.swift; path = ../../../../../GuidesResponseStorage.swift; sourceTree = "<group>"; };
+		300A535E2C4F41A4005CA9BB /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = APIEndpoints.swift; path = ../../../../APIEndpoints.swift; sourceTree = "<group>"; };
+		300A53612C4F41B8005CA9BB /* GuidesResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "GuidesResponseDTO+Mapping.swift"; path = "../../../../../GuidesResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		300A53632C4F45D1005CA9BB /* GuidesRequestDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "GuidesRequestDTO+Mapping.swift"; path = "../../../../../GuidesRequestDTO+Mapping.swift"; sourceTree = "<group>"; };
+		300A53662C4F50B8005CA9BB /* FetchRecentGuideQueriesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FetchRecentGuideQueriesUseCase.swift; path = ../../../../FetchRecentGuideQueriesUseCase.swift; sourceTree = "<group>"; };
+		300A53692C4F50F9005CA9BB /* GuidesQueriesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuidesQueriesRepository.swift; path = ../../../../GuidesQueriesRepository.swift; sourceTree = "<group>"; };
+		300A536C2C4F5131005CA9BB /* UseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UseCase.swift; path = ../../../../../UseCase.swift; sourceTree = "<group>"; };
+		300A536E2C4F514D005CA9BB /* Cancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cancellable.swift; path = ../../../Cancellable.swift; sourceTree = "<group>"; };
+		300A53712C4F51B4005CA9BB /* DefaultGuidesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DefaultGuidesRepository.swift; path = ../../../../DefaultGuidesRepository.swift; sourceTree = "<group>"; };
+		300A53732C4F526A005CA9BB /* UserDefaultsGuidesResponseStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserDefaultsGuidesResponseStorage.swift; path = ../../../../../UserDefaultsGuidesResponseStorage.swift; sourceTree = "<group>"; };
+		300A53752C4F698B005CA9BB /* GuidesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuidesRepository.swift; path = ../../../../GuidesRepository.swift; sourceTree = "<group>"; };
+		300A53782C4F69C4005CA9BB /* RepositoryTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RepositoryTask.swift; path = ../../../../../RepositoryTask.swift; sourceTree = "<group>"; };
+		300A537A2C4F6BC4005CA9BB /* DefaultGuidesQueriesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DefaultGuidesQueriesRepository.swift; path = ../../../../DefaultGuidesQueriesRepository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,8 +159,12 @@
 		300A52F62C4E4C5C005CA9BB /* Interval */ = {
 			isa = PBXGroup;
 			children = (
-				300A52F72C4E4C5C005CA9BB /* AppDelegate.swift */,
-				300A52F92C4E4C5C005CA9BB /* SceneDelegate.swift */,
+				300A53542C4F3F7E005CA9BB /* Common */,
+				300A534C2C4F3E05005CA9BB /* Data */,
+				300A53422C4E63D5005CA9BB /* Domain */,
+				300A533D2C4E6309005CA9BB /* Presentation */,
+				300A53312C4E61FF005CA9BB /* Infrastructure */,
+				300A53272C4E60D3005CA9BB /* Application */,
 				300A52FB2C4E4C5C005CA9BB /* ViewController.swift */,
 				300A52FD2C4E4C5C005CA9BB /* Main.storyboard */,
 				300A53002C4E4C5D005CA9BB /* Assets.xcassets */,
@@ -125,6 +189,224 @@
 				300A531A2C4E4C5D005CA9BB /* IntervalUITestsLaunchTests.swift */,
 			);
 			path = IntervalUITests;
+			sourceTree = "<group>";
+		};
+		300A53272C4E60D3005CA9BB /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				300A532A2C4E6150005CA9BB /* DIContailner */,
+				300A52F72C4E4C5C005CA9BB /* AppDelegate.swift */,
+				300A52F92C4E4C5C005CA9BB /* SceneDelegate.swift */,
+				300A53282C4E60ED005CA9BB /* AppAppearance.swift */,
+				300A532B2C4E6170005CA9BB /* AppConfiguration.swift */,
+				300A532D2C4E6185005CA9BB /* AppFlowCoordinator.swift */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		300A532A2C4E6150005CA9BB /* DIContailner */ = {
+			isa = PBXGroup;
+			children = (
+				300A532F2C4E619B005CA9BB /* AppDIContainer.swift */,
+				300A533B2C4E62F7005CA9BB /* IntervalSceneDIContainer.swift */,
+			);
+			path = DIContailner;
+			sourceTree = "<group>";
+		};
+		300A53312C4E61FF005CA9BB /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				300A53322C4E621D005CA9BB /* Network */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		300A53322C4E621D005CA9BB /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				300A53332C4E6229005CA9BB /* DataTransferService.swift */,
+				300A53352C4E623F005CA9BB /* NetworkService.swift */,
+				300A53372C4E6257005CA9BB /* Endpoint.swift */,
+				300A53392C4E6269005CA9BB /* NetworkConfig.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		300A533D2C4E6309005CA9BB /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				300A533E2C4E6312005CA9BB /* IntervalScene */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		300A533E2C4E6312005CA9BB /* IntervalScene */ = {
+			isa = PBXGroup;
+			children = (
+				300A53462C4E6630005CA9BB /* GuidesList */,
+				300A533F2C4E631E005CA9BB /* Flows */,
+			);
+			path = IntervalScene;
+			sourceTree = "<group>";
+		};
+		300A533F2C4E631E005CA9BB /* Flows */ = {
+			isa = PBXGroup;
+			children = (
+				300A53402C4E6360005CA9BB /* IntervalFlowCoordinator.swift */,
+			);
+			path = Flows;
+			sourceTree = "<group>";
+		};
+		300A53422C4E63D5005CA9BB /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				300A53682C4F50E8005CA9BB /* Interfaces */,
+				300A53652C4F50A9005CA9BB /* UseCases */,
+				300A53432C4E63DB005CA9BB /* Entities */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		300A53432C4E63DB005CA9BB /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				300A53442C4E6404005CA9BB /* IntervalSetting.swift */,
+				300A534A2C4F3D6A005CA9BB /* GuideQuery.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		300A53462C4E6630005CA9BB /* GuidesList */ = {
+			isa = PBXGroup;
+			children = (
+				300A53472C4E6638005CA9BB /* ViewModels */,
+			);
+			path = GuidesList;
+			sourceTree = "<group>";
+		};
+		300A53472C4E6638005CA9BB /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				300A53482C4E6671005CA9BB /* GuidesListViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		300A534C2C4F3E05005CA9BB /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				300A53702C4F51A9005CA9BB /* Repositories */,
+				300A535D2C4F418E005CA9BB /* Network */,
+				300A534E2C4F3E10005CA9BB /* PersistentStorages */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		300A534E2C4F3E10005CA9BB /* PersistentStorages */ = {
+			isa = PBXGroup;
+			children = (
+				300A535A2C4F4138005CA9BB /* GuidesResponseStorage */,
+				300A53512C4F3F06005CA9BB /* UserDefaultsStorage */,
+				300A534F2C4F3E24005CA9BB /* GuidesQueriesStorage.swift */,
+			);
+			path = PersistentStorages;
+			sourceTree = "<group>";
+		};
+		300A53512C4F3F06005CA9BB /* UserDefaultsStorage */ = {
+			isa = PBXGroup;
+			children = (
+				300A53572C4F3FBF005CA9BB /* DataMapping */,
+				300A53522C4F3F2B005CA9BB /* UserDefaultsGuidesQueriesStorage.swift */,
+				300A53732C4F526A005CA9BB /* UserDefaultsGuidesResponseStorage.swift */,
+			);
+			path = UserDefaultsStorage;
+			sourceTree = "<group>";
+		};
+		300A53542C4F3F7E005CA9BB /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				300A53552C4F3F8A005CA9BB /* DispatchQueueType.swift */,
+				300A536E2C4F514D005CA9BB /* Cancellable.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		300A53572C4F3FBF005CA9BB /* DataMapping */ = {
+			isa = PBXGroup;
+			children = (
+				300A53582C4F3FD0005CA9BB /* GuideQueryUDS+Mapping.swift */,
+			);
+			path = DataMapping;
+			sourceTree = "<group>";
+		};
+		300A535A2C4F4138005CA9BB /* GuidesResponseStorage */ = {
+			isa = PBXGroup;
+			children = (
+				300A535B2C4F4152005CA9BB /* GuidesResponseStorage.swift */,
+			);
+			path = GuidesResponseStorage;
+			sourceTree = "<group>";
+		};
+		300A535D2C4F418E005CA9BB /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				300A53602C4F41A7005CA9BB /* DataMapping */,
+				300A535E2C4F41A4005CA9BB /* APIEndpoints.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		300A53602C4F41A7005CA9BB /* DataMapping */ = {
+			isa = PBXGroup;
+			children = (
+				300A53612C4F41B8005CA9BB /* GuidesResponseDTO+Mapping.swift */,
+				300A53632C4F45D1005CA9BB /* GuidesRequestDTO+Mapping.swift */,
+			);
+			path = DataMapping;
+			sourceTree = "<group>";
+		};
+		300A53652C4F50A9005CA9BB /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				300A536B2C4F5123005CA9BB /* Protocol */,
+				300A53662C4F50B8005CA9BB /* FetchRecentGuideQueriesUseCase.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		300A53682C4F50E8005CA9BB /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				300A53692C4F50F9005CA9BB /* GuidesQueriesRepository.swift */,
+				300A53752C4F698B005CA9BB /* GuidesRepository.swift */,
+			);
+			path = Interfaces;
+			sourceTree = "<group>";
+		};
+		300A536B2C4F5123005CA9BB /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				300A536C2C4F5131005CA9BB /* UseCase.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
+		300A53702C4F51A9005CA9BB /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				300A53772C4F69B9005CA9BB /* Utils */,
+				300A53712C4F51B4005CA9BB /* DefaultGuidesRepository.swift */,
+				300A537A2C4F6BC4005CA9BB /* DefaultGuidesQueriesRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		300A53772C4F69B9005CA9BB /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				300A53782C4F69C4005CA9BB /* RepositoryTask.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,9 +540,39 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				300A53412C4E6360005CA9BB /* IntervalFlowCoordinator.swift in Sources */,
+				300A53302C4E619B005CA9BB /* AppDIContainer.swift in Sources */,
+				300A53792C4F69C4005CA9BB /* RepositoryTask.swift in Sources */,
+				300A533A2C4E6269005CA9BB /* NetworkConfig.swift in Sources */,
+				300A535F2C4F41A4005CA9BB /* APIEndpoints.swift in Sources */,
+				300A53592C4F3FD0005CA9BB /* GuideQueryUDS+Mapping.swift in Sources */,
+				300A535C2C4F4152005CA9BB /* GuidesResponseStorage.swift in Sources */,
 				300A52FC2C4E4C5C005CA9BB /* ViewController.swift in Sources */,
+				300A532C2C4E6170005CA9BB /* AppConfiguration.swift in Sources */,
+				300A53742C4F526A005CA9BB /* UserDefaultsGuidesResponseStorage.swift in Sources */,
+				300A53762C4F698B005CA9BB /* GuidesRepository.swift in Sources */,
 				300A52F82C4E4C5C005CA9BB /* AppDelegate.swift in Sources */,
+				300A53642C4F45D1005CA9BB /* GuidesRequestDTO+Mapping.swift in Sources */,
+				300A53382C4E6257005CA9BB /* Endpoint.swift in Sources */,
+				300A53362C4E623F005CA9BB /* NetworkService.swift in Sources */,
+				300A53342C4E6229005CA9BB /* DataTransferService.swift in Sources */,
+				300A536A2C4F50F9005CA9BB /* GuidesQueriesRepository.swift in Sources */,
+				300A536F2C4F514D005CA9BB /* Cancellable.swift in Sources */,
+				300A53502C4F3E24005CA9BB /* GuidesQueriesStorage.swift in Sources */,
+				300A53452C4E6404005CA9BB /* IntervalSetting.swift in Sources */,
+				300A537B2C4F6BC4005CA9BB /* DefaultGuidesQueriesRepository.swift in Sources */,
 				300A52FA2C4E4C5C005CA9BB /* SceneDelegate.swift in Sources */,
+				300A53492C4E6671005CA9BB /* GuidesListViewModel.swift in Sources */,
+				300A532E2C4E6185005CA9BB /* AppFlowCoordinator.swift in Sources */,
+				300A53722C4F51B4005CA9BB /* DefaultGuidesRepository.swift in Sources */,
+				300A533C2C4E62F7005CA9BB /* IntervalSceneDIContainer.swift in Sources */,
+				300A53292C4E60ED005CA9BB /* AppAppearance.swift in Sources */,
+				300A53532C4F3F2B005CA9BB /* UserDefaultsGuidesQueriesStorage.swift in Sources */,
+				300A53672C4F50B8005CA9BB /* FetchRecentGuideQueriesUseCase.swift in Sources */,
+				300A53622C4F41B8005CA9BB /* GuidesResponseDTO+Mapping.swift in Sources */,
+				300A536D2C4F5131005CA9BB /* UseCase.swift in Sources */,
+				300A53562C4F3F8A005CA9BB /* DispatchQueueType.swift in Sources */,
+				300A534B2C4F3D6A005CA9BB /* GuideQuery.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
