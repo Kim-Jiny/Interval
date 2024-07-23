@@ -47,7 +47,7 @@ final class IntervalSceneDIContainer: IntervalFlowCoordinatorDependencies {
     func makeGuidesRepository() -> GuidesRepository {
         DefaultGuidesRepository(
             dataTransferService: dependencies.apiDataTransferService, 
-            cache: <#any GuidesResponseStorage#>
+            cache: guidesResponseCache
         )
     }
     func makeGuidesQueriesRepository() -> GuidesQueriesRepository {
@@ -124,11 +124,11 @@ final class IntervalSceneDIContainer: IntervalFlowCoordinatorDependencies {
 //        )
 //    }
 //
-//    // MARK: - Flow Coordinators
-//    func makeMoviesSearchFlowCoordinator(navigationController: UINavigationController) -> MoviesSearchFlowCoordinator {
-//        MoviesSearchFlowCoordinator(
-//            navigationController: navigationController,
-//            dependencies: self
-//        )
-//    }
+    // MARK: - Flow Coordinators
+    func makeIntervalFlowCoordinator(navigationController: UINavigationController) -> IntervalFlowCoordinator {
+        IntervalFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self
+        )
+    }
 }
