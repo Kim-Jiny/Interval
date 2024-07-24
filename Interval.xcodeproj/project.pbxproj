@@ -46,6 +46,14 @@
 		300A53B32C4F7780005CA9BB /* AppFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53B22C4F7780005CA9BB /* AppFlowCoordinator.swift */; };
 		300A53B62C4F7787005CA9BB /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53B42C4F7787005CA9BB /* AppConfiguration.swift */; };
 		300A53B72C4F7787005CA9BB /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53B52C4F7787005CA9BB /* AppAppearance.swift */; };
+		300A53BB2C4F7D43005CA9BB /* GuidesListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 300A53BA2C4F7D43005CA9BB /* GuidesListViewController.xib */; };
+		300A53BC2C4F7D43005CA9BB /* GuidesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53B92C4F7D43005CA9BB /* GuidesListViewController.swift */; };
+		300A53BF2C50BD0F005CA9BB /* GuidesListCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53BE2C50BD0F005CA9BB /* GuidesListCollectionViewController.swift */; };
+		300A53C12C50BE73005CA9BB /* GuidesListItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53C02C50BE73005CA9BB /* GuidesListItemViewModel.swift */; };
+		300A53C32C50BED3005CA9BB /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53C22C50BED3005CA9BB /* Observable.swift */; };
+		300A53C52C50C0E2005CA9BB /* ConnectionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53C42C50C0E2005CA9BB /* ConnectionError.swift */; };
+		300A53C72C50C110005CA9BB /* SearchGuidesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53C62C50C110005CA9BB /* SearchGuidesUseCase.swift */; };
+		300A53CC2C50C695005CA9BB /* StoryboardInstantiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300A53CB2C50C695005CA9BB /* StoryboardInstantiable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +117,14 @@
 		300A53B22C4F7780005CA9BB /* AppFlowCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppFlowCoordinator.swift; sourceTree = "<group>"; };
 		300A53B42C4F7787005CA9BB /* AppConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		300A53B52C4F7787005CA9BB /* AppAppearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
+		300A53B92C4F7D43005CA9BB /* GuidesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidesListViewController.swift; sourceTree = "<group>"; };
+		300A53BA2C4F7D43005CA9BB /* GuidesListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GuidesListViewController.xib; sourceTree = "<group>"; };
+		300A53BE2C50BD0F005CA9BB /* GuidesListCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidesListCollectionViewController.swift; sourceTree = "<group>"; };
+		300A53C02C50BE73005CA9BB /* GuidesListItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidesListItemViewModel.swift; sourceTree = "<group>"; };
+		300A53C22C50BED3005CA9BB /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
+		300A53C42C50C0E2005CA9BB /* ConnectionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionError.swift; sourceTree = "<group>"; };
+		300A53C62C50C110005CA9BB /* SearchGuidesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGuidesUseCase.swift; sourceTree = "<group>"; };
+		300A53CB2C50C695005CA9BB /* StoryboardInstantiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryboardInstantiable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,6 +251,7 @@
 		300A533D2C4E6309005CA9BB /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				300A53C82C50C67B005CA9BB /* Utils */,
 				300A533E2C4E6312005CA9BB /* IntervalScene */,
 			);
 			path = Presentation;
@@ -279,6 +296,7 @@
 		300A53462C4E6630005CA9BB /* GuidesList */ = {
 			isa = PBXGroup;
 			children = (
+				300A53B82C4F7D0C005CA9BB /* View */,
 				300A53472C4E6638005CA9BB /* ViewModels */,
 			);
 			path = GuidesList;
@@ -288,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				300A53A22C4F7717005CA9BB /* GuidesListViewModel.swift */,
+				300A53C02C50BE73005CA9BB /* GuidesListItemViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -327,6 +346,7 @@
 			children = (
 				300A537C2C4F6D48005CA9BB /* Cancellable.swift */,
 				300A537D2C4F6D48005CA9BB /* DispatchQueueType.swift */,
+				300A53C42C50C0E2005CA9BB /* ConnectionError.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -370,6 +390,7 @@
 			children = (
 				300A536B2C4F5123005CA9BB /* Protocol */,
 				300A539A2C4F76E5005CA9BB /* FetchRecentGuideQueriesUseCase.swift */,
+				300A53C62C50C110005CA9BB /* SearchGuidesUseCase.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -407,6 +428,49 @@
 				300A53842C4F6D7D005CA9BB /* RepositoryTask.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		300A53B82C4F7D0C005CA9BB /* View */ = {
+			isa = PBXGroup;
+			children = (
+				300A53BD2C50BCF8005CA9BB /* GuidesListCollectionViewController */,
+				300A53B92C4F7D43005CA9BB /* GuidesListViewController.swift */,
+				300A53BA2C4F7D43005CA9BB /* GuidesListViewController.xib */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		300A53BD2C50BCF8005CA9BB /* GuidesListCollectionViewController */ = {
+			isa = PBXGroup;
+			children = (
+				300A53BE2C50BD0F005CA9BB /* GuidesListCollectionViewController.swift */,
+			);
+			path = GuidesListCollectionViewController;
+			sourceTree = "<group>";
+		};
+		300A53C82C50C67B005CA9BB /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				300A53C22C50BED3005CA9BB /* Observable.swift */,
+				300A53CA2C50C687005CA9BB /* Protocols */,
+				300A53C92C50C682005CA9BB /* Extensions */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		300A53C92C50C682005CA9BB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		300A53CA2C50C687005CA9BB /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				300A53CB2C50C695005CA9BB /* StoryboardInstantiable.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -514,6 +578,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				300A53012C4E4C5D005CA9BB /* Assets.xcassets in Resources */,
+				300A53BB2C4F7D43005CA9BB /* GuidesListViewController.xib in Resources */,
 				300A53042C4E4C5D005CA9BB /* Base in Resources */,
 				300A52FF2C4E4C5C005CA9BB /* Base in Resources */,
 			);
@@ -540,9 +605,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				300A53C12C50BE73005CA9BB /* GuidesListItemViewModel.swift in Sources */,
 				300A53AC2C4F7743005CA9BB /* DataTransferService.swift in Sources */,
+				300A53C52C50C0E2005CA9BB /* ConnectionError.swift in Sources */,
 				300A53872C4F760C005CA9BB /* APIEndpoints.swift in Sources */,
 				300A537F2C4F6D48005CA9BB /* DispatchQueueType.swift in Sources */,
+				300A53BC2C4F7D43005CA9BB /* GuidesListViewController.swift in Sources */,
 				300A53B72C4F7787005CA9BB /* AppAppearance.swift in Sources */,
 				300A538A2C4F763C005CA9BB /* GuidesResponseDTO+Mapping.swift in Sources */,
 				300A52FC2C4E4C5C005CA9BB /* ViewController.swift in Sources */,
@@ -550,6 +618,7 @@
 				300A53932C4F768A005CA9BB /* GuidesResponseStorage.swift in Sources */,
 				300A53952C4F76AF005CA9BB /* GuidesQueriesStorage.swift in Sources */,
 				300A53A52C4F7724005CA9BB /* IntervalFlowCoordinator.swift in Sources */,
+				300A53C72C50C110005CA9BB /* SearchGuidesUseCase.swift in Sources */,
 				300A53B32C4F7780005CA9BB /* AppFlowCoordinator.swift in Sources */,
 				300A52F82C4E4C5C005CA9BB /* AppDelegate.swift in Sources */,
 				300A53AD2C4F7743005CA9BB /* NetworkService.swift in Sources */,
@@ -558,6 +627,7 @@
 				300A53AB2C4F7743005CA9BB /* Endpoint.swift in Sources */,
 				300A53822C4F6D76005CA9BB /* DefaultGuidesRepository.swift in Sources */,
 				300A53832C4F6D76005CA9BB /* DefaultGuidesQueriesRepository.swift in Sources */,
+				300A53CC2C50C695005CA9BB /* StoryboardInstantiable.swift in Sources */,
 				300A53A32C4F7717005CA9BB /* GuidesListViewModel.swift in Sources */,
 				300A538D2C4F7679005CA9BB /* GuideQueryUDS+Mapping.swift in Sources */,
 				300A53B12C4F7757005CA9BB /* IntervalSceneDIContainer.swift in Sources */,
@@ -568,9 +638,11 @@
 				300A53A02C4F76FC005CA9BB /* GuideQuery.swift in Sources */,
 				300A53B62C4F7787005CA9BB /* AppConfiguration.swift in Sources */,
 				300A539D2C4F76EA005CA9BB /* UseCase.swift in Sources */,
+				300A53C32C50BED3005CA9BB /* Observable.swift in Sources */,
 				300A539B2C4F76E5005CA9BB /* FetchRecentGuideQueriesUseCase.swift in Sources */,
 				300A53B02C4F7757005CA9BB /* AppDIContainer.swift in Sources */,
 				300A53A12C4F76FC005CA9BB /* IntervalSetting.swift in Sources */,
+				300A53BF2C50BD0F005CA9BB /* GuidesListCollectionViewController.swift in Sources */,
 				300A53852C4F6D7D005CA9BB /* RepositoryTask.swift in Sources */,
 				300A53982C4F76CB005CA9BB /* GuidesQueriesRepository.swift in Sources */,
 			);
@@ -750,7 +822,7 @@
 		300A531F2C4E4C5D005CA9BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				API_BASE_URL = "http://api.themoviedb.org";
+				API_BASE_URL = "http://localhost:8080";
 				API_KEY = 2696829a81b1b5827d515ff121700838;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -783,7 +855,7 @@
 		300A53202C4E4C5D005CA9BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				API_BASE_URL = "http://api.themoviedb.org";
+				API_BASE_URL = "http://localhost:8080";
 				API_KEY = 2696829a81b1b5827d515ff121700838;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
