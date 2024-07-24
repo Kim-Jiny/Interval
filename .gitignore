@@ -1,1 +1,9 @@
+# Xcode
+*.xcworkspace
+*.xcuserdata/
 *.xcuserstate
+DerivedData/
+build/
+
+# User interface state files
+UserInterfaceState.xcuserstate
