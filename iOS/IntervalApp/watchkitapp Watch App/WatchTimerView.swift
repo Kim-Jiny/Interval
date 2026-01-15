@@ -7,6 +7,7 @@
 
 import SwiftUI
 import WatchKit
+import WidgetKit
 
 struct WatchTimerView: View {
     let routine: WatchRoutine
@@ -25,11 +26,20 @@ struct WatchTimerView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 8) {
+                // iPhone에서 운동 완료
+                if connectivityManager.isWorkoutCompletedFromiPhone {
+                    completedView
+                }
                 // iPhone 연동 모드 표시
-                if connectivityManager.isReceivingFromiPhone {
+                else if connectivityManager.isReceivingFromiPhone {
                     iPhoneModeView
-                } else {
-                    // Watch 독립 모드
+                }
+                // Watch 독립 모드 - 완료
+                else if timerManager.isCompleted {
+                    completedView
+                }
+                // Watch 독립 모드
+                else {
                     standaloneModeView
                 }
             }
@@ -43,12 +53,48 @@ struct WatchTimerView: View {
         }
         .onDisappear {
             timerManager.stop()
+            connectivityManager.resetCompletedState()
         }
         .onChange(of: connectivityManager.isReceivingFromiPhone) { _, isReceiving in
             if isReceiving {
                 // iPhone에서 제어 시작 - 로컬 타이머 중지
                 timerManager.pause()
             }
+        }
+        .onChange(of: connectivityManager.shouldDismissTimer) { _, shouldDismiss in
+            if shouldDismiss {
+                // iPhone에서 운동 종료 시 Watch 화면 닫기
+                connectivityManager.resetCompletedState()
+                dismiss()
+            }
+        }
+    }
+
+    // 운동 완료 화면
+    private var completedView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 50))
+                .foregroundStyle(.white)
+
+            Text("Workout Complete!")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundStyle(.white)
+
+            Text(routine.name)
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.8))
+
+            Button {
+                connectivityManager.resetCompletedState()
+                dismiss()
+            } label: {
+                Text("OK")
+                    .font(.headline)
+            }
+            .buttonStyle(.bordered)
+            .tint(.white)
         }
     }
 
@@ -58,7 +104,7 @@ struct WatchTimerView: View {
             HStack {
                 Image(systemName: "iphone")
                     .font(.caption2)
-                Text("iPhone 연동")
+                Text("iPhone Sync")
                     .font(.caption2)
             }
             .foregroundStyle(.white.opacity(0.7))
@@ -79,7 +125,7 @@ struct WatchTimerView: View {
             Button {
                 dismiss()
             } label: {
-                Text("닫기")
+                Text("Close")
                     .font(.caption)
             }
             .buttonStyle(.bordered)
@@ -109,7 +155,7 @@ struct WatchTimerView: View {
             Spacer()
 
             // 현재 구간
-            Text(timerManager.currentInterval?.name ?? "완료")
+            Text(timerManager.currentInterval?.name ?? String(localized: "Complete"))
                 .font(.headline)
                 .foregroundStyle(.white)
                 .lineLimit(1)
@@ -138,11 +184,11 @@ struct WatchTimerView: View {
 
             // 다음 구간
             if let next = timerManager.nextInterval {
-                Text("다음: \(next.name)")
+                Text("Next: \(next.name)")
                     .font(.caption2)
                     .foregroundStyle(.white.opacity(0.7))
             } else if timerManager.isCompleted {
-                Text("완료!")
+                Text("Complete!")
                     .font(.headline)
                     .foregroundStyle(.white)
             }
@@ -261,6 +307,9 @@ class WatchTimerManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDel
         // Extended Runtime Session 시작 (화면 꺼져도 계속 실행)
         startExtendedSession()
 
+        // 위젯 업데이트
+        updateWidget()
+
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.tick()
         }
@@ -270,6 +319,7 @@ class WatchTimerManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDel
         isRunning = false
         timer?.invalidate()
         timer = nil
+        updateWidget()
     }
 
     func stop() {
@@ -281,6 +331,31 @@ class WatchTimerManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDel
             timeRemaining = first.duration
         }
         isCompleted = false
+        clearWidget()
+    }
+
+    // MARK: - Widget Update
+
+    private func updateWidget() {
+        let defaults = UserDefaults.standard
+        defaults.set(isRunning, forKey: "widgetTimerRunning")
+        defaults.set(currentInterval?.name ?? "", forKey: "widgetIntervalName")
+        defaults.set(timeRemaining, forKey: "widgetTimeRemaining")
+        defaults.set(currentRound, forKey: "widgetCurrentRound")
+        defaults.set(routine.rounds, forKey: "widgetTotalRounds")
+
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    private func clearWidget() {
+        let defaults = UserDefaults.standard
+        defaults.set(false, forKey: "widgetTimerRunning")
+        defaults.removeObject(forKey: "widgetIntervalName")
+        defaults.removeObject(forKey: "widgetTimeRemaining")
+        defaults.removeObject(forKey: "widgetCurrentRound")
+        defaults.removeObject(forKey: "widgetTotalRounds")
+
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - Extended Runtime Session
@@ -352,6 +427,7 @@ class WatchTimerManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDel
             timeRemaining = routine.intervals[nextIndex].duration
             // 구간 변경 햅틱
             WKInterfaceDevice.current().play(.notification)
+            updateWidget()
         } else if currentRound < routine.rounds {
             currentRound += 1
             currentIntervalIndex = 0
@@ -361,12 +437,14 @@ class WatchTimerManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDel
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 WKInterfaceDevice.current().play(.click)
             }
+            updateWidget()
         } else {
             isRunning = false
             isCompleted = true
             timer?.invalidate()
             timer = nil
             stopExtendedSession()
+            clearWidget()
             // 완료 햅틱
             WKInterfaceDevice.current().play(.success)
         }
@@ -378,8 +456,8 @@ class WatchTimerManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDel
         id: UUID(),
         name: "Sample",
         intervals: [
-            WatchInterval(id: UUID(), name: "Workout", duration: 30, type: .workout),
-            WatchInterval(id: UUID(), name: "Rest", duration: 10, type: .rest)
+            WatchInterval(id: UUID(), name: String(localized: "Workout"), duration: 30, type: .workout),
+            WatchInterval(id: UUID(), name: String(localized: "Rest"), duration: 10, type: .rest)
         ],
         rounds: 3
     )

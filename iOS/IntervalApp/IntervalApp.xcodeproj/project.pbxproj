@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		30A7019D2F17A00000109C2D /* IntervalWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 30A701902F17A00000109C2D /* IntervalWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		30A7021E2F18A44E00109C2D /* watchkitapp Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 30A701FE2F18A44C00109C2D /* watchkitapp Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		30A7024A2F18BA6600109C2D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30A702492F18BA6600109C2D /* WidgetKit.framework */; };
+		30A7024C2F18BA6600109C2D /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30A7024B2F18BA6600109C2D /* SwiftUI.framework */; };
+		30A702552F18BA6700109C2D /* IntervalWatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 30A702472F18BA6600109C2D /* IntervalWatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +57,13 @@
 			remoteGlobalIDString = 30A701FD2F18A44C00109C2D;
 			remoteInfo = "watchkitapp Watch App";
 		};
+		30A702532F18BA6700109C2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 30A701532F17933A00109C2D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 30A702462F18BA6600109C2D;
+			remoteInfo = IntervalWatchWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -79,6 +89,17 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		30A7025A2F18BA6700109C2D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				30A702552F18BA6700109C2D /* IntervalWatchWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +110,9 @@
 		30A701FE2F18A44C00109C2D /* watchkitapp Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "watchkitapp Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30A7020A2F18A44E00109C2D /* watchkitapp Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "watchkitapp Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30A702142F18A44E00109C2D /* watchkitapp Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "watchkitapp Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		30A702472F18BA6600109C2D /* IntervalWatchWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IntervalWatchWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		30A702492F18BA6600109C2D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		30A7024B2F18BA6600109C2D /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -105,6 +129,13 @@
 				Info.plist,
 			);
 			target = 30A701952F17A00000109C2D /* IntervalWidgetExtension */;
+		};
+		30A702592F18BA6700109C2D /* Exceptions for "IntervalWatchWidget" folder in "IntervalWatchWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 30A702462F18BA6600109C2D /* IntervalWatchWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -148,6 +179,14 @@
 		30A702172F18A44E00109C2D /* watchkitapp Watch AppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "watchkitapp Watch AppUITests";
+			sourceTree = "<group>";
+		};
+		30A7024D2F18BA6600109C2D /* IntervalWatchWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				30A702592F18BA6700109C2D /* Exceptions for "IntervalWatchWidget" folder in "IntervalWatchWidgetExtension" target */,
+			);
+			path = IntervalWatchWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -202,6 +241,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		30A702442F18BA6600109C2D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30A7024C2F18BA6600109C2D /* SwiftUI.framework in Frameworks */,
+				30A7024A2F18BA6600109C2D /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -215,6 +263,8 @@
 				30A701FF2F18A44C00109C2D /* watchkitapp Watch App */,
 				30A7020D2F18A44E00109C2D /* watchkitapp Watch AppTests */,
 				30A702172F18A44E00109C2D /* watchkitapp Watch AppUITests */,
+				30A7024D2F18BA6600109C2D /* IntervalWatchWidget */,
+				30A702482F18BA6600109C2D /* Frameworks */,
 				30A7015C2F17933A00109C2D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -229,8 +279,18 @@
 				30A701FE2F18A44C00109C2D /* watchkitapp Watch App.app */,
 				30A7020A2F18A44E00109C2D /* watchkitapp Watch AppTests.xctest */,
 				30A702142F18A44E00109C2D /* watchkitapp Watch AppUITests.xctest */,
+				30A702472F18BA6600109C2D /* IntervalWatchWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		30A702482F18BA6600109C2D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				30A702492F18BA6600109C2D /* WidgetKit.framework */,
+				30A7024B2F18BA6600109C2D /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -337,10 +397,12 @@
 				30A701FA2F18A44C00109C2D /* Sources */,
 				30A701FB2F18A44C00109C2D /* Frameworks */,
 				30A701FC2F18A44C00109C2D /* Resources */,
+				30A7025A2F18BA6700109C2D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				30A702542F18BA6700109C2D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				30A701FF2F18A44C00109C2D /* watchkitapp Watch App */,
@@ -398,6 +460,28 @@
 			productReference = 30A702142F18A44E00109C2D /* watchkitapp Watch AppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		30A702462F18BA6600109C2D /* IntervalWatchWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30A702562F18BA6700109C2D /* Build configuration list for PBXNativeTarget "IntervalWatchWidgetExtension" */;
+			buildPhases = (
+				30A702432F18BA6600109C2D /* Sources */,
+				30A702442F18BA6600109C2D /* Frameworks */,
+				30A702452F18BA6600109C2D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				30A7024D2F18BA6600109C2D /* IntervalWatchWidget */,
+			);
+			name = IntervalWatchWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = IntervalWatchWidgetExtension;
+			productReference = 30A702472F18BA6600109C2D /* IntervalWatchWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -433,6 +517,9 @@
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = 30A701FD2F18A44C00109C2D;
 					};
+					30A702462F18BA6600109C2D = {
+						CreatedOnToolsVersion = 16.3;
+					};
 				};
 			};
 			buildConfigurationList = 30A701562F17933A00109C2D /* Build configuration list for PBXProject "IntervalApp" */;
@@ -456,6 +543,7 @@
 				30A701FD2F18A44C00109C2D /* watchkitapp Watch App */,
 				30A702092F18A44E00109C2D /* watchkitapp Watch AppTests */,
 				30A702132F18A44E00109C2D /* watchkitapp Watch AppUITests */,
+				30A702462F18BA6600109C2D /* IntervalWatchWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -504,6 +592,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		30A702122F18A44E00109C2D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30A702452F18BA6600109C2D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -562,6 +657,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		30A702432F18BA6600109C2D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -594,6 +696,11 @@
 			isa = PBXTargetDependency;
 			target = 30A701FD2F18A44C00109C2D /* watchkitapp Watch App */;
 			targetProxy = 30A7021C2F18A44E00109C2D /* PBXContainerItemProxy */;
+		};
+		30A702542F18BA6700109C2D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 30A702462F18BA6600109C2D /* IntervalWatchWidgetExtension */;
+			targetProxy = 30A702532F18BA6700109C2D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1035,6 +1142,66 @@
 			};
 			name = Release;
 		};
+		30A702572F18BA6700109C2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HW9XJ9J5M2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IntervalWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IntervalWatchWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jiny.IntervalApp.watchkitapp.IntervalWatchWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		30A702582F18BA6700109C2D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HW9XJ9J5M2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IntervalWatchWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IntervalWatchWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jiny.IntervalApp.watchkitapp.IntervalWatchWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1106,6 +1273,15 @@
 			buildConfigurations = (
 				30A702272F18A44E00109C2D /* Debug */,
 				30A702282F18A44E00109C2D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		30A702562F18BA6700109C2D /* Build configuration list for PBXNativeTarget "IntervalWatchWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30A702572F18BA6700109C2D /* Debug */,
+				30A702582F18BA6700109C2D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

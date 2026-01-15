@@ -20,7 +20,7 @@ struct WatchContentView: View {
                         Image(systemName: "iphone.and.arrow.forward")
                             .font(.largeTitle)
                             .foregroundStyle(.secondary)
-                        Text("iPhone에서\n루틴을 동기화하세요")
+                        Text("Sync routines\nfrom iPhone")
                             .font(.caption)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.secondary)
@@ -39,7 +39,7 @@ struct WatchContentView: View {
                     }
                 }
             }
-            .navigationTitle("인터벌")
+            .navigationTitle("Interval")
             .fullScreenCover(item: $selectedRoutine) { routine in
                 WatchTimerView(routine: routine)
                     .environmentObject(connectivityManager)

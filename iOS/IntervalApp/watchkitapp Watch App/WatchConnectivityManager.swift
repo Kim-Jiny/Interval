@@ -20,6 +20,10 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     @Published var totalRounds: Int = 1
     @Published var intervalType: String = "workout"
 
+    // iPhone에서 종료/완료 시 Watch UI 제어
+    @Published var shouldDismissTimer = false
+    @Published var isWorkoutCompletedFromiPhone = false
+
     private var session: WCSession?
 
     override init() {
@@ -66,6 +70,15 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     // Watch에서 직접 루틴 시작 시 iPhone 연동 모드 해제
     func startStandaloneMode() {
         isReceivingFromiPhone = false
+        activeRoutine = nil
+        shouldDismissTimer = false
+        isWorkoutCompletedFromiPhone = false
+    }
+
+    // 완료 화면에서 닫을 때 상태 리셋
+    func resetCompletedState() {
+        isWorkoutCompletedFromiPhone = false
+        shouldDismissTimer = false
         activeRoutine = nil
     }
 }
@@ -150,12 +163,14 @@ extension WatchConnectivityManager: WCSessionDelegate {
         case "completed":
             // 운동 완료
             playCompletionHaptic()
+            isWorkoutCompletedFromiPhone = true
             isReceivingFromiPhone = false
-            activeRoutine = nil
 
         case "started":
             // iPhone에서 타이머 시작됨
             isReceivingFromiPhone = true
+            isWorkoutCompletedFromiPhone = false
+            shouldDismissTimer = false
             if let routineData = message["routine"] as? Data,
                let routine = try? JSONDecoder().decode(WatchRoutine.self, from: routineData) {
                 activeRoutine = routine
@@ -176,8 +191,8 @@ extension WatchConnectivityManager: WCSessionDelegate {
 
         case "stopped":
             // iPhone에서 타이머 중지됨
+            shouldDismissTimer = true
             isReceivingFromiPhone = false
-            activeRoutine = nil
             playHaptic(type: .stop)
 
         default:
