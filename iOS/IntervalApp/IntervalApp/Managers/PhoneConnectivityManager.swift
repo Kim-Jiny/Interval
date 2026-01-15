@@ -78,7 +78,7 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
     // MARK: - 타이머 이벤트 전송
 
     func sendTimerStarted(routine: Routine, intervalName: String, timeRemaining: TimeInterval, currentRound: Int) {
-        guard let session = session, session.isReachable else { return }
+        guard let session = session, session.activationState == .activated else { return }
 
         let watchRoutine = WatchRoutineData(
             id: routine.id,
@@ -106,8 +106,15 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             message["routine"] = routineData
         }
 
-        session.sendMessage(message, replyHandler: nil) { error in
-            print("Failed to send timer started: \(error.localizedDescription)")
+        // Watch 앱이 실행 중이면 sendMessage, 아니면 transferUserInfo로 백그라운드 전달
+        if session.isReachable {
+            session.sendMessage(message, replyHandler: nil) { error in
+                print("Failed to send timer started: \(error.localizedDescription)")
+            }
+        } else if session.isWatchAppInstalled {
+            // Watch 앱이 설치되어 있지만 실행 중이 아닐 때
+            session.transferUserInfo(message)
+            print("Timer start info transferred to Watch (background)")
         }
     }
 

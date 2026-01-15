@@ -8,6 +8,7 @@
 import Foundation
 import WatchConnectivity
 import WatchKit
+import UserNotifications
 
 class WatchConnectivityManager: NSObject, ObservableObject {
     static let shared = WatchConnectivityManager()
@@ -24,6 +25,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     @Published var shouldDismissTimer = false
     @Published var isWorkoutCompletedFromiPhone = false
 
+    // 백그라운드에서 타이머 시작 알림 수신 시
+    @Published var pendingTimerStart = false
+
     private var session: WCSession?
 
     override init() {
@@ -32,6 +36,19 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             session = WCSession.default
             session?.delegate = self
             session?.activate()
+        }
+
+        // 알림 권한 요청
+        requestNotificationPermission()
+    }
+
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Watch notification permission granted")
+            } else if let error = error {
+                print("Watch notification permission error: \(error)")
+            }
         }
     }
 
@@ -117,10 +134,16 @@ extension WatchConnectivityManager: WCSessionDelegate {
         }
     }
 
-    // iPhone에서 UserInfo 수신
+    // iPhone에서 UserInfo 수신 (백그라운드에서도 동작)
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
         DispatchQueue.main.async { [weak self] in
-            self?.handleApplicationContext(userInfo)
+            // 타이머 이벤트인지 확인
+            if let action = userInfo["action"] as? String {
+                self?.handleTimerUserInfo(userInfo, action: action)
+            } else {
+                // 루틴 동기화 데이터
+                self?.handleApplicationContext(userInfo)
+            }
         }
     }
 
@@ -209,5 +232,69 @@ extension WatchConnectivityManager: WCSessionDelegate {
                 WatchRoutineStore.shared.updateRoutines(routines)
             }
         }
+    }
+
+    // 백그라운드에서 수신된 타이머 이벤트 처리
+    private func handleTimerUserInfo(_ userInfo: [String: Any], action: String) {
+        switch action {
+        case "started":
+            // 타이머 데이터 저장
+            isReceivingFromiPhone = true
+            isWorkoutCompletedFromiPhone = false
+            shouldDismissTimer = false
+
+            if let routineData = userInfo["routine"] as? Data,
+               let routine = try? JSONDecoder().decode(WatchRoutine.self, from: routineData) {
+                activeRoutine = routine
+            }
+            if let name = userInfo["intervalName"] as? String {
+                currentIntervalName = name
+            }
+            if let time = userInfo["timeRemaining"] as? TimeInterval {
+                timeRemaining = time
+            }
+            if let round = userInfo["currentRound"] as? Int {
+                currentRound = round
+            }
+            if let total = userInfo["totalRounds"] as? Int {
+                totalRounds = total
+            }
+
+            // 로컬 알림 표시 (앱이 백그라운드일 때)
+            postTimerStartNotification()
+
+            // 앱이 포그라운드로 오면 타이머 화면을 열도록 플래그 설정
+            pendingTimerStart = true
+            playHaptic(type: .start)
+
+        default:
+            break
+        }
+    }
+
+    // 타이머 시작 로컬 알림
+    private func postTimerStartNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = activeRoutine?.name ?? "Interval"
+        content.body = String(localized: "Workout started on iPhone. Tap to open.")
+        content.sound = .default
+        content.categoryIdentifier = "TIMER_START"
+
+        let request = UNNotificationRequest(
+            identifier: "timer_start_\(UUID().uuidString)",
+            content: content,
+            trigger: nil // 즉시 표시
+        )
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Failed to post notification: \(error)")
+            }
+        }
+    }
+
+    // 대기 중인 타이머 시작 처리 완료
+    func clearPendingTimerStart() {
+        pendingTimerStart = false
     }
 }

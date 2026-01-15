@@ -52,8 +52,14 @@ struct WatchTimerView: View {
             }
         }
         .onDisappear {
-            timerManager.stop()
-            connectivityManager.resetCompletedState()
+            // Watch 독립 모드일 때만 타이머 정지
+            if !connectivityManager.isReceivingFromiPhone {
+                timerManager.stop()
+            }
+            // 완료 상태일 때만 리셋 (iPhone 연동 중이면 상태 유지)
+            if connectivityManager.isWorkoutCompletedFromiPhone {
+                connectivityManager.resetCompletedState()
+            }
         }
         .onChange(of: connectivityManager.isReceivingFromiPhone) { _, isReceiving in
             if isReceiving {
@@ -98,7 +104,7 @@ struct WatchTimerView: View {
         }
     }
 
-    // iPhone 연동 모드 UI
+    // iPhone 연동 모드 UI (닫기 버튼 없음 - iPhone에서만 제어 가능)
     private var iPhoneModeView: some View {
         VStack(spacing: 8) {
             HStack {
@@ -109,12 +115,15 @@ struct WatchTimerView: View {
             }
             .foregroundStyle(.white.opacity(0.7))
 
+            Spacer()
+
             Text(connectivityManager.currentIntervalName)
-                .font(.headline)
+                .font(.title3)
+                .fontWeight(.semibold)
                 .foregroundStyle(.white)
 
             Text(formatTime(connectivityManager.timeRemaining))
-                .font(.system(size: 48, weight: .bold, design: .monospaced))
+                .font(.system(size: 52, weight: .bold, design: .monospaced))
                 .foregroundStyle(.white)
                 .minimumScaleFactor(0.5)
 
@@ -122,14 +131,12 @@ struct WatchTimerView: View {
                 .font(.caption)
                 .foregroundStyle(.white.opacity(0.8))
 
-            Button {
-                dismiss()
-            } label: {
-                Text("Close")
-                    .font(.caption)
-            }
-            .buttonStyle(.bordered)
-            .tint(.white.opacity(0.3))
+            Spacer()
+
+            // iPhone에서 제어 중 안내 문구
+            Text("Controlled by iPhone")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.5))
         }
     }
 
