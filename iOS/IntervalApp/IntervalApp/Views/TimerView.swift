@@ -413,7 +413,8 @@ class TimerManager: ObservableObject {
                 routine: routine,
                 intervalName: interval.name,
                 timeRemaining: timeRemaining,
-                currentRound: currentRound
+                currentRound: currentRound,
+                intervalType: interval.type.rawValue
             )
         }
 

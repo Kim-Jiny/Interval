@@ -211,6 +211,9 @@ extension WatchConnectivityManager: WCSessionDelegate {
             if let total = message["totalRounds"] as? Int {
                 totalRounds = total
             }
+            if let type = message["intervalType"] as? String {
+                intervalType = type
+            }
             playHaptic(type: .start)
 
         case "stopped":
@@ -258,6 +261,9 @@ extension WatchConnectivityManager: WCSessionDelegate {
             }
             if let total = userInfo["totalRounds"] as? Int {
                 totalRounds = total
+            }
+            if let type = userInfo["intervalType"] as? String {
+                intervalType = type
             }
 
             // 로컬 알림 표시 (앱이 백그라운드일 때)

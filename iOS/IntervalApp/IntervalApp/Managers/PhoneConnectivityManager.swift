@@ -77,7 +77,7 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
 
     // MARK: - 타이머 이벤트 전송
 
-    func sendTimerStarted(routine: Routine, intervalName: String, timeRemaining: TimeInterval, currentRound: Int) {
+    func sendTimerStarted(routine: Routine, intervalName: String, timeRemaining: TimeInterval, currentRound: Int, intervalType: String) {
         guard let session = session, session.activationState == .activated else { return }
 
         let watchRoutine = WatchRoutineData(
@@ -99,7 +99,8 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "intervalName": intervalName,
             "timeRemaining": timeRemaining,
             "currentRound": currentRound,
-            "totalRounds": routine.rounds
+            "totalRounds": routine.rounds,
+            "intervalType": intervalType
         ]
 
         if let routineData = try? JSONEncoder().encode(watchRoutine) {
