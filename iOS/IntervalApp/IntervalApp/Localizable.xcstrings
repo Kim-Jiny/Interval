@@ -198,6 +198,9 @@
         }
       }
     },
+    "%lld" : {
+
+    },
     "%lld intervals" : {
       "localizations" : {
         "de" : {
@@ -303,8 +306,22 @@
         }
       }
     },
+    "%lldR" : {
+
+    },
     "%llds" : {
 
+    },
+    "20s workout, 10s rest x 8" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "20s Training, 10s Pause x 8" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "20s workout, 10s rest x 8" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "20s ejercicio, 10s descanso x 8" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "20s exercice, 10s repos x 8" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "20秒運動、10秒休憩 x 8" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "20초 운동, 10초 휴식 x 8" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "20秒运动，10秒休息 x 8" } }
+      }
     },
     "Add Interval" : {
       "localizations" : {
@@ -352,6 +369,28 @@
         }
       }
     },
+    "Arm Stretch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Armdehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Arm Stretch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramiento de brazos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirement des bras" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "腕ストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "팔 스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "手臂拉伸" } }
+      }
+    },
+    "Back Stretch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Rückendehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back Stretch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramiento de espalda" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirement du dos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "背中ストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "등 스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "背部拉伸" } }
+      }
+    },
     "Basic Interval" : {
       "localizations" : {
         "de" : {
@@ -396,6 +435,28 @@
             "value" : "基础间歇"
           }
         }
+      }
+    },
+    "Burpees" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Burpees" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Burpees" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Burpees" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Burpees" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "バーピー" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "버피" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "波比跳" } }
+      }
+    },
+    "Calf Stretch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wadendehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Calf Stretch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramiento de pantorrillas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirement des mollets" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ふくらはぎストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "종아리 스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "小腿拉伸" } }
       }
     },
     "Cancel" : {
@@ -534,6 +595,28 @@
             "value" : "放松"
           }
         }
+      }
+    },
+    "Cooldown Walk" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abkühl-Gehen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cooldown Walk" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Caminata de enfriamiento" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Marche de récupération" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "クールダウンウォーク" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "정리 걷기" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "放松步行" } }
+      }
+    },
+    "Core workout with leg raises" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Core-Training mit Beinheben" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Core workout with leg raises" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ejercicio de core con elevaciones de piernas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Exercice de gainage avec levées de jambes" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "レッグレイズで体幹トレーニング" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "레그레이즈 코어 운동" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "抬腿核心训练" } }
       }
     },
     "Delete" : {
@@ -764,6 +847,83 @@
             "value" : "编辑计划"
           }
         }
+      }
+    },
+    "Empty" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Leer" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Empty" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Vacío" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vide" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "空のテンプレート" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "빈 템플릿" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "空白" } }
+      }
+    },
+    "Get Ready" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bereit machen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Get Ready" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Prepárate" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Préparez-vous" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "準備" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "준비" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "准备" } }
+      }
+    },
+    "High intensity interval training" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Hochintensives Intervalltraining" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "High intensity interval training" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Entrenamiento de intervalos de alta intensidad" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Entraînement fractionné de haute intensité" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "高強度インターバルトレーニング" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "고강도 인터벌 트레이닝" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "高强度间歇训练" } }
+      }
+    },
+    "High Knees" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Knieheben" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "High Knees" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Rodillas altas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Montées de genoux" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ハイニー" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "하이니" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "高抬腿" } }
+      }
+    },
+    "HIIT Circuit" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "HIIT Zirkel" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "HIIT Circuit" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Circuito HIIT" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Circuit HIIT" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "HIITサーキット" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "HIIT 서킷" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "HIIT循环" } }
+      }
+    },
+    "Hip Stretch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Hüftdehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Hip Stretch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramiento de cadera" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirement des hanches" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "股関節ストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "고관절 스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "髋部拉伸" } }
+      }
+    },
+    "Hold plank with rest intervals" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Planke halten mit Ruhepausen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Hold plank with rest intervals" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Mantener plancha con intervalos de descanso" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Gainage avec intervalles de repos" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "休憩を挟みながらプランク" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "휴식과 함께 플랭크 버티기" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "平板支撑与休息间隔" } }
       }
     },
     "Interval" : {
@@ -1043,6 +1203,39 @@
         }
       }
     },
+    "Jump Squats" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sprung-Kniebeugen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Jump Squats" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Sentadillas con salto" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Squats sautés" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ジャンプスクワット" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "점프 스쿼트" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "跳跃深蹲" } }
+      }
+    },
+    "Leg Raises" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Beinheben" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Leg Raises" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Elevaciones de piernas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Levées de jambes" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "レッグレイズ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "레그레이즈" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "抬腿" } }
+      }
+    },
+    "Leg Stretch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Beindehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Leg Stretch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramiento de piernas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirement des jambes" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "脚ストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "다리 스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "腿部拉伸" } }
+      }
+    },
     "Minutes" : {
       "localizations" : {
         "de" : {
@@ -1087,6 +1280,28 @@
             "value" : "分"
           }
         }
+      }
+    },
+    "Mountain Climbers" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bergsteiger" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mountain Climbers" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Escaladores" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Grimpeurs" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "マウンテンクライマー" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "마운틴 클라이머" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "登山者" } }
+      }
+    },
+    "Neck Stretch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nackendehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Neck Stretch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramiento de cuello" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirement du cou" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "首ストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "목 스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "颈部拉伸" } }
       }
     },
     "New Routine" : {
@@ -1179,6 +1394,39 @@
             "value" : "下一个"
           }
         }
+      }
+    },
+    "Plank" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Planke" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Plank" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Plancha" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Planche" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "プランク" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "플랭크" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "平板支撑" } }
+      }
+    },
+    "Plank Challenge" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Planke Challenge" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Plank Challenge" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Desafío de plancha" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Défi planche" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "プランクチャレンジ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "플랭크 챌린지" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "平板支撑挑战" } }
+      }
+    },
+    "Relaxing stretch routine" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Entspannende Dehnroutine" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Relaxing stretch routine" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Rutina de estiramientos relajantes" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Routine d'étirements relaxants" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "リラックスストレッチルーティン" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "릴렉스 스트레칭 루틴" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "放松拉伸训练" } }
       }
     },
     "Rest" : {
@@ -1411,6 +1659,39 @@
         }
       }
     },
+    "Run" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Laufen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Run" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Correr" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Course" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "走る" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "달리기" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "跑步" } }
+      }
+    },
+    "Run/Walk intervals for beginners" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Lauf/Geh-Intervalle für Anfänger" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Run/Walk intervals for beginners" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Intervalos de correr/caminar para principiantes" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Intervalles course/marche pour débutants" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "初心者向けラン/ウォークインターバル" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "초보자용 달리기/걷기 인터벌" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "初学者跑步/步行间歇" } }
+      }
+    },
+    "Running Intervals" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Laufintervalle" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Running Intervals" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Intervalos de carrera" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Intervalles de course" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ランニングインターバル" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "러닝 인터벌" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "跑步间歇" } }
+      }
+    },
     "Save" : {
       "localizations" : {
         "de" : {
@@ -1501,6 +1782,50 @@
             "value" : "秒"
           }
         }
+      }
+    },
+    "Select Template" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Vorlage auswählen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Select Template" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Seleccionar plantilla" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Sélectionner un modèle" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "テンプレートを選択" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "템플릿 선택" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择模板" } }
+      }
+    },
+    "Shoulder Stretch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Schulterdehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shoulder Stretch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramiento de hombros" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirement des épaules" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "肩ストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "어깨 스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "肩部拉伸" } }
+      }
+    },
+    "Start from scratch" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Von Grund auf neu beginnen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start from scratch" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Empezar desde cero" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Commencer de zéro" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ゼロから作成" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "처음부터 만들기" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "从零开始" } }
+      }
+    },
+    "Stretching" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Dehnung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Stretching" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Estiramientos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Étirements" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ストレッチ" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "스트레칭" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "拉伸" } }
       }
     },
     "Tabata" : {
@@ -1687,6 +2012,17 @@
         }
       }
     },
+    "Walk" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gehen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Walk" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Caminar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Marche" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "歩く" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "걷기" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "步行" } }
+      }
+    },
     "Warmup" : {
       "localizations" : {
         "de" : {
@@ -1731,6 +2067,17 @@
             "value" : "热身"
           }
         }
+      }
+    },
+    "Warmup Walk" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aufwärm-Gehen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Warmup Walk" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Caminata de calentamiento" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Marche d'échauffement" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "ウォームアップウォーク" } },
+        "ko" : { "stringUnit" : { "state" : "translated", "value" : "준비 걷기" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "热身步行" } }
       }
     },
     "Workout" : {

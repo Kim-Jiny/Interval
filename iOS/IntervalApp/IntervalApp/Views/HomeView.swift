@@ -9,7 +9,9 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var routineStore: RoutineStore
-    @State private var showingAddRoutine = false
+    @State private var showingTemplateSelection = false
+    @State private var pendingTemplate: Routine?
+    @State private var templateForEditing: Routine?
     @State private var selectedRoutine: Routine?
 
     var body: some View {
@@ -49,15 +51,27 @@ struct HomeView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        showingAddRoutine = true
+                        showingTemplateSelection = true
                     } label: {
                         Image(systemName: "plus")
                     }
                 }
             }
-            .sheet(isPresented: $showingAddRoutine) {
+            .sheet(isPresented: $showingTemplateSelection, onDismiss: {
+                if let template = pendingTemplate {
+                    pendingTemplate = nil
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                        templateForEditing = template
+                    }
+                }
+            }) {
+                TemplateSelectionView { routine in
+                    pendingTemplate = routine
+                }
+            }
+            .sheet(item: $templateForEditing) { routine in
                 NavigationStack {
-                    RoutineEditorView(routine: nil, isNew: true)
+                    RoutineEditorView(routine: routine, isNew: true)
                 }
             }
             .fullScreenCover(item: $selectedRoutine) { routine in
