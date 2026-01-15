@@ -88,6 +88,18 @@ struct TimerView: View {
                     .font(.subheadline)
             }
             .foregroundStyle(.white)
+
+            // Live Activity 버튼
+            if !timerManager.isCompleted {
+                Button {
+                    timerManager.restartLiveActivity()
+                } label: {
+                    Image(systemName: timerManager.isLiveActivityActive ? "bell.fill" : "bell.slash.fill")
+                        .font(.title2)
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+                .padding(.leading, 12)
+            }
         }
     }
 
@@ -284,6 +296,7 @@ class TimerManager: ObservableObject {
     @Published var timeRemaining: TimeInterval = 0
     @Published var isRunning: Bool = false
     @Published var isCompleted: Bool = false
+    @Published var isLiveActivityActive: Bool = false
 
     var currentInterval: WorkoutInterval? {
         guard currentIntervalIndex < routine.intervals.count else { return nil }
@@ -473,6 +486,20 @@ class TimerManager: ObservableObject {
 
     // MARK: - Live Activity
 
+    func restartLiveActivity() {
+        // 기존 활동 종료
+        if let activity = liveActivity {
+            Task {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+        }
+        liveActivity = nil
+        isLiveActivityActive = false
+
+        // 새로운 활동 시작
+        startLiveActivity()
+    }
+
     private func startLiveActivity() {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             print("Live Activities are not enabled")
@@ -492,13 +519,25 @@ class TimerManager: ObservableObject {
                 content: .init(state: contentState, staleDate: nil),
                 pushType: nil
             )
+            isLiveActivityActive = true
         } catch {
             print("Failed to start Live Activity: \(error)")
+            isLiveActivityActive = false
         }
     }
 
     private func updateLiveActivity() {
-        guard let activity = liveActivity else { return }
+        guard let activity = liveActivity else {
+            isLiveActivityActive = false
+            return
+        }
+
+        // 활동이 종료되었는지 확인
+        if activity.activityState == .dismissed || activity.activityState == .ended {
+            isLiveActivityActive = false
+            liveActivity = nil
+            return
+        }
 
         let contentState = createContentState()
 
@@ -516,6 +555,7 @@ class TimerManager: ObservableObject {
             await activity.end(.init(state: contentState, staleDate: nil), dismissalPolicy: .default)
         }
         liveActivity = nil
+        isLiveActivityActive = false
     }
 
     private func createContentState() -> TimerActivityAttributes.ContentState {
