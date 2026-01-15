@@ -28,10 +28,8 @@ struct WatchContentView: View {
                 } else {
                     List(routineStore.routines) { routine in
                         Button {
-                            // iPhone 연동 중이 아닐 때만 독립 모드로 전환
-                            if !connectivityManager.isReceivingFromiPhone {
-                                connectivityManager.startStandaloneMode()
-                            }
+                            // Watch에서 직접 시작 시 항상 독립 모드로 전환
+                            connectivityManager.startStandaloneMode()
                             selectedRoutine = routine
                         } label: {
                             WatchRoutineRow(routine: routine)

@@ -5,14 +5,21 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         }
       }
     },
     "▶ %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "▶ %@"
+          }
+        }
+      }
     },
     "Interval" : {
       "localizations" : {
@@ -202,7 +209,7 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "R%1$lld/%2$lld"
           }
         }

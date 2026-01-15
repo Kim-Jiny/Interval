@@ -77,6 +77,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
 
     // 완료 화면에서 닫을 때 상태 리셋
     func resetCompletedState() {
+        isReceivingFromiPhone = false
         isWorkoutCompletedFromiPhone = false
         shouldDismissTimer = false
         activeRoutine = nil
