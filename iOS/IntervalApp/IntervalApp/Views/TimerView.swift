@@ -13,6 +13,7 @@ struct TimerView: View {
     let routine: Routine
     @Environment(\.dismiss) private var dismiss
     @StateObject private var timerManager: TimerManager
+    @State private var showingExitConfirmation = false
 
     init(routine: Routine) {
         self.routine = routine
@@ -49,6 +50,15 @@ struct TimerView: View {
             }
             .padding()
         }
+        .alert(String(localized: "End Workout"), isPresented: $showingExitConfirmation) {
+            Button(String(localized: "No"), role: .cancel) { }
+            Button(String(localized: "Yes"), role: .destructive) {
+                timerManager.stop()
+                dismiss()
+            }
+        } message: {
+            Text("Do you want to end this workout?")
+        }
         .onDisappear {
             timerManager.stop()
         }
@@ -72,7 +82,7 @@ struct TimerView: View {
     private var headerView: some View {
         HStack {
             Button {
-                dismiss()
+                showingExitConfirmation = true
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title)
@@ -549,10 +559,8 @@ class TimerManager: ObservableObject {
     private func endLiveActivity() {
         guard let activity = liveActivity else { return }
 
-        let contentState = createContentState()
-
         Task {
-            await activity.end(.init(state: contentState, staleDate: nil), dismissalPolicy: .default)
+            await activity.end(nil, dismissalPolicy: .immediate)
         }
         liveActivity = nil
         isLiveActivityActive = false
