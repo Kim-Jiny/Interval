@@ -54,7 +54,7 @@ struct WatchContentView: View {
                     }
                 }
             }
-            .navigationTitle("Interval")
+            .navigationTitle(String(localized: "IntervalMate"))
             .fullScreenCover(item: $selectedRoutine) { routine in
                 WatchTimerView(routine: routine)
                     .environmentObject(connectivityManager)

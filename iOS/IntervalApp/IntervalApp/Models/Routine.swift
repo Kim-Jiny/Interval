@@ -14,6 +14,7 @@ struct Routine: Identifiable, Codable, Equatable {
     var rounds: Int
     var createdAt: Date
     var updatedAt: Date
+    var isFavorite: Bool = false
 
     var totalDuration: TimeInterval {
         let singleRoundDuration = intervals.reduce(0) { $0 + $1.duration }
@@ -33,7 +34,8 @@ struct Routine: Identifiable, Codable, Equatable {
         intervals: [WorkoutInterval],
         rounds: Int = 1,
         createdAt: Date = Date(),
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        isFavorite: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -41,6 +43,7 @@ struct Routine: Identifiable, Codable, Equatable {
         self.rounds = rounds
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.isFavorite = isFavorite
     }
 
     static var sample: Routine {

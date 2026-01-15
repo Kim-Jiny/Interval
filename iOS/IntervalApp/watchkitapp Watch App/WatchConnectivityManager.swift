@@ -281,7 +281,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
     // 타이머 시작 로컬 알림
     private func postTimerStartNotification() {
         let content = UNMutableNotificationContent()
-        content.title = activeRoutine?.name ?? "Interval"
+        content.title = activeRoutine?.name ?? "IntervalMate"
         content.body = String(localized: "Workout started on iPhone. Tap to open.")
         content.sound = .default
         content.categoryIdentifier = "TIMER_START"

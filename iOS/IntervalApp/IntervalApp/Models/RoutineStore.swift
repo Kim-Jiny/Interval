@@ -55,6 +55,23 @@ class RoutineStore: ObservableObject {
         saveRoutines()
     }
 
+    func toggleFavorite(_ routine: Routine) {
+        if let index = routines.firstIndex(where: { $0.id == routine.id }) {
+            routines[index].isFavorite.toggle()
+            saveRoutines()
+        }
+    }
+
+    // 즐겨찾기 루틴
+    var favoriteRoutines: [Routine] {
+        routines.filter { $0.isFavorite }
+    }
+
+    // 일반 루틴
+    var regularRoutines: [Routine] {
+        routines.filter { !$0.isFavorite }
+    }
+
     private func saveRoutines() {
         do {
             let data = try JSONEncoder().encode(routines)

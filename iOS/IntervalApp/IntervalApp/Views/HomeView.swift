@@ -17,33 +17,31 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(routineStore.routines) { routine in
-                    RoutineRowView(routine: routine)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedRoutine = routine
+                // 즐겨찾기 섹션
+                if !routineStore.favoriteRoutines.isEmpty {
+                    Section {
+                        ForEach(routineStore.favoriteRoutines) { routine in
+                            routineRow(routine)
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                routineStore.deleteRoutine(routine)
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-
-                            NavigationLink {
-                                RoutineEditorView(routine: routine, isNew: false)
-                            } label: {
-                                Label("Edit", systemImage: "pencil")
-                            }
-                            .tint(.blue)
-                        }
+                    } header: {
+                        Label("Favorites", systemImage: "star.fill")
+                            .foregroundStyle(.yellow)
+                    }
                 }
-                .onMove { source, destination in
-                    routineStore.moveRoutine(from: source, to: destination)
+
+                // 모든 루틴 섹션
+                Section {
+                    ForEach(routineStore.regularRoutines) { routine in
+                        routineRow(routine)
+                    }
+                } header: {
+                    if !routineStore.favoriteRoutines.isEmpty {
+                        Label("Routines", systemImage: "list.bullet")
+                    }
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Interval Training")
+            .navigationTitle(String(localized: "IntervalMate"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
@@ -78,6 +76,45 @@ struct HomeView: View {
                 TimerView(routine: routine)
             }
         }
+    }
+
+    // 루틴 행 뷰 (스와이프 액션 포함)
+    @ViewBuilder
+    private func routineRow(_ routine: Routine) -> some View {
+        RoutineRowView(routine: routine)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                selectedRoutine = routine
+            }
+            // 왼쪽 스와이프 → 즐겨찾기
+            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                Button {
+                    withAnimation {
+                        routineStore.toggleFavorite(routine)
+                    }
+                } label: {
+                    Label(
+                        routine.isFavorite ? "Unfavorite" : "Favorite",
+                        systemImage: routine.isFavorite ? "star.slash" : "star.fill"
+                    )
+                }
+                .tint(.yellow)
+            }
+            // 오른쪽 스와이프 → 편집/삭제
+            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                Button(role: .destructive) {
+                    routineStore.deleteRoutine(routine)
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+
+                NavigationLink {
+                    RoutineEditorView(routine: routine, isNew: false)
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
+                .tint(.blue)
+            }
     }
 }
 
