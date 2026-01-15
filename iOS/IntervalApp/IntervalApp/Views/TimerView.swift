@@ -301,6 +301,14 @@ class TimerManager: ObservableObject {
     private var audioPlayer: AVAudioPlayer?
     private var liveActivity: Activity<TimerActivityAttributes>?
 
+    // 설정값 (UserDefaults에서 읽기)
+    private var vibrationEnabled: Bool {
+        UserDefaults.standard.object(forKey: "vibrationEnabled") as? Bool ?? true
+    }
+    private var soundEnabled: Bool {
+        UserDefaults.standard.object(forKey: "soundEnabled") as? Bool ?? true
+    }
+
     @Published var currentRound: Int = 1
     @Published var currentIntervalIndex: Int = 0
     @Published var timeRemaining: TimeInterval = 0
@@ -399,6 +407,16 @@ class TimerManager: ObservableObject {
             startLiveActivity()
         }
 
+        // Watch에 타이머 시작 알림
+        if let interval = currentInterval {
+            PhoneConnectivityManager.shared.sendTimerStarted(
+                routine: routine,
+                intervalName: interval.name,
+                timeRemaining: timeRemaining,
+                currentRound: currentRound
+            )
+        }
+
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.tick()
         }
@@ -413,6 +431,10 @@ class TimerManager: ObservableObject {
     func stop() {
         pause()
         endLiveActivity()
+
+        // Watch에 타이머 중지 알림
+        PhoneConnectivityManager.shared.sendTimerStopped()
+
         currentRound = 1
         currentIntervalIndex = 0
         if let first = routine.intervals.first {
@@ -448,10 +470,19 @@ class TimerManager: ObservableObject {
         if currentSecond != lastLiveActivityUpdate {
             lastLiveActivityUpdate = currentSecond
             updateLiveActivity()
+
+            // Watch에 매초 시간 업데이트
+            PhoneConnectivityManager.shared.sendTimerUpdate(timeRemaining: timeRemaining)
         }
 
+        // 카운트다운 (3, 2, 1) - Watch에도 알림
         if timeRemaining <= 3 && timeRemaining > 2.9 {
             playCountdownSound()
+            PhoneConnectivityManager.shared.sendCountdown(timeRemaining: timeRemaining)
+        } else if timeRemaining <= 2 && timeRemaining > 1.9 {
+            PhoneConnectivityManager.shared.sendCountdown(timeRemaining: timeRemaining)
+        } else if timeRemaining <= 1 && timeRemaining > 0.9 {
+            PhoneConnectivityManager.shared.sendCountdown(timeRemaining: timeRemaining)
         }
 
         if timeRemaining <= 0 {
@@ -467,11 +498,33 @@ class TimerManager: ObservableObject {
             currentIntervalIndex = nextIndex
             timeRemaining = routine.intervals[nextIndex].duration
             updateLiveActivity()
+
+            // Watch에 구간 변경 알림
+            if let interval = currentInterval {
+                PhoneConnectivityManager.shared.sendIntervalChange(
+                    intervalName: interval.name,
+                    timeRemaining: timeRemaining,
+                    currentRound: currentRound,
+                    totalRounds: routine.rounds,
+                    intervalType: interval.type.rawValue
+                )
+            }
         } else if currentRound < routine.rounds {
             currentRound += 1
             currentIntervalIndex = 0
             timeRemaining = routine.intervals[0].duration
             updateLiveActivity()
+
+            // Watch에 라운드 변경 알림
+            if let interval = currentInterval {
+                PhoneConnectivityManager.shared.sendIntervalChange(
+                    intervalName: interval.name,
+                    timeRemaining: timeRemaining,
+                    currentRound: currentRound,
+                    totalRounds: routine.rounds,
+                    intervalType: interval.type.rawValue
+                )
+            }
         } else {
             isRunning = false
             isCompleted = true
@@ -479,19 +532,40 @@ class TimerManager: ObservableObject {
             timer = nil
             endLiveActivity()
             playCompletionSound()
+
+            // Watch에 완료 알림
+            PhoneConnectivityManager.shared.sendTimerCompleted()
         }
     }
 
     private func playCountdownSound() {
-        AudioServicesPlaySystemSound(1057)
+        if soundEnabled {
+            AudioServicesPlaySystemSound(1057)
+        }
+        if vibrationEnabled {
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+        }
     }
 
     private func playIntervalEndSound() {
-        AudioServicesPlaySystemSound(1013)
+        if soundEnabled {
+            AudioServicesPlaySystemSound(1013)
+        }
+        if vibrationEnabled {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.warning)
+        }
     }
 
     private func playCompletionSound() {
-        AudioServicesPlaySystemSound(1025)
+        if soundEnabled {
+            AudioServicesPlaySystemSound(1025)
+        }
+        if vibrationEnabled {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+        }
     }
 
     // MARK: - Live Activity

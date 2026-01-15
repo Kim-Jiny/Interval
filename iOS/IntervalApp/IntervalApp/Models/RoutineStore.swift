@@ -20,6 +20,9 @@ class RoutineStore: ObservableObject {
         if routines.isEmpty {
             routines = [Routine.sample, Routine.tabata]
             saveRoutines()
+        } else {
+            // 기존 루틴이 있으면 Watch에 동기화
+            PhoneConnectivityManager.shared.syncRoutines(routines)
         }
     }
 
@@ -56,6 +59,9 @@ class RoutineStore: ObservableObject {
         do {
             let data = try JSONEncoder().encode(routines)
             UserDefaults.standard.set(data, forKey: storageKey)
+
+            // Watch에 루틴 동기화
+            PhoneConnectivityManager.shared.syncRoutines(routines)
         } catch {
             print("Failed to save routines: \(error)")
         }
