@@ -11,11 +11,10 @@ import Foundation
 struct TimerActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var currentIntervalName: String
-        var timeRemaining: TimeInterval
+        var endTime: Date  // 카운트다운 종료 시간
         var intervalType: String
         var currentRound: Int
         var totalRounds: Int
-        var progress: Double
     }
 
     var routineName: String

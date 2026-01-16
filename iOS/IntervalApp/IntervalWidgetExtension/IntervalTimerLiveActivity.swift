@@ -35,29 +35,28 @@ struct IntervalTimerLiveActivity: Widget {
                 }
 
                 DynamicIslandExpandedRegion(.center) {
-                    Text(formatTime(context.state.timeRemaining))
+                    // 자동 카운트다운 타이머
+                    Text(timerInterval: Date()...context.state.endTime, countsDown: true)
                         .font(.system(size: 36, weight: .bold, design: .monospaced))
                         .foregroundStyle(.white)
+                        .multilineTextAlignment(.center)
                 }
 
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(spacing: 8) {
-                        ProgressView(value: context.state.progress)
-                            .tint(colorForType(context.state.intervalType))
-
-                        Text(context.attributes.routineName)
-                            .font(.caption)
-                            .foregroundStyle(.white.opacity(0.7))
-                    }
+                    Text(context.attributes.routineName)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.7))
                 }
             } compactLeading: {
                 Circle()
                     .fill(colorForType(context.state.intervalType))
                     .frame(width: 12, height: 12)
             } compactTrailing: {
-                Text(formatTimeCompact(context.state.timeRemaining))
+                // 자동 카운트다운 타이머
+                Text(timerInterval: Date()...context.state.endTime, countsDown: true)
                     .font(.system(size: 14, weight: .semibold, design: .monospaced))
                     .foregroundStyle(colorForType(context.state.intervalType))
+                    .frame(minWidth: 50)
             } minimal: {
                 Circle()
                     .fill(colorForType(context.state.intervalType))
@@ -73,22 +72,6 @@ struct IntervalTimerLiveActivity: Widget {
         case "warmup": return .orange
         case "cooldown": return .blue
         default: return .gray
-        }
-    }
-
-    private func formatTime(_ time: TimeInterval) -> String {
-        let minutes = Int(time) / 60
-        let seconds = Int(time) % 60
-        return String(format: "%d:%02d", minutes, seconds)
-    }
-
-    private func formatTimeCompact(_ time: TimeInterval) -> String {
-        let minutes = Int(time) / 60
-        let seconds = Int(time) % 60
-        if minutes > 0 {
-            return String(format: "%d:%02d", minutes, seconds)
-        } else {
-            return String(format: ":%02d", seconds)
         }
     }
 }
@@ -118,9 +101,11 @@ struct LockScreenView: View {
 
             // Right: Timer
             VStack(alignment: .trailing, spacing: 4) {
-                Text(formatTime(context.state.timeRemaining))
+                // 자동 카운트다운 타이머
+                Text(timerInterval: Date()...context.state.endTime, countsDown: true)
                     .font(.system(size: 32, weight: .bold, design: .monospaced))
                     .foregroundStyle(.white)
+                    .multilineTextAlignment(.trailing)
 
                 Text("Round \(context.state.currentRound)/\(context.state.totalRounds)")
                     .font(.caption)
@@ -139,11 +124,5 @@ struct LockScreenView: View {
         case "cooldown": return .blue
         default: return .gray
         }
-    }
-
-    private func formatTime(_ time: TimeInterval) -> String {
-        let minutes = Int(time) / 60
-        let seconds = Int(time) % 60
-        return String(format: "%d:%02d", minutes, seconds)
     }
 }

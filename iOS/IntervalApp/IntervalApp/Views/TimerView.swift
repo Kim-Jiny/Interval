@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import AVFoundation
 import ActivityKit
 
@@ -583,7 +584,7 @@ class TimerManager: ObservableObject {
         if nextIndex < routine.intervals.count {
             currentIntervalIndex = nextIndex
             timeRemaining = routine.intervals[nextIndex].duration
-            updateLiveActivity()
+            updateLiveActivityWithPush()  // 푸시로 업데이트
 
             // Watch에 구간 변경 알림
             if let interval = currentInterval {
@@ -599,7 +600,7 @@ class TimerManager: ObservableObject {
             currentRound += 1
             currentIntervalIndex = 0
             timeRemaining = routine.intervals[0].duration
-            updateLiveActivity()
+            updateLiveActivityWithPush()  // 푸시로 업데이트
 
             // Watch에 라운드 변경 알림
             if let interval = currentInterval {
@@ -617,7 +618,7 @@ class TimerManager: ObservableObject {
             timer?.cancel()
             timer = nil
             stopBackgroundAudio()
-            endLiveActivity()
+            endLiveActivityWithPush()  // 푸시로 종료
             playCompletionSound()
 
             // Watch에 완료 알림
@@ -693,16 +694,34 @@ class TimerManager: ObservableObject {
         let contentState = createContentState()
 
         do {
+            // 먼저 푸시 토큰으로 시도
             liveActivity = try Activity.request(
                 attributes: attributes,
-                content: ActivityContent(state: contentState, staleDate: Date().addingTimeInterval(2)),
-                pushType: nil
+                content: ActivityContent(state: contentState, staleDate: Date().addingTimeInterval(60)),
+                pushType: .token
             )
             isLiveActivityActive = true
-            print("Live Activity started successfully")
+            print("Live Activity started with push token")
+
+            // 푸시 토큰 모니터링 시작
+            if let activity = liveActivity {
+                LiveActivityPushManager.shared.startMonitoringPushToken(for: activity)
+            }
         } catch {
-            print("Failed to start Live Activity: \(error)")
-            isLiveActivityActive = false
+            print("Failed to start Live Activity with token: \(error)")
+            // 토큰 실패 시 푸시 없이 시도
+            do {
+                liveActivity = try Activity.request(
+                    attributes: attributes,
+                    content: ActivityContent(state: contentState, staleDate: Date().addingTimeInterval(60)),
+                    pushType: nil
+                )
+                isLiveActivityActive = true
+                print("Live Activity started without push token")
+            } catch {
+                print("Failed to start Live Activity: \(error)")
+                isLiveActivityActive = false
+            }
         }
     }
 
@@ -724,7 +743,25 @@ class TimerManager: ObservableObject {
         }
     }
 
+    /// 구간 변경 시 푸시로 업데이트 (백그라운드에서도 작동)
+    private func updateLiveActivityWithPush() {
+        // 로컬 업데이트
+        updateLiveActivity()
+
+        // 서버로 푸시 요청 (백그라운드에서 업데이트)
+        LiveActivityPushManager.shared.sendUpdate(
+            currentIntervalName: currentInterval?.name ?? "Done",
+            endTime: Date().addingTimeInterval(timeRemaining),
+            intervalType: currentInterval?.type.rawValue ?? "workout",
+            currentRound: currentRound,
+            totalRounds: routine.rounds
+        )
+    }
+
     private func endLiveActivity() {
+        // 푸시 토큰 모니터링 중지
+        LiveActivityPushManager.shared.stopMonitoringPushToken()
+
         // 모든 Live Activity 종료
         let activities = Activity<TimerActivityAttributes>.activities
         for activity in activities {
@@ -736,14 +773,27 @@ class TimerManager: ObservableObject {
         isLiveActivityActive = false
     }
 
+    /// 푸시로 Live Activity 종료 (백그라운드에서도 작동)
+    private func endLiveActivityWithPush() {
+        // 서버로 종료 푸시 요청
+        LiveActivityPushManager.shared.sendEnd(
+            currentIntervalName: "Done",
+            intervalType: currentInterval?.type.rawValue ?? "workout",
+            currentRound: currentRound,
+            totalRounds: routine.rounds
+        )
+
+        // 로컬 종료
+        endLiveActivity()
+    }
+
     private func createContentState() -> TimerActivityAttributes.ContentState {
         TimerActivityAttributes.ContentState(
             currentIntervalName: currentInterval?.name ?? "Done",
-            timeRemaining: timeRemaining,
+            endTime: Date().addingTimeInterval(timeRemaining),
             intervalType: currentInterval?.type.rawValue ?? "workout",
             currentRound: currentRound,
-            totalRounds: routine.rounds,
-            progress: progress
+            totalRounds: routine.rounds
         )
     }
 }
