@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Interval</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Home Screen -->
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_all">All</string>
+    <string name="empty_favorites">No favorite routines yet.\nTap the heart icon on a routine to add it to favorites.</string>
+    <string name="empty_routines">No routines yet.\nTap + to create your first routine!</string>
+    <string name="start">Start</string>
+
+    <!-- Routine Card -->
+    <string name="rounds_format">%d rounds</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+
+    <!-- Delete Dialog -->
+    <string name="delete_routine">Delete Routine</string>
+    <string name="delete_routine_confirm">Are you sure you want to delete \"%s\"?</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Timer Screen -->
+    <string name="round">Round</string>
+    <string name="round_format">%d / %d</string>
+    <string name="next">Next</string>
+    <string name="workout_complete">Workout Complete!</string>
+    <string name="exit_timer">Exit Timer?</string>
+    <string name="exit_timer_message">Your workout progress will be lost.</string>
+    <string name="exit">Exit</string>
+    <string name="continue_workout">Continue</string>
+    <string name="reset">Reset</string>
+    <string name="close">Close</string>
+    <string name="previous">Previous</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+
+    <!-- Routine Editor -->
+    <string name="new_routine">New Routine</string>
+    <string name="edit_routine">Edit Routine</string>
+    <string name="save">Save</string>
+    <string name="routine_name">Routine Name</string>
+    <string name="rounds">Rounds</string>
+    <string name="intervals">Intervals</string>
+    <string name="no_intervals">No intervals yet. Tap + to add one.</string>
+    <string name="add_interval">Add interval</string>
+    <string name="decrease_rounds">Decrease rounds</string>
+    <string name="increase_rounds">Increase rounds</string>
+
+    <!-- Interval Editor -->
+    <string name="add_interval_title">Add Interval</string>
+    <string name="edit_interval_title">Edit Interval</string>
+    <string name="interval_name">Name</string>
+    <string name="duration">Duration</string>
+    <string name="type">Type</string>
+    <string name="min">min</string>
+    <string name="sec">sec</string>
+    <string name="add_minute">Add minute</string>
+    <string name="remove_minute">Remove minute</string>
+    <string name="add_seconds">Add seconds</string>
+    <string name="remove_seconds">Remove seconds</string>
+
+    <!-- Interval Types -->
+    <string name="type_workout">Workout</string>
+    <string name="type_rest">Rest</string>
+    <string name="type_warmup">Warmup</string>
+    <string name="type_cooldown">Cooldown</string>
+
+    <!-- Template Selection -->
+    <string name="select_template">Select Template</string>
+    <string name="template_rounds">%d rounds</string>
+    <string name="template_intervals">%d intervals</string>
+
+    <!-- Template Names -->
+    <string name="template_empty">Empty</string>
+    <string name="template_tabata">Tabata</string>
+    <string name="template_running">Running Intervals</string>
+    <string name="template_plank">Plank Challenge</string>
+    <string name="template_leg_raises">Leg Raises</string>
+    <string name="template_hiit">HIIT Circuit</string>
+    <string name="template_stretching">Stretching</string>
+
+    <!-- Template Interval Names -->
+    <string name="interval_workout">Workout</string>
+    <string name="interval_work">Work</string>
+    <string name="interval_rest">Rest</string>
+    <string name="interval_warmup">Warmup</string>
+    <string name="interval_cooldown">Cooldown</string>
+    <string name="interval_run">Run</string>
+    <string name="interval_walk">Walk</string>
+    <string name="interval_plank">Plank</string>
+    <string name="interval_leg_raises">Leg Raises</string>
+    <string name="interval_burpees">Burpees</string>
+    <string name="interval_jump_squats">Jump Squats</string>
+    <string name="interval_mountain_climbers">Mountain Climbers</string>
+    <string name="interval_push_ups">Push-ups</string>
+    <string name="interval_neck_stretch">Neck Stretch</string>
+    <string name="interval_shoulder_stretch">Shoulder Stretch</string>
+    <string name="interval_arm_stretch">Arm Stretch</string>
+    <string name="interval_back_stretch">Back Stretch</string>
+    <string name="interval_hip_stretch">Hip Stretch</string>
+    <string name="interval_leg_stretch">Leg Stretch</string>
+    <string name="interval_calf_stretch">Calf Stretch</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="timer_settings">Timer</string>
+    <string name="vibration">Vibration</string>
+    <string name="vibration_desc">Vibrate on interval changes</string>
+    <string name="voice_guidance">Voice Guidance</string>
+    <string name="voice_guidance_desc">Announce interval names</string>
+    <string name="background_sound">Background Sound</string>
+    <string name="background_sound_desc">Play sound during workout</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
+
+    <!-- Notification -->
+    <string name="timer_notification_channel">Timer</string>
+    <string name="timer_notification_title">Interval Timer</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="work">Work</string>
+    <string name="drag_to_reorder">Drag to reorder</string>
+    <string name="delete_interval">Delete interval</string>
+</resources>

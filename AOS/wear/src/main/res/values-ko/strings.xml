@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">인터벌</string>
+    <string name="routines">루틴</string>
+    <string name="no_routines">루틴 없음</string>
+    <string name="add_routines_on_phone">휴대폰에서 루틴을 추가하세요</string>
+    <string name="rounds_format">%d 라운드</string>
+    <string name="round_format">라운드 %d/%d</string>
+    <string name="done">완료!</string>
+    <string name="play">재생</string>
+    <string name="pause">일시정지</string>
+</resources>
