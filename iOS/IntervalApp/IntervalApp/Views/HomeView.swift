@@ -12,6 +12,7 @@ struct HomeView: View {
     @State private var showingTemplateSelection = false
     @State private var pendingTemplate: Routine?
     @State private var templateForEditing: Routine?
+    @State private var routineToEdit: Routine?
     @State private var selectedRoutine: Routine?
 
     var body: some View {
@@ -43,10 +44,6 @@ struct HomeView: View {
             .listStyle(.insetGrouped)
             .navigationTitle(String(localized: "IntervalMate"))
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
-                }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showingTemplateSelection = true
@@ -70,6 +67,11 @@ struct HomeView: View {
             .sheet(item: $templateForEditing) { routine in
                 NavigationStack {
                     RoutineEditorView(routine: routine, isNew: true)
+                }
+            }
+            .sheet(item: $routineToEdit) { routine in
+                NavigationStack {
+                    RoutineEditorView(routine: routine, isNew: false)
                 }
             }
             .fullScreenCover(item: $selectedRoutine) { routine in
@@ -100,13 +102,20 @@ struct HomeView: View {
                 }
                 .tint(.yellow)
             }
-            // 오른쪽 스와이프 → 삭제
-            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            // 오른쪽 스와이프 → 편집, 삭제
+            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                 Button(role: .destructive) {
                     routineStore.deleteRoutine(routine)
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
+
+                Button {
+                    routineToEdit = routine
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
+                .tint(.blue)
             }
     }
 }
