@@ -273,6 +273,51 @@ extension WatchConnectivityManager: WCSessionDelegate {
             pendingTimerStart = true
             playHaptic(type: .start)
 
+        case "intervalChange":
+            // 구간 변경 - 백그라운드에서도 처리
+            playIntervalChangeHaptic()
+
+            if let name = userInfo["intervalName"] as? String {
+                currentIntervalName = name
+            }
+            if let time = userInfo["timeRemaining"] as? TimeInterval {
+                timeRemaining = time
+            }
+            if let round = userInfo["currentRound"] as? Int {
+                currentRound = round
+            }
+            if let total = userInfo["totalRounds"] as? Int {
+                totalRounds = total
+            }
+            if let type = userInfo["intervalType"] as? String {
+                intervalType = type
+            }
+
+        case "timerUpdate":
+            // 일반 타이머 업데이트
+            if let time = userInfo["timeRemaining"] as? TimeInterval {
+                timeRemaining = time
+            }
+
+        case "countdown":
+            // 카운트다운 (3, 2, 1)
+            playCountdownHaptic()
+            if let time = userInfo["timeRemaining"] as? TimeInterval {
+                timeRemaining = time
+            }
+
+        case "completed":
+            // 운동 완료
+            playCompletionHaptic()
+            isWorkoutCompletedFromiPhone = true
+            isReceivingFromiPhone = false
+
+        case "stopped":
+            // iPhone에서 타이머 중지됨
+            shouldDismissTimer = true
+            isReceivingFromiPhone = false
+            playHaptic(type: .stop)
+
         default:
             break
         }

@@ -297,8 +297,9 @@ struct TimerView: View {
 
 class TimerManager: ObservableObject {
     private let routine: Routine
-    private var timer: Timer?
+    private var timer: DispatchSourceTimer?
     private var audioPlayer: AVAudioPlayer?
+    private var backgroundAudioPlayer: AVAudioPlayer?
     private var liveActivity: Activity<TimerActivityAttributes>?
 
     // 설정값 (UserDefaults에서 읽기)
@@ -392,19 +393,93 @@ class TimerManager: ObservableObject {
 
     private func setupAudioSession() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Failed to setup audio session: \(error)")
         }
     }
 
+    private func startBackgroundAudio() {
+        // 이미 재생 중이면 무시
+        if backgroundAudioPlayer?.isPlaying == true {
+            return
+        }
+
+        // 오디오 세션 재활성화
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to activate audio session: \(error)")
+        }
+
+        // 무음 오디오를 생성하여 백그라운드에서 앱 유지
+        let sampleRate: Double = 44100
+        let duration: Double = 1.0 // 1초
+        let frameCount = Int(sampleRate * duration)
+
+        // WAV 파일 생성
+        var header = [UInt8]()
+        let dataSize = frameCount * 2 // 16-bit mono
+        let fileSize = 36 + dataSize
+
+        // RIFF header
+        header.append(contentsOf: "RIFF".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(fileSize).littleEndian) { Array($0) })
+        header.append(contentsOf: "WAVE".utf8)
+
+        // fmt chunk
+        header.append(contentsOf: "fmt ".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(16).littleEndian) { Array($0) }) // chunk size
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) }) // PCM
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) }) // mono
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(44100).littleEndian) { Array($0) }) // sample rate
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(88200).littleEndian) { Array($0) }) // byte rate
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(2).littleEndian) { Array($0) }) // block align
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(16).littleEndian) { Array($0) }) // bits per sample
+
+        // data chunk
+        header.append(contentsOf: "data".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(dataSize).littleEndian) { Array($0) })
+
+        // 무음 데이터 (0)
+        var audioData = Data(header)
+        audioData.append(Data(count: dataSize))
+
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("silence.wav")
+
+        do {
+            try audioData.write(to: tempURL)
+
+            backgroundAudioPlayer = try AVAudioPlayer(contentsOf: tempURL)
+            backgroundAudioPlayer?.numberOfLoops = -1 // 무한 반복
+            backgroundAudioPlayer?.volume = 0.0 // 완전 무음
+            backgroundAudioPlayer?.prepareToPlay()
+            backgroundAudioPlayer?.play()
+            print("Background audio started")
+        } catch {
+            print("Failed to setup background audio: \(error)")
+        }
+    }
+
+    private func stopBackgroundAudio() {
+        backgroundAudioPlayer?.stop()
+        backgroundAudioPlayer = nil
+        print("Background audio stopped")
+    }
+
     func start() {
         guard !isCompleted else { return }
         isRunning = true
 
+        // 백그라운드 오디오 시작 (앱 유지용)
+        startBackgroundAudio()
+
         if liveActivity == nil {
             startLiveActivity()
+        } else {
+            // 일시정지 후 재시작 시 timerEndDate 업데이트
+            updateLiveActivity()
         }
 
         // Watch에 타이머 시작 알림
@@ -418,19 +493,29 @@ class TimerManager: ObservableObject {
             )
         }
 
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            self?.tick()
+        // DispatchSourceTimer 사용 (백그라운드에서도 실행)
+        let queue = DispatchQueue.global(qos: .userInteractive)
+        timer = DispatchSource.makeTimerSource(queue: queue)
+        timer?.schedule(deadline: .now(), repeating: .milliseconds(100))
+        timer?.setEventHandler { [weak self] in
+            DispatchQueue.main.async {
+                self?.tick()
+            }
         }
+        timer?.resume()
     }
 
     func pause() {
         isRunning = false
-        timer?.invalidate()
+        timer?.cancel()
         timer = nil
+        stopBackgroundAudio()
+        updateLiveActivity()
     }
 
     func stop() {
         pause()
+        stopBackgroundAudio()
         endLiveActivity()
 
         // Watch에 타이머 중지 알림
@@ -529,8 +614,9 @@ class TimerManager: ObservableObject {
         } else {
             isRunning = false
             isCompleted = true
-            timer?.invalidate()
+            timer?.cancel()
             timer = nil
+            stopBackgroundAudio()
             endLiveActivity()
             playCompletionSound()
 
@@ -591,6 +677,14 @@ class TimerManager: ObservableObject {
             return
         }
 
+        // 이미 활성화된 Live Activity가 있으면 종료
+        if let existingActivity = liveActivity {
+            Task {
+                await existingActivity.end(nil, dismissalPolicy: .immediate)
+            }
+            liveActivity = nil
+        }
+
         let attributes = TimerActivityAttributes(
             routineName: routine.name,
             totalIntervals: routine.intervals.count
@@ -601,10 +695,11 @@ class TimerManager: ObservableObject {
         do {
             liveActivity = try Activity.request(
                 attributes: attributes,
-                content: .init(state: contentState, staleDate: nil),
+                content: ActivityContent(state: contentState, staleDate: Date().addingTimeInterval(2)),
                 pushType: nil
             )
             isLiveActivityActive = true
+            print("Live Activity started successfully")
         } catch {
             print("Failed to start Live Activity: \(error)")
             isLiveActivityActive = false
@@ -612,30 +707,30 @@ class TimerManager: ObservableObject {
     }
 
     private func updateLiveActivity() {
-        guard let activity = liveActivity else {
-            isLiveActivityActive = false
-            return
-        }
-
-        // 활동이 종료되었는지 확인
-        if activity.activityState == .dismissed || activity.activityState == .ended {
-            isLiveActivityActive = false
-            liveActivity = nil
+        guard let activity = liveActivity, activity.activityState == .active else {
+            // Live Activity가 없거나 활성 상태가 아니면 다시 시작
+            if isRunning && !isCompleted && liveActivity == nil {
+                startLiveActivity()
+            }
             return
         }
 
         let contentState = createContentState()
 
         Task {
-            await activity.update(.init(state: contentState, staleDate: nil))
+            await activity.update(
+                ActivityContent(state: contentState, staleDate: nil)
+            )
         }
     }
 
     private func endLiveActivity() {
-        guard let activity = liveActivity else { return }
-
-        Task {
-            await activity.end(nil, dismissalPolicy: .immediate)
+        // 모든 Live Activity 종료
+        let activities = Activity<TimerActivityAttributes>.activities
+        for activity in activities {
+            Task.detached {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
         }
         liveActivity = nil
         isLiveActivityActive = false

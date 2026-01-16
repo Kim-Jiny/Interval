@@ -100,20 +100,13 @@ struct HomeView: View {
                 }
                 .tint(.yellow)
             }
-            // 오른쪽 스와이프 → 편집/삭제
-            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            // 오른쪽 스와이프 → 삭제
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button(role: .destructive) {
                     routineStore.deleteRoutine(routine)
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
-
-                NavigationLink {
-                    RoutineEditorView(routine: routine, isNew: false)
-                } label: {
-                    Label("Edit", systemImage: "pencil")
-                }
-                .tint(.blue)
             }
     }
 }

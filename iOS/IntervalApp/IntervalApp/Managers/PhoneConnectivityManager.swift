@@ -120,7 +120,7 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
     }
 
     func sendIntervalChange(intervalName: String, timeRemaining: TimeInterval, currentRound: Int, totalRounds: Int, intervalType: String) {
-        guard let session = session, session.isReachable else { return }
+        guard let session = session, session.activationState == .activated else { return }
 
         let message: [String: Any] = [
             "action": "intervalChange",
@@ -131,8 +131,13 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "intervalType": intervalType
         ]
 
-        session.sendMessage(message, replyHandler: nil) { error in
-            print("Failed to send interval change: \(error.localizedDescription)")
+        if session.isReachable {
+            session.sendMessage(message, replyHandler: nil) { error in
+                print("Failed to send interval change: \(error.localizedDescription)")
+            }
+        } else if session.isWatchAppInstalled {
+            // Watch 화면이 꺼져있을 때 transferUserInfo로 전달
+            session.transferUserInfo(message)
         }
     }
 
@@ -163,26 +168,34 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
     }
 
     func sendTimerStopped() {
-        guard let session = session, session.isReachable else { return }
+        guard let session = session, session.activationState == .activated else { return }
 
         let message: [String: Any] = [
             "action": "stopped"
         ]
 
-        session.sendMessage(message, replyHandler: nil) { error in
-            print("Failed to send timer stopped: \(error.localizedDescription)")
+        if session.isReachable {
+            session.sendMessage(message, replyHandler: nil) { error in
+                print("Failed to send timer stopped: \(error.localizedDescription)")
+            }
+        } else if session.isWatchAppInstalled {
+            session.transferUserInfo(message)
         }
     }
 
     func sendTimerCompleted() {
-        guard let session = session, session.isReachable else { return }
+        guard let session = session, session.activationState == .activated else { return }
 
         let message: [String: Any] = [
             "action": "completed"
         ]
 
-        session.sendMessage(message, replyHandler: nil) { error in
-            print("Failed to send timer completed: \(error.localizedDescription)")
+        if session.isReachable {
+            session.sendMessage(message, replyHandler: nil) { error in
+                print("Failed to send timer completed: \(error.localizedDescription)")
+            }
+        } else if session.isWatchAppInstalled {
+            session.transferUserInfo(message)
         }
     }
 }
