@@ -301,7 +301,9 @@ class TimerManager: ObservableObject {
     private var timer: DispatchSourceTimer?
     private var audioPlayer: AVAudioPlayer?
     private var backgroundAudioPlayer: AVAudioPlayer?
+    private var tickAudioPlayer: AVAudioPlayer?
     private var liveActivity: Activity<TimerActivityAttributes>?
+    private var lastTickTime: TimeInterval = 0
 
     // 설정값 (UserDefaults에서 읽기)
     private var vibrationEnabled: Bool {
@@ -309,6 +311,9 @@ class TimerManager: ObservableObject {
     }
     private var soundEnabled: Bool {
         UserDefaults.standard.object(forKey: "soundEnabled") as? Bool ?? true
+    }
+    private var backgroundSoundEnabled: Bool {
+        UserDefaults.standard.object(forKey: "backgroundSoundEnabled") as? Bool ?? true
     }
 
     @Published var currentRound: Int = 1
@@ -414,6 +419,17 @@ class TimerManager: ObservableObject {
             print("Failed to activate audio session: \(error)")
         }
 
+        if backgroundSoundEnabled {
+            // 백그라운드 사운드 ON: 틱 사운드가 포함된 오디오 재생
+            startTickBackgroundAudio()
+        } else {
+            // 백그라운드 사운드 OFF: 무음 오디오 재생
+            startSilentBackgroundAudio()
+        }
+    }
+
+    /// 무음 백그라운드 오디오 (백그라운드 사운드 OFF일 때)
+    private func startSilentBackgroundAudio() {
         // 무음 오디오를 생성하여 백그라운드에서 앱 유지
         let sampleRate: Double = 44100
         let duration: Double = 1.0 // 1초
@@ -457,9 +473,75 @@ class TimerManager: ObservableObject {
             backgroundAudioPlayer?.volume = 0.0 // 완전 무음
             backgroundAudioPlayer?.prepareToPlay()
             backgroundAudioPlayer?.play()
-            print("Background audio started")
+            print("Silent background audio started")
         } catch {
-            print("Failed to setup background audio: \(error)")
+            print("Failed to setup silent background audio: \(error)")
+        }
+    }
+
+    /// 틱 사운드 백그라운드 오디오 (백그라운드 사운드 ON일 때)
+    private func startTickBackgroundAudio() {
+        // 틱 사운드가 포함된 오디오 생성 (10초마다 작은 비프음)
+        let sampleRate: Double = 44100
+        let duration: Double = 10.0 // 10초 (루프)
+        let frameCount = Int(sampleRate * duration)
+
+        // WAV 파일 생성
+        var header = [UInt8]()
+        let dataSize = frameCount * 2 // 16-bit mono
+        let fileSize = 36 + dataSize
+
+        // RIFF header
+        header.append(contentsOf: "RIFF".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(fileSize).littleEndian) { Array($0) })
+        header.append(contentsOf: "WAVE".utf8)
+
+        // fmt chunk
+        header.append(contentsOf: "fmt ".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(16).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) }) // PCM
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) }) // mono
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(44100).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(88200).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(2).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(16).littleEndian) { Array($0) })
+
+        // data chunk
+        header.append(contentsOf: "data".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(dataSize).littleEndian) { Array($0) })
+
+        var audioData = Data(header)
+
+        // 오디오 데이터 생성 (10초 중 시작 부분에 작은 비프음)
+        var samples = [Int16](repeating: 0, count: frameCount)
+
+        // 처음 0.05초에 440Hz 비프음 (매우 작은 볼륨)
+        let beepDuration = Int(sampleRate * 0.05) // 0.05초
+        let frequency: Double = 440 // Hz
+        let amplitude: Int16 = 800 // 매우 작은 볼륨 (최대 32767)
+
+        for i in 0..<beepDuration {
+            let sample = Double(amplitude) * sin(2.0 * .pi * frequency * Double(i) / sampleRate)
+            samples[i] = Int16(sample)
+        }
+
+        // Int16 배열을 Data로 변환
+        let sampleData = samples.withUnsafeBytes { Data($0) }
+        audioData.append(sampleData)
+
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("tick.wav")
+
+        do {
+            try audioData.write(to: tempURL)
+
+            backgroundAudioPlayer = try AVAudioPlayer(contentsOf: tempURL)
+            backgroundAudioPlayer?.numberOfLoops = -1 // 무한 반복
+            backgroundAudioPlayer?.volume = 0.05 // 아주 작은 볼륨
+            backgroundAudioPlayer?.prepareToPlay()
+            backgroundAudioPlayer?.play()
+            print("Tick background audio started")
+        } catch {
+            print("Failed to setup tick background audio: \(error)")
         }
     }
 

@@ -588,6 +588,98 @@
         }
       }
     },
+    "Background Sound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hintergrundton"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background Sound"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonido de Fondo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son en Arrière-plan"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックグラウンドサウンド"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "백그라운드 사운드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "后台声音"
+          }
+        }
+      }
+    },
+    "Background Sound plays periodic tick sounds to keep the timer running when the app is in background." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Hintergrundton spielt regelmäßige Tick-Töne ab, damit der Timer im Hintergrund weiterläuft."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background Sound plays periodic tick sounds to keep the timer running when the app is in background."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El sonido de fondo reproduce sonidos de tic periódicos para mantener el temporizador funcionando cuando la aplicación está en segundo plano."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le son en arrière-plan émet des tics périodiques pour maintenir le minuteur actif lorsque l'application est en arrière-plan."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックグラウンドサウンドは、アプリがバックグラウンドにあるときにタイマーを動作させ続けるために定期的なティック音を再生します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "백그라운드 사운드는 앱이 백그라운드에 있을 때 타이머가 계속 작동하도록 주기적인 틱 소리를 재생합니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "后台声音会定期播放滴答声，以便在应用程序处于后台时保持计时器运行。"
+          }
+        }
+      }
+    },
     "Basic Interval" : {
       "localizations" : {
         "de" : {

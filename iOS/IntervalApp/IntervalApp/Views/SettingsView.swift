@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage("vibrationEnabled") private var vibrationEnabled = true
     @AppStorage("soundEnabled") private var soundEnabled = true
+    @AppStorage("backgroundSoundEnabled") private var backgroundSoundEnabled = true
     @EnvironmentObject var routineStore: RoutineStore
     @ObservedObject private var connectivityManager = PhoneConnectivityManager.shared
 
@@ -39,8 +40,19 @@ struct SettingsView: View {
                                 .foregroundColor(.blue)
                         }
                     }
+
+                    Toggle(isOn: $backgroundSoundEnabled) {
+                        Label {
+                            Text("Background Sound")
+                        } icon: {
+                            Image(systemName: "bell.badge.waveform.fill")
+                                .foregroundColor(.purple)
+                        }
+                    }
                 } header: {
                     Text("Notifications")
+                } footer: {
+                    Text("Background Sound plays periodic tick sounds to keep the timer running when the app is in background.")
                 }
 
                 // MARK: - Apple Watch
