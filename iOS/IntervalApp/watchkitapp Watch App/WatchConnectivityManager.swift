@@ -30,6 +30,10 @@ class WatchConnectivityManager: NSObject, ObservableObject {
 
     private var session: WCSession?
 
+    // 중복 메시지 방지용 (sendMessage와 transferUserInfo 양쪽에서 올 수 있음)
+    private var lastProcessedAction: String?
+    private var lastProcessedTime: Date?
+
     override init() {
         super.init()
         if WCSession.isSupported() {
@@ -150,6 +154,11 @@ extension WatchConnectivityManager: WCSessionDelegate {
     private func handleMessage(_ message: [String: Any]) {
         guard let action = message["action"] as? String else { return }
 
+        // 중복 메시지 체크 (timerUpdate, countdown은 실시간이므로 제외)
+        if action != "timerUpdate" && action != "countdown" {
+            guard shouldProcessAction(action) else { return }
+        }
+
         switch action {
         case "intervalChange":
             // 구간 변경 - 강한 햅틱
@@ -239,6 +248,11 @@ extension WatchConnectivityManager: WCSessionDelegate {
 
     // 백그라운드에서 수신된 타이머 이벤트 처리
     private func handleTimerUserInfo(_ userInfo: [String: Any], action: String) {
+        // 중복 메시지 체크 (timerUpdate, countdown은 실시간이므로 제외)
+        if action != "timerUpdate" && action != "countdown" {
+            guard shouldProcessAction(action) else { return }
+        }
+
         switch action {
         case "started":
             // 타이머 데이터 저장
@@ -347,5 +361,22 @@ extension WatchConnectivityManager: WCSessionDelegate {
     // 대기 중인 타이머 시작 처리 완료
     func clearPendingTimerStart() {
         pendingTimerStart = false
+    }
+
+    // 중복 메시지 체크 (0.5초 이내 같은 액션은 무시)
+    private func shouldProcessAction(_ action: String) -> Bool {
+        let now = Date()
+
+        // 같은 액션이 0.5초 이내에 처리된 경우 무시
+        if let lastAction = lastProcessedAction,
+           let lastTime = lastProcessedTime,
+           lastAction == action,
+           now.timeIntervalSince(lastTime) < 0.5 {
+            return false
+        }
+
+        lastProcessedAction = action
+        lastProcessedTime = now
+        return true
     }
 }

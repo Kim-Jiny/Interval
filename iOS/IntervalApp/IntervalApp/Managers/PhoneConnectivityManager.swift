@@ -107,20 +107,23 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             message["routine"] = routineData
         }
 
-        // Watch 앱이 실행 중이면 sendMessage, 아니면 transferUserInfo로 백그라운드 전달
+        guard session.isWatchAppInstalled else { return }
+
+        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
+        session.transferUserInfo(message)
+        print("Timer start info transferred to Watch")
+
+        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
         if session.isReachable {
-            session.sendMessage(message, replyHandler: nil) { error in
-                print("Failed to send timer started: \(error.localizedDescription)")
+            session.sendMessage(message, replyHandler: nil) { _ in
+                // 실패해도 transferUserInfo로 이미 전송됨
             }
-        } else if session.isWatchAppInstalled {
-            // Watch 앱이 설치되어 있지만 실행 중이 아닐 때
-            session.transferUserInfo(message)
-            print("Timer start info transferred to Watch (background)")
         }
     }
 
     func sendIntervalChange(intervalName: String, timeRemaining: TimeInterval, currentRound: Int, totalRounds: Int, intervalType: String) {
         guard let session = session, session.activationState == .activated else { return }
+        guard session.isWatchAppInstalled else { return }
 
         let message: [String: Any] = [
             "action": "intervalChange",
@@ -131,13 +134,12 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "intervalType": intervalType
         ]
 
+        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
+        session.transferUserInfo(message)
+
+        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
         if session.isReachable {
-            session.sendMessage(message, replyHandler: nil) { error in
-                print("Failed to send interval change: \(error.localizedDescription)")
-            }
-        } else if session.isWatchAppInstalled {
-            // Watch 화면이 꺼져있을 때 transferUserInfo로 전달
-            session.transferUserInfo(message)
+            session.sendMessage(message, replyHandler: nil) { _ in }
         }
     }
 
@@ -149,9 +151,8 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "timeRemaining": timeRemaining
         ]
 
-        session.sendMessage(message, replyHandler: nil) { error in
-            print("Failed to send countdown: \(error.localizedDescription)")
-        }
+        // 실시간 업데이트는 sendMessage만 사용 (transferUserInfo는 큐에 쌓임)
+        session.sendMessage(message, replyHandler: nil) { _ in }
     }
 
     func sendTimerUpdate(timeRemaining: TimeInterval) {
@@ -162,40 +163,41 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "timeRemaining": timeRemaining
         ]
 
-        session.sendMessage(message, replyHandler: nil) { error in
-            print("Failed to send timer update: \(error.localizedDescription)")
-        }
+        // 실시간 업데이트는 sendMessage만 사용 (transferUserInfo는 큐에 쌓임)
+        session.sendMessage(message, replyHandler: nil) { _ in }
     }
 
     func sendTimerStopped() {
         guard let session = session, session.activationState == .activated else { return }
+        guard session.isWatchAppInstalled else { return }
 
         let message: [String: Any] = [
             "action": "stopped"
         ]
 
+        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
+        session.transferUserInfo(message)
+
+        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
         if session.isReachable {
-            session.sendMessage(message, replyHandler: nil) { error in
-                print("Failed to send timer stopped: \(error.localizedDescription)")
-            }
-        } else if session.isWatchAppInstalled {
-            session.transferUserInfo(message)
+            session.sendMessage(message, replyHandler: nil) { _ in }
         }
     }
 
     func sendTimerCompleted() {
         guard let session = session, session.activationState == .activated else { return }
+        guard session.isWatchAppInstalled else { return }
 
         let message: [String: Any] = [
             "action": "completed"
         ]
 
+        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
+        session.transferUserInfo(message)
+
+        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
         if session.isReachable {
-            session.sendMessage(message, replyHandler: nil) { error in
-                print("Failed to send timer completed: \(error.localizedDescription)")
-            }
-        } else if session.isWatchAppInstalled {
-            session.transferUserInfo(message)
+            session.sendMessage(message, replyHandler: nil) { _ in }
         }
     }
 }
