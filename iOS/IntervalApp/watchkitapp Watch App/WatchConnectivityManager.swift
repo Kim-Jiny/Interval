@@ -88,6 +88,31 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         }
     }
 
+    // Watch 푸시 토큰을 iPhone으로 전송
+    func sendWatchPushToken(_ token: String) {
+        guard let session = session, session.activationState == .activated else {
+            print("WCSession not activated, cannot send watch token")
+            return
+        }
+
+        let message: [String: Any] = [
+            "action": "watchPushToken",
+            "token": token
+        ]
+
+        // 즉시 전송 시도
+        if session.isReachable {
+            session.sendMessage(message, replyHandler: nil) { error in
+                print("Failed to send watch token via message: \(error.localizedDescription)")
+            }
+            print("Watch token sent via sendMessage")
+        }
+
+        // 백업으로 transferUserInfo도 사용 (iPhone이 비활성 상태일 때)
+        session.transferUserInfo(message)
+        print("Watch token queued via transferUserInfo")
+    }
+
     // Watch에서 직접 루틴 시작 시 iPhone 연동 모드 해제
     func startStandaloneMode() {
         isReceivingFromiPhone = false

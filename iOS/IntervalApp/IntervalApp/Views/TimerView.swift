@@ -568,12 +568,15 @@ class TimerManager: ObservableObject {
 
         if liveActivity == nil {
             startLiveActivity()
+
+            // Watch 앱 깨우기 (푸시 알림) - 처음 시작할 때만
+            PhoneConnectivityManager.shared.sendWatchWakeUpPush(routineName: routine.name)
         } else {
             // 일시정지 후 재시작 시 timerEndDate 업데이트
             updateLiveActivity()
         }
 
-        // Watch에 타이머 시작 알림
+        // Watch에 타이머 시작 알림 (WatchConnectivity)
         if let interval = currentInterval {
             PhoneConnectivityManager.shared.sendTimerStarted(
                 routine: routine,
