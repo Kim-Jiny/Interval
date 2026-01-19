@@ -83,7 +83,12 @@ struct TimerView: View {
     private var headerView: some View {
         HStack {
             Button {
-                showingExitConfirmation = true
+                if timerManager.isCompleted {
+                    timerManager.stop()
+                    dismiss()
+                } else {
+                    showingExitConfirmation = true
+                }
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title)
@@ -552,7 +557,10 @@ class TimerManager: ObservableObject {
     }
 
     func start() {
-        guard !isCompleted else { return }
+        // 완료 상태에서 시작하면 현재 구간에서 시작
+        if isCompleted {
+            isCompleted = false
+        }
         isRunning = true
 
         // 백그라운드 오디오 시작 (앱 유지용)
@@ -875,7 +883,9 @@ class TimerManager: ObservableObject {
             endTime: Date().addingTimeInterval(timeRemaining),
             intervalType: currentInterval?.type.rawValue ?? "workout",
             currentRound: currentRound,
-            totalRounds: routine.rounds
+            totalRounds: routine.rounds,
+            isPaused: !isRunning,
+            remainingSeconds: Int(ceil(timeRemaining))
         )
     }
 }

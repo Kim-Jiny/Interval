@@ -15,6 +15,8 @@ struct TimerActivityAttributes: ActivityAttributes {
         var intervalType: String
         var currentRound: Int
         var totalRounds: Int
+        var isPaused: Bool
+        var remainingSeconds: Int  // 일시정지 시 표시할 남은 시간
     }
 
     var routineName: String

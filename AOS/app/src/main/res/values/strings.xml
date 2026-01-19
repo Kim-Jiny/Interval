@@ -123,6 +123,8 @@
     <!-- Notification -->
     <string name="timer_notification_channel">Timer</string>
     <string name="timer_notification_title">Interval Timer</string>
+    <string name="notification_paused">%s - Paused</string>
+    <string name="notification_running">%s - Round %d</string>
 
     <!-- Common -->
     <string name="back">Back</string>

@@ -117,7 +117,8 @@ class TimerViewModel @Inject constructor(
     }
 
     fun startTimer() {
-        _timerState.update { it.copy(isRunning = true) }
+        // 완료 상태에서 시작하면 현재 구간에서 시작
+        _timerState.update { it.copy(isRunning = true, isCompleted = false) }
         startForegroundService()
         pendingStart = !serviceBound
         tickCount = 0

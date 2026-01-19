@@ -35,11 +35,18 @@ struct IntervalTimerLiveActivity: Widget {
                 }
 
                 DynamicIslandExpandedRegion(.center) {
-                    // 자동 카운트다운 타이머
-                    Text(timerInterval: Date()...context.state.endTime, countsDown: true)
-                        .font(.system(size: 36, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.center)
+                    // 일시정지 시 정적 텍스트, 실행 중 자동 카운트다운
+                    if context.state.isPaused {
+                        Text(formatTime(context.state.remainingSeconds))
+                            .font(.system(size: 36, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.white.opacity(0.7))
+                            .multilineTextAlignment(.center)
+                    } else {
+                        Text(timerInterval: Date()...context.state.endTime, countsDown: true)
+                            .font(.system(size: 36, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.white)
+                            .multilineTextAlignment(.center)
+                    }
                 }
 
                 DynamicIslandExpandedRegion(.bottom) {
@@ -52,11 +59,18 @@ struct IntervalTimerLiveActivity: Widget {
                     .fill(colorForType(context.state.intervalType))
                     .frame(width: 12, height: 12)
             } compactTrailing: {
-                // 자동 카운트다운 타이머
-                Text(timerInterval: Date()...context.state.endTime, countsDown: true)
-                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(colorForType(context.state.intervalType))
-                    .frame(minWidth: 50)
+                // 일시정지 시 정적 텍스트, 실행 중 자동 카운트다운
+                if context.state.isPaused {
+                    Text(formatTime(context.state.remainingSeconds))
+                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(colorForType(context.state.intervalType).opacity(0.7))
+                        .frame(minWidth: 50)
+                } else {
+                    Text(timerInterval: Date()...context.state.endTime, countsDown: true)
+                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(colorForType(context.state.intervalType))
+                        .frame(minWidth: 50)
+                }
             } minimal: {
                 Circle()
                     .fill(colorForType(context.state.intervalType))
@@ -73,6 +87,12 @@ struct IntervalTimerLiveActivity: Widget {
         case "cooldown": return .blue
         default: return .gray
         }
+    }
+
+    private func formatTime(_ seconds: Int) -> String {
+        let mins = seconds / 60
+        let secs = seconds % 60
+        return String(format: "%d:%02d", mins, secs)
     }
 }
 
@@ -101,11 +121,18 @@ struct LockScreenView: View {
 
             // Right: Timer
             VStack(alignment: .trailing, spacing: 4) {
-                // 자동 카운트다운 타이머
-                Text(timerInterval: Date()...context.state.endTime, countsDown: true)
-                    .font(.system(size: 32, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.white)
-                    .multilineTextAlignment(.trailing)
+                // 일시정지 시 정적 텍스트, 실행 중 자동 카운트다운
+                if context.state.isPaused {
+                    Text(formatTime(context.state.remainingSeconds))
+                        .font(.system(size: 32, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white.opacity(0.7))
+                        .multilineTextAlignment(.trailing)
+                } else {
+                    Text(timerInterval: Date()...context.state.endTime, countsDown: true)
+                        .font(.system(size: 32, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.trailing)
+                }
 
                 Text("Round \(context.state.currentRound)/\(context.state.totalRounds)")
                     .font(.caption)
@@ -124,5 +151,11 @@ struct LockScreenView: View {
         case "cooldown": return .blue
         default: return .gray
         }
+    }
+
+    private func formatTime(_ seconds: Int) -> String {
+        let mins = seconds / 60
+        let secs = seconds % 60
+        return String(format: "%d:%02d", mins, secs)
     }
 }

@@ -123,6 +123,8 @@
     <!-- Notification -->
     <string name="timer_notification_channel">타이머</string>
     <string name="timer_notification_title">인터벌 타이머</string>
+    <string name="notification_paused">%s - 일시정지</string>
+    <string name="notification_running">%s - %d 라운드</string>
 
     <!-- Common -->
     <string name="back">뒤로</string>

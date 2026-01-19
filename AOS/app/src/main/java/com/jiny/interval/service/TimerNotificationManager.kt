@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.jiny.interval.IntervalApp
+import com.jiny.interval.R
 import com.jiny.interval.domain.model.TimerState
 import com.jiny.interval.domain.model.WorkoutInterval
 import com.jiny.interval.presentation.MainActivity
@@ -38,11 +39,16 @@ class TimerNotificationManager(private val context: Context) {
 
         val intervalName = currentInterval?.name ?: "Timer"
         val timeText = TimeFormatter.formatMillisToMinSec(timerState.timeRemaining)
+        val statusText = if (timerState.isRunning) {
+            context.getString(R.string.notification_running, timeText, timerState.currentRound)
+        } else {
+            context.getString(R.string.notification_paused, timeText)
+        }
 
         return NotificationCompat.Builder(context, IntervalApp.TIMER_CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle(intervalName)
-            .setContentText("$timeText - Round ${timerState.currentRound}")
+            .setContentText(statusText)
             .setContentIntent(contentIntent)
             .setOngoing(true)
             .setSilent(true)
