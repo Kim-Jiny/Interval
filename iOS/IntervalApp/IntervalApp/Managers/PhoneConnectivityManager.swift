@@ -109,16 +109,17 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
 
         guard session.isWatchAppInstalled else { return }
 
-        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
-        session.transferUserInfo(message)
-        print("Timer start info transferred to Watch")
-
-        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
+        // Watch가 활성화되어 있으면 sendMessage 먼저 시도 (즉시 전달)
         if session.isReachable {
-            session.sendMessage(message, replyHandler: nil) { _ in
-                // 실패해도 transferUserInfo로 이미 전송됨
+            session.sendMessage(message, replyHandler: nil) { error in
+                print("sendMessage failed, using transferUserInfo: \(error.localizedDescription)")
             }
+            print("Timer start message sent to Watch (immediate)")
         }
+
+        // transferUserInfo로도 전송 (백업 - Watch가 비활성일 때 전달됨)
+        session.transferUserInfo(message)
+        print("Timer start info queued for Watch")
     }
 
     func sendIntervalChange(intervalName: String, timeRemaining: TimeInterval, currentRound: Int, totalRounds: Int, intervalType: String) {
@@ -134,13 +135,13 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "intervalType": intervalType
         ]
 
-        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
-        session.transferUserInfo(message)
-
-        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
+        // Watch가 활성화되어 있으면 sendMessage 먼저 시도 (즉시 전달)
         if session.isReachable {
             session.sendMessage(message, replyHandler: nil) { _ in }
         }
+
+        // transferUserInfo로도 전송 (백업)
+        session.transferUserInfo(message)
     }
 
     func sendCountdown(timeRemaining: TimeInterval) {
@@ -175,13 +176,13 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "action": "stopped"
         ]
 
-        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
-        session.transferUserInfo(message)
-
-        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
+        // Watch가 활성화되어 있으면 sendMessage 먼저 시도 (즉시 전달)
         if session.isReachable {
             session.sendMessage(message, replyHandler: nil) { _ in }
         }
+
+        // transferUserInfo로도 전송 (백업)
+        session.transferUserInfo(message)
     }
 
     func sendTimerCompleted() {
@@ -192,13 +193,13 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
             "action": "completed"
         ]
 
-        // 항상 transferUserInfo로 먼저 전송 (신뢰성 보장)
-        session.transferUserInfo(message)
-
-        // Watch가 활성화되어 있으면 sendMessage도 시도 (즉시 전달용)
+        // Watch가 활성화되어 있으면 sendMessage 먼저 시도 (즉시 전달)
         if session.isReachable {
             session.sendMessage(message, replyHandler: nil) { _ in }
         }
+
+        // transferUserInfo로도 전송 (백업)
+        session.transferUserInfo(message)
     }
 }
 
