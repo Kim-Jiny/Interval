@@ -563,6 +563,9 @@ class TimerManager: ObservableObject {
         }
         isRunning = true
 
+        // 화면 자동 잠금 비활성화
+        UIApplication.shared.isIdleTimerDisabled = true
+
         // 백그라운드 오디오 시작 (앱 유지용)
         startBackgroundAudio()
 
@@ -611,6 +614,9 @@ class TimerManager: ObservableObject {
         pause()
         stopBackgroundAudio()
         endLiveActivity()
+
+        // 화면 자동 잠금 다시 활성화
+        UIApplication.shared.isIdleTimerDisabled = false
 
         // Watch에 타이머 중지 알림
         PhoneConnectivityManager.shared.sendTimerStopped()

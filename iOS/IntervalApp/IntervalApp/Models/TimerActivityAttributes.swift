@@ -18,8 +18,18 @@ struct TimerActivityAttributes: ActivityAttributes {
         var isPaused: Bool
         var remainingSeconds: Int  // 일시정지 시 표시할 남은 시간
 
+        enum CodingKeys: String, CodingKey {
+            case currentIntervalName
+            case endTime
+            case intervalType
+            case currentRound
+            case totalRounds
+            case isPaused
+            case remainingSeconds
+        }
+
         // 서버에서 isPaused, remainingSeconds가 없을 때 기본값 사용
-        init(from decoder: Decoder) throws {
+        public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             currentIntervalName = try container.decode(String.self, forKey: .currentIntervalName)
             endTime = try container.decode(Date.self, forKey: .endTime)
@@ -30,7 +40,18 @@ struct TimerActivityAttributes: ActivityAttributes {
             remainingSeconds = try container.decodeIfPresent(Int.self, forKey: .remainingSeconds) ?? 0
         }
 
-        init(currentIntervalName: String, endTime: Date, intervalType: String, currentRound: Int, totalRounds: Int, isPaused: Bool, remainingSeconds: Int) {
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(currentIntervalName, forKey: .currentIntervalName)
+            try container.encode(endTime, forKey: .endTime)
+            try container.encode(intervalType, forKey: .intervalType)
+            try container.encode(currentRound, forKey: .currentRound)
+            try container.encode(totalRounds, forKey: .totalRounds)
+            try container.encode(isPaused, forKey: .isPaused)
+            try container.encode(remainingSeconds, forKey: .remainingSeconds)
+        }
+
+        public init(currentIntervalName: String, endTime: Date, intervalType: String, currentRound: Int, totalRounds: Int, isPaused: Bool, remainingSeconds: Int) {
             self.currentIntervalName = currentIntervalName
             self.endTime = endTime
             self.intervalType = intervalType
