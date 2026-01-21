@@ -251,7 +251,7 @@ class AuthManager: NSObject, ObservableObject {
     }
 
     /// APNS 토큰 업데이트
-    func updateAPNSToken(_ token: String) async throws {
+    func updateAPNSToken(_ token: String, isRetry: Bool = false) async throws {
         guard let accessToken = getAccessToken() else {
             throw AuthError.notLoggedIn
         }
@@ -277,8 +277,54 @@ class AuthManager: NSObject, ObservableObject {
         }
         #endif
 
+        // 401 에러 시 토큰 갱신 후 재시도
+        if httpResponse.statusCode == 401 && !isRetry {
+            try await refreshTokenIfNeeded()
+            try await updateAPNSToken(token, isRetry: true)
+            return
+        }
+
         if httpResponse.statusCode != 200 {
             throw AuthError.serverError("Failed to update APNS token")
+        }
+    }
+
+    /// 푸시 알림 설정 업데이트
+    func updatePushSetting(enabled: Bool, isRetry: Bool = false) async throws {
+        guard let accessToken = getAccessToken() else {
+            throw AuthError.notLoggedIn
+        }
+
+        let url = URL(string: "\(baseURL)/auth/update-push-setting.php")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        let body: [String: Any] = ["pushEnabled": enabled]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw AuthError.networkError
+        }
+
+        #if DEBUG
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("🔔 Update Push Setting Response (\(httpResponse.statusCode)): \(jsonString)")
+        }
+        #endif
+
+        // 401 에러 시 토큰 갱신 후 재시도
+        if httpResponse.statusCode == 401 && !isRetry {
+            try await refreshTokenIfNeeded()
+            try await updatePushSetting(enabled: enabled, isRetry: true)
+            return
+        }
+
+        if httpResponse.statusCode != 200 {
+            throw AuthError.serverError("Failed to update push setting")
         }
     }
 

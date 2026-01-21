@@ -17,6 +17,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return true
     }
 
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // 앱이 활성화되면 뱃지 초기화
+        application.applicationIconBadgeNumber = 0
+    }
+
     // MARK: - Push Notifications
 
     private func registerForPushNotifications() {

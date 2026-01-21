@@ -4081,6 +4081,100 @@
         }
       }
     },
+    "Push Notifications" : {
+      "comment" : "Push notification toggle label",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push-Benachrichtigungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push Notifications"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificaciones push"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications push"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プッシュ通知"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "푸시 알림"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送通知"
+          }
+        }
+      }
+    },
+    "Push notifications are disabled in system settings. Tap to open Settings." : {
+      "comment" : "Push permission denied message",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push-Benachrichtigungen sind in den Systemeinstellungen deaktiviert. Tippen Sie, um die Einstellungen zu öffnen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Push notifications are disabled in system settings. Tap to open Settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las notificaciones push están deshabilitadas en los ajustes del sistema. Toca para abrir Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les notifications push sont désactivées dans les paramètres système. Appuyez pour ouvrir les Paramètres."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プッシュ通知はシステム設定で無効になっています。設定を開くにはタップしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "푸시 알림이 시스템 설정에서 비활성화되어 있습니다. 설정을 열려면 탭하세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送通知已在系统设置中禁用。点击打开设置。"
+          }
+        }
+      }
+    },
     "Relaxing stretch routine" : {
       "localizations" : {
         "de" : {

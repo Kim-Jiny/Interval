@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct SettingsView: View {
+    @AppStorage("pushNotificationEnabled") private var pushNotificationEnabled = true
     @AppStorage("vibrationEnabled") private var vibrationEnabled = true
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("backgroundSoundEnabled") private var backgroundSoundEnabled = true
@@ -27,6 +29,7 @@ struct SettingsView: View {
     @State private var showingNicknameEdit = false
     @State private var editingNickname = ""
     @State private var isUpdatingNickname = false
+    @State private var pushPermissionDenied = false
 
     var body: some View {
         NavigationStack {
@@ -124,6 +127,18 @@ struct SettingsView: View {
 
                 // MARK: - 알림 설정
                 Section {
+                    Toggle(isOn: $pushNotificationEnabled) {
+                        Label {
+                            Text("Push Notifications", comment: "Push notification toggle label")
+                        } icon: {
+                            Image(systemName: "bell.fill")
+                                .foregroundColor(.red)
+                        }
+                    }
+                    .onChange(of: pushNotificationEnabled) { _, newValue in
+                        handlePushNotificationToggle(newValue)
+                    }
+
                     Toggle(isOn: $vibrationEnabled) {
                         Label {
                             Text("Vibration")
@@ -153,7 +168,17 @@ struct SettingsView: View {
                 } header: {
                     Text("Notifications")
                 } footer: {
-                    Text("Background Sound plays periodic tick sounds to keep the timer running when the app is in background.")
+                    VStack(alignment: .leading, spacing: 4) {
+                        if pushPermissionDenied {
+                            Button {
+                                openAppSettings()
+                            } label: {
+                                Text("Push notifications are disabled in system settings. Tap to open Settings.", comment: "Push permission denied message")
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                        Text("Background Sound plays periodic tick sounds to keep the timer running when the app is in background.")
+                    }
                 }
 
                 // MARK: - Apple Watch
@@ -251,6 +276,9 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .task {
                 await updateManager.checkForUpdate()
+            }
+            .onAppear {
+                checkPushNotificationStatus()
             }
             .alert("Error", isPresented: $showingAlert) {
                 Button("OK", role: .cancel) { }
@@ -368,6 +396,80 @@ struct SettingsView: View {
         case .syncFailed(let error):
             alertMessage = String(localized: "Sync failed: \(error)")
             showingAlert = true
+        }
+    }
+
+    private func checkPushNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                pushPermissionDenied = settings.authorizationStatus == .denied
+                // 권한이 거부된 상태면 토글도 꺼진 상태로
+                if settings.authorizationStatus == .denied {
+                    pushNotificationEnabled = false
+                }
+            }
+        }
+    }
+
+    private func handlePushNotificationToggle(_ enabled: Bool) {
+        #if DEBUG
+        print("🔔 Push toggle changed to: \(enabled)")
+        #endif
+
+        if enabled {
+            // 푸시 권한 요청
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                DispatchQueue.main.async {
+                    #if DEBUG
+                    print("🔔 Push authorization result: granted=\(granted), error=\(String(describing: error))")
+                    #endif
+
+                    if granted {
+                        UIApplication.shared.registerForRemoteNotifications()
+                        pushPermissionDenied = false
+                        // 서버에 푸시 설정 동기화
+                        syncPushSettingToServer(enabled: true)
+                    } else {
+                        pushNotificationEnabled = false
+                        pushPermissionDenied = true
+                    }
+                }
+            }
+        } else {
+            // 서버에 푸시 설정 동기화 (끄기)
+            syncPushSettingToServer(enabled: false)
+        }
+    }
+
+    private func syncPushSettingToServer(enabled: Bool) {
+        guard authManager.isLoggedIn else {
+            #if DEBUG
+            print("🔔 Skip sync - not logged in")
+            #endif
+            return
+        }
+
+        #if DEBUG
+        print("🔔 Syncing push setting to server: \(enabled)")
+        #endif
+
+        Task {
+            do {
+                try await authManager.updatePushSetting(enabled: enabled)
+                #if DEBUG
+                print("🔔 Push setting synced successfully: \(enabled)")
+                #endif
+            } catch {
+                #if DEBUG
+                print("🔔 Failed to sync push setting: \(error)")
+                #endif
+            }
+        }
+    }
+
+    private func openAppSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
         }
     }
 }
