@@ -296,7 +296,7 @@ struct TimerView: View {
                     .foregroundStyle(.white)
                     .frame(width: 60, height: 60)
             }
-            .disabled(timerManager.isCompleted)
+            .disabled(timerManager.isCompleted && timerManager.currentIntervalIndex == routine.intervals.count - 1 && timerManager.currentRound == routine.rounds)
         }
     }
 }
@@ -635,6 +635,11 @@ class TimerManager: ObservableObject {
     }
 
     func previousInterval() {
+        // 완료 상태에서 이전으로 가면 완료 해제
+        if isCompleted {
+            isCompleted = false
+        }
+
         if currentIntervalIndex > 0 {
             currentIntervalIndex -= 1
         } else if currentRound > 1 {
@@ -730,7 +735,7 @@ class TimerManager: ObservableObject {
 
     private func playCountdownSound() {
         if soundEnabled {
-            playBeep(frequency: 880, duration: 0.1, volume: 0.5)
+            playBeep(frequency: 700, duration: 0.1, volume: 0.5)
         }
         if vibrationEnabled {
             let generator = UIImpactFeedbackGenerator(style: .light)
@@ -740,11 +745,7 @@ class TimerManager: ObservableObject {
 
     private func playIntervalEndSound() {
         if soundEnabled {
-            // 띠링~ 느낌의 두 음 (시스템 알림음과 비슷하게)
-            playBeep(frequency: 1175, duration: 0.15, volume: 0.6)  // D6
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
-                self?.playBeep(frequency: 1397, duration: 0.2, volume: 0.6)  // F6
-            }
+            playBeep(frequency: 1400, duration: 0.8, volume: 0.7)
         }
         if vibrationEnabled {
             let generator = UINotificationFeedbackGenerator()
@@ -754,7 +755,17 @@ class TimerManager: ObservableObject {
 
     private func playCompletionSound() {
         if soundEnabled {
-            playBeep(frequency: 1000, duration: 0.5, volume: 0.8)
+            // 띠리링~ 상승 멜로디 (도-미-솔-도)
+            playBeep(frequency: 523, duration: 0.2, volume: 0.7)   // C5 (도)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                self?.playBeep(frequency: 659, duration: 0.2, volume: 0.7)   // E5 (미)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.30) { [weak self] in
+                self?.playBeep(frequency: 784, duration: 0.2, volume: 0.7)   // G5 (솔)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+                self?.playBeep(frequency: 1047, duration: 0.4, volume: 0.8)   // C6 (높은 도)
+            }
         }
         if vibrationEnabled {
             let generator = UINotificationFeedbackGenerator()
