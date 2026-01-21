@@ -116,13 +116,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		301802F72F1E1AAD0083263C /* Exceptions for "watchkitapp Watch App" folder in "watchkitapp Watch App" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"watchkitapp-Watch-App-Info.plist",
-			);
-			target = 30A701FD2F18A44C00109C2D /* watchkitapp Watch App */;
-		};
 		30A701832F17933C00109C2D /* Exceptions for "IntervalApp" folder in "IntervalApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -175,9 +168,6 @@
 		};
 		30A701FF2F18A44C00109C2D /* watchkitapp Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				301802F72F1E1AAD0083263C /* Exceptions for "watchkitapp Watch App" folder in "watchkitapp Watch App" target */,
-			);
 			path = "watchkitapp Watch App";
 			sourceTree = "<group>";
 		};

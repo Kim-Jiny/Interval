@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+struct IntervalEditItem: Identifiable {
+    let id = UUID()
+    let interval: WorkoutInterval?
+    let index: Int?
+}
+
 struct RoutineEditorView: View {
     @EnvironmentObject var routineStore: RoutineStore
     @Environment(\.dismiss) private var dismiss
@@ -16,9 +22,7 @@ struct RoutineEditorView: View {
     @State private var name: String
     @State private var intervals: [WorkoutInterval]
     @State private var rounds: Int
-    @State private var showingIntervalEditor = false
-    @State private var editingInterval: WorkoutInterval?
-    @State private var editingIntervalIndex: Int?
+    @State private var editingItem: IntervalEditItem?
 
     private let originalRoutine: Routine?
 
@@ -47,18 +51,14 @@ struct RoutineEditorView: View {
                     IntervalRowView(interval: interval)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            editingIntervalIndex = index
-                            editingInterval = interval
-                            showingIntervalEditor = true
+                            editingItem = IntervalEditItem(interval: interval, index: index)
                         }
                 }
                 .onDelete(perform: deleteInterval)
                 .onMove(perform: moveInterval)
 
                 Button {
-                    editingIntervalIndex = nil
-                    editingInterval = nil
-                    showingIntervalEditor = true
+                    editingItem = IntervalEditItem(interval: nil, index: nil)
                 } label: {
                     Label("Add Interval", systemImage: "plus.circle")
                 }
@@ -88,12 +88,12 @@ struct RoutineEditorView: View {
                 .disabled(name.isEmpty || intervals.isEmpty)
             }
         }
-        .sheet(isPresented: $showingIntervalEditor) {
+        .sheet(item: $editingItem) { item in
             NavigationStack {
                 IntervalEditorView(
-                    interval: editingInterval,
+                    interval: item.interval,
                     onSave: { newInterval in
-                        if let index = editingIntervalIndex {
+                        if let index = item.index {
                             intervals[index] = newInterval
                         } else {
                             intervals.append(newInterval)

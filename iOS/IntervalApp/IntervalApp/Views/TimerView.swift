@@ -307,6 +307,7 @@ class TimerManager: ObservableObject {
     private var audioPlayer: AVAudioPlayer?
     private var backgroundAudioPlayer: AVAudioPlayer?
     private var tickAudioPlayer: AVAudioPlayer?
+    private var soundPlayer: AVAudioPlayer?
     private var liveActivity: Activity<TimerActivityAttributes>?
     private var lastTickTime: TimeInterval = 0
 
@@ -666,8 +667,10 @@ class TimerManager: ObservableObject {
             playCountdownSound()
             PhoneConnectivityManager.shared.sendCountdown(timeRemaining: timeRemaining)
         } else if timeRemaining <= 2 && timeRemaining > 1.9 {
+            playCountdownSound()
             PhoneConnectivityManager.shared.sendCountdown(timeRemaining: timeRemaining)
         } else if timeRemaining <= 1 && timeRemaining > 0.9 {
+            playCountdownSound()
             PhoneConnectivityManager.shared.sendCountdown(timeRemaining: timeRemaining)
         }
 
@@ -727,7 +730,7 @@ class TimerManager: ObservableObject {
 
     private func playCountdownSound() {
         if soundEnabled {
-            AudioServicesPlaySystemSound(1057)
+            playBeep(frequency: 880, duration: 0.1, volume: 0.5)
         }
         if vibrationEnabled {
             let generator = UIImpactFeedbackGenerator(style: .light)
@@ -737,7 +740,11 @@ class TimerManager: ObservableObject {
 
     private func playIntervalEndSound() {
         if soundEnabled {
-            AudioServicesPlaySystemSound(1013)
+            // 띠링~ 느낌의 두 음 (시스템 알림음과 비슷하게)
+            playBeep(frequency: 1175, duration: 0.15, volume: 0.6)  // D6
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                self?.playBeep(frequency: 1397, duration: 0.2, volume: 0.6)  // F6
+            }
         }
         if vibrationEnabled {
             let generator = UINotificationFeedbackGenerator()
@@ -747,11 +754,81 @@ class TimerManager: ObservableObject {
 
     private func playCompletionSound() {
         if soundEnabled {
-            AudioServicesPlaySystemSound(1025)
+            playBeep(frequency: 1000, duration: 0.5, volume: 0.8)
         }
         if vibrationEnabled {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
+        }
+    }
+
+    /// AVAudioPlayer를 사용해서 비프음 재생 (무음 모드에서도 에어팟으로 재생됨)
+    private func playBeep(frequency: Double, duration: Double, volume: Float) {
+        let sampleRate: Double = 44100
+        let frameCount = Int(sampleRate * duration)
+
+        // WAV 헤더 생성
+        var header = [UInt8]()
+        let dataSize = frameCount * 2
+        let fileSize = 36 + dataSize
+
+        // RIFF header
+        header.append(contentsOf: "RIFF".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(fileSize).littleEndian) { Array($0) })
+        header.append(contentsOf: "WAVE".utf8)
+
+        // fmt chunk
+        header.append(contentsOf: "fmt ".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(16).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(1).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(44100).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(88200).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(2).littleEndian) { Array($0) })
+        header.append(contentsOf: withUnsafeBytes(of: UInt16(16).littleEndian) { Array($0) })
+
+        // data chunk
+        header.append(contentsOf: "data".utf8)
+        header.append(contentsOf: withUnsafeBytes(of: UInt32(dataSize).littleEndian) { Array($0) })
+
+        var audioData = Data(header)
+
+        // 비프음 생성 (페이드 인/아웃 포함)
+        var samples = [Int16](repeating: 0, count: frameCount)
+        let amplitude: Double = 20000
+
+        for i in 0..<frameCount {
+            let t = Double(i) / sampleRate
+            var envelope: Double = 1.0
+
+            // 페이드 인 (처음 10%)
+            let fadeInSamples = Int(Double(frameCount) * 0.1)
+            if i < fadeInSamples {
+                envelope = Double(i) / Double(fadeInSamples)
+            }
+
+            // 페이드 아웃 (마지막 30%)
+            let fadeOutStart = Int(Double(frameCount) * 0.7)
+            if i > fadeOutStart {
+                envelope = Double(frameCount - i) / Double(frameCount - fadeOutStart)
+            }
+
+            let sample = amplitude * envelope * sin(2.0 * .pi * frequency * t)
+            samples[i] = Int16(sample)
+        }
+
+        let sampleData = samples.withUnsafeBytes { Data($0) }
+        audioData.append(sampleData)
+
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("beep_\(frequency).wav")
+
+        do {
+            try audioData.write(to: tempURL)
+            soundPlayer = try AVAudioPlayer(contentsOf: tempURL)
+            soundPlayer?.volume = volume
+            soundPlayer?.play()
+        } catch {
+            print("Failed to play beep: \(error)")
         }
     }
 
