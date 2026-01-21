@@ -9,11 +9,18 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var routineStore: RoutineStore
+    @ObservedObject private var shareManager = RoutineShareManager.shared
     @State private var showingTemplateSelection = false
     @State private var pendingTemplate: Routine?
     @State private var templateForEditing: Routine?
     @State private var routineToEdit: Routine?
     @State private var selectedRoutine: Routine?
+    @State private var routineToShare: Routine?
+    @State private var shareUrl: String?
+    @State private var showingShareSheet = false
+    @State private var showingLoginPrompt = false
+    @State private var shareError: String?
+    @State private var showingShareError = false
 
     var body: some View {
         NavigationStack {
@@ -77,6 +84,26 @@ struct HomeView: View {
             .fullScreenCover(item: $selectedRoutine) { routine in
                 TimerView(routine: routine)
             }
+            .sheet(isPresented: $showingShareSheet) {
+                if let url = shareUrl {
+                    ShareSheet(items: [URL(string: url)!])
+                }
+            }
+            .sheet(isPresented: $showingLoginPrompt) {
+                LoginView()
+            }
+            .alert(String(localized: "Share Error", comment: "Share error alert title"), isPresented: $showingShareError) {
+                Button(String(localized: "OK", comment: "OK button"), role: .cancel) {}
+            } message: {
+                Text(shareError ?? "")
+            }
+            .onChange(of: AuthManager.shared.isLoggedIn) { _, isLoggedIn in
+                // 로그인 후 공유 재시도
+                if isLoggedIn, let routine = routineToShare {
+                    routineToShare = nil
+                    shareRoutine(routine)
+                }
+            }
         }
     }
 
@@ -102,7 +129,7 @@ struct HomeView: View {
                 }
                 .tint(.yellow)
             }
-            // 오른쪽 스와이프 → 편집, 삭제
+            // 오른쪽 스와이프 → 공유, 편집, 삭제
             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                 Button(role: .destructive) {
                     routineStore.deleteRoutine(routine)
@@ -116,7 +143,35 @@ struct HomeView: View {
                     Label("Edit", systemImage: "pencil")
                 }
                 .tint(.blue)
+
+                Button {
+                    shareRoutine(routine)
+                } label: {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                .tint(.green)
             }
+    }
+
+    private func shareRoutine(_ routine: Routine) {
+        // 로그인 체크
+        guard AuthManager.shared.isLoggedIn else {
+            routineToShare = routine
+            showingLoginPrompt = true
+            return
+        }
+
+        routineToShare = routine
+        Task {
+            do {
+                let url = try await shareManager.shareRoutine(routine)
+                shareUrl = url
+                showingShareSheet = true
+            } catch {
+                shareError = error.localizedDescription
+                showingShareError = true
+            }
+        }
     }
 }
 

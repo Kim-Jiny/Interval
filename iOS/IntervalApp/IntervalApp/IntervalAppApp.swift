@@ -42,26 +42,59 @@ struct IntervalAppApp: App {
     }
 
     private func handleDeepLink(_ url: URL) {
-        // intervalApp://workout/SHARECODE
         // intervalApp://routine/SHARECODE
-        guard url.scheme == "intervalApp" else { return }
+        // intervalApp://workout/SHARECODE
+
+        #if DEBUG
+        print("🔗 Deep link received: \(url.absoluteString)")
+        print("🔗 Scheme: \(url.scheme ?? "nil")")
+        print("🔗 Host: \(url.host ?? "nil")")
+        print("🔗 Path: \(url.path)")
+        print("🔗 PathComponents: \(url.pathComponents)")
+        #endif
+
+        guard url.scheme?.lowercased() == "intervalapp" else {
+            print("🔗 Invalid scheme")
+            return
+        }
 
         let host = url.host
-        let path = url.pathComponents.dropFirst().first
+
+        // pathComponents에서 share code 추출
+        // intervalApp://routine/ABC123 -> path = "/ABC123" -> pathComponents = ["/", "ABC123"]
+        var shareCode: String?
+        if url.pathComponents.count > 1 {
+            shareCode = url.pathComponents[1]
+        } else if !url.path.isEmpty {
+            // path가 "/ABC123" 형태일 경우
+            shareCode = String(url.path.dropFirst())
+        }
+
+        #if DEBUG
+        print("🔗 Extracted shareCode: \(shareCode ?? "nil")")
+        #endif
 
         switch host {
         case "workout":
-            if let shareCode = path {
-                // 운동 기록 공유 처리
-                print("Open shared workout: \(shareCode)")
+            if let code = shareCode, !code.isEmpty {
+                print("Open shared workout: \(code)")
             }
         case "routine":
-            if let shareCode = path {
-                // 루틴 공유 처리
-                print("Open shared routine: \(shareCode)")
+            if let code = shareCode, !code.isEmpty {
+                print("🔗 Fetching routine with code: \(code)")
+                Task { @MainActor in
+                    do {
+                        try await RoutineShareManager.shared.fetchRoutine(code: code)
+                        print("🔗 Routine fetched successfully, showShareConfirmation: \(RoutineShareManager.shared.showShareConfirmation)")
+                    } catch {
+                        print("🔗 Failed to fetch shared routine: \(error)")
+                    }
+                }
+            } else {
+                print("🔗 No share code found")
             }
         default:
-            break
+            print("🔗 Unknown host: \(host ?? "nil")")
         }
     }
 }
