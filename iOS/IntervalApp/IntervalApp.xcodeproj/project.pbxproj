@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		300AC3E42F20A0A00018FCC9 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 300AC3E32F20A0A00018FCC9 /* GoogleSignIn */; };
+		300AC3E72F20A0B50018FCC9 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 300AC3E62F20A0B50018FCC9 /* KakaoSDK */; };
 		30A7019D2F17A00000109C2D /* IntervalWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 30A701902F17A00000109C2D /* IntervalWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		30A7021E2F18A44E00109C2D /* watchkitapp Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 30A701FE2F18A44C00109C2D /* watchkitapp Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		30A7024A2F18BA6600109C2D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30A702492F18BA6600109C2D /* WidgetKit.framework */; };
@@ -196,6 +198,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				300AC3E42F20A0A00018FCC9 /* GoogleSignIn in Frameworks */,
+				300AC3E72F20A0B50018FCC9 /* KakaoSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +321,8 @@
 			);
 			name = IntervalApp;
 			packageProductDependencies = (
+				300AC3E32F20A0A00018FCC9 /* GoogleSignIn */,
+				300AC3E62F20A0B50018FCC9 /* KakaoSDK */,
 			);
 			productName = IntervalApp;
 			productReference = 30A7015B2F17933A00109C2D /* IntervalApp.app */;
@@ -531,6 +537,10 @@
 			);
 			mainGroup = 30A701522F17933A00109C2D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				300AC3E22F20A0A00018FCC9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				300AC3E52F20A0B50018FCC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 30A7015C2F17933A00109C2D /* Products */;
 			projectDirPath = "";
@@ -716,7 +726,9 @@
 				DEVELOPMENT_TEAM = HW9XJ9J5M2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IntervalApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IntervalMate;
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -725,7 +737,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jiny.swiftUI.IntervalApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -745,7 +757,9 @@
 				DEVELOPMENT_TEAM = HW9XJ9J5M2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IntervalApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IntervalMate;
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -754,7 +768,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jiny.swiftUI.IntervalApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1301,6 +1315,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		300AC3E22F20A0A00018FCC9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
+		300AC3E52F20A0B50018FCC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.27.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		300AC3E32F20A0A00018FCC9 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 300AC3E22F20A0A00018FCC9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		300AC3E62F20A0B50018FCC9 /* KakaoSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 300AC3E52F20A0B50018FCC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 30A701532F17933A00109C2D /* Project object */;
 }
