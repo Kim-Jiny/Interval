@@ -12,19 +12,18 @@ import GoogleMobileAds
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        // 푸시 알림 권한 요청 및 등록
         UNUserNotificationCenter.current().delegate = self
-        registerForPushNotifications()
 
-        // AdMob 초기화
-        AdManager.shared.configure()
+        // ATT 요청 → 완료 후 푸시 권한 요청
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            print("📺 Starting ATT + Push flow...")
+            AdManager.shared.configure {
+                print("📺 ATT completed, requesting push...")
+                self?.registerForPushNotifications()
+            }
+        }
 
         return true
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // 앱이 활성화되면 뱃지 초기화
-        application.applicationIconBadgeNumber = 0
     }
 
     // MARK: - Push Notifications

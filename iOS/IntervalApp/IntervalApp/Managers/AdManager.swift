@@ -40,7 +40,7 @@ class AdManager: NSObject, ObservableObject {
 
     // MARK: - Initialize SDK
 
-    func configure() {
+    func configure(completion: (() -> Void)? = nil) {
         // ATT 권한 요청 후 AdMob 초기화
         requestTrackingAuthorization { [weak self] in
             MobileAds.shared.start { status in
@@ -50,6 +50,8 @@ class AdManager: NSObject, ObservableObject {
                     await self?.loadRewardedAd()
                 }
             }
+            // ATT 완료 후 콜백 호출
+            completion?()
         }
     }
 
@@ -58,27 +60,38 @@ class AdManager: NSObject, ObservableObject {
     func requestTrackingAuthorization(completion: @escaping () -> Void) {
         // iOS 14 이상에서만 ATT 요청
         if #available(iOS 14, *) {
-            // 앱이 활성화된 후 요청해야 함
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                ATTrackingManager.requestTrackingAuthorization { [weak self] status in
-                    DispatchQueue.main.async {
-                        self?.trackingAuthorizationStatus = status
+            // 현재 상태 먼저 확인
+            let currentStatus = ATTrackingManager.trackingAuthorizationStatus
+            print("📺 Current ATT status: \(currentStatus.rawValue)")
 
-                        switch status {
-                        case .authorized:
-                            print("📺 Tracking authorized")
-                        case .denied:
-                            print("📺 Tracking denied")
-                        case .notDetermined:
-                            print("📺 Tracking not determined")
-                        case .restricted:
-                            print("📺 Tracking restricted")
-                        @unknown default:
-                            print("📺 Tracking unknown status")
-                        }
+            // 이미 결정된 경우 바로 완료
+            if currentStatus != .notDetermined {
+                self.trackingAuthorizationStatus = currentStatus
+                print("📺 ATT already determined: \(currentStatus.rawValue)")
+                completion()
+                return
+            }
 
-                        completion()
+            // ATT 요청 (딜레이는 AppDelegate에서 처리)
+            print("📺 Requesting ATT authorization...")
+            ATTrackingManager.requestTrackingAuthorization { [weak self] status in
+                DispatchQueue.main.async {
+                    self?.trackingAuthorizationStatus = status
+
+                    switch status {
+                    case .authorized:
+                        print("📺 Tracking authorized")
+                    case .denied:
+                        print("📺 Tracking denied")
+                    case .notDetermined:
+                        print("📺 Tracking not determined")
+                    case .restricted:
+                        print("📺 Tracking restricted")
+                    @unknown default:
+                        print("📺 Tracking unknown status")
                     }
+
+                    completion()
                 }
             }
         } else {
