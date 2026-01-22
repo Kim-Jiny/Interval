@@ -7,6 +7,21 @@
 
 import Foundation
 
+// MARK: - Number Formatter
+
+private let numberFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.groupingSeparator = ","
+    return formatter
+}()
+
+private extension Int {
+    var formatted: String {
+        numberFormatter.string(from: NSNumber(value: self)) ?? "\(self)"
+    }
+}
+
 // MARK: - Challenge Status
 
 enum ChallengeStatus: String, Codable, CaseIterable {
@@ -88,11 +103,11 @@ struct Challenge: Identifiable, Codable, Equatable {
     }
 
     var formattedEntryFee: String {
-        "\(entryFee)M"
+        "\(entryFee.formatted)M"
     }
 
     var formattedPrizePool: String {
-        "\(totalPrizePool)M"
+        "\(totalPrizePool.formatted)M"
     }
 
     var daysRemaining: Int? {
@@ -177,6 +192,14 @@ struct ParticipationStats: Codable, Equatable {
     var formattedAttendanceRate: String {
         String(format: "%.1f%%", attendanceRate)
     }
+
+    var formattedPrizeWon: String {
+        "\(prizeWon.formatted)M"
+    }
+
+    var formattedEntryFeePaid: String {
+        "\(entryFeePaid.formatted)M"
+    }
 }
 
 // MARK: - Challenge Participant
@@ -196,6 +219,10 @@ struct ChallengeParticipant: Identifiable, Codable, Equatable {
 
     var formattedAttendanceRate: String {
         String(format: "%.1f%%", attendanceRate)
+    }
+
+    var formattedPrizeWon: String {
+        "\(prizeWon.formatted)M"
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -260,11 +287,11 @@ struct ChallengeListItem: Identifiable, Codable, Equatable {
     var createdAt: String
 
     var formattedEntryFee: String {
-        "\(entryFee)M"
+        "\(entryFee.formatted)M"
     }
 
     var formattedPrizePool: String {
-        "\(totalPrizePool)M"
+        "\(totalPrizePool.formatted)M"
     }
 
     var challengeStartDate: Date? {
@@ -434,6 +461,10 @@ struct FinalRanking: Codable, Identifiable {
     let completionCount: Int
     let attendanceRate: Double
     let prizeWon: Int
+
+    var formattedPrizeWon: String {
+        "\(prizeWon.formatted)M"
+    }
 }
 
 struct WorkoutRecordResponse: Codable {

@@ -16,6 +16,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>intervalApp</string>
+				<string>intervalapp</string>
 			</array>
 		</dict>
 		<dict>

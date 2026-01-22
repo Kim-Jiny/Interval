@@ -31,6 +31,10 @@ class ChallengeManager: ObservableObject {
     // For deep link handling
     @Published var pendingChallenge: Challenge?
     @Published var showJoinConfirmation: Bool = false
+    @Published var showDeepLinkError: Bool = false
+    @Published var deepLinkErrorMessage: String?
+    @Published var showAlreadyParticipating: Bool = false
+    @Published var showCannotJoin: Bool = false
 
     /// 진행 중인 챌린지만 (홈화면용)
     /// 현재 시간이 챌린지 시작~종료 사이인 것만 표시
@@ -579,12 +583,45 @@ class ChallengeManager: ObservableObject {
     // MARK: - Handle Deep Link
 
     func handleDeepLink(shareCode: String) async {
+        #if DEBUG
+        print("🔗 handleDeepLink called with shareCode: \(shareCode)")
+        #endif
+
         do {
             let challenge = try await fetchChallenge(code: shareCode)
+            #if DEBUG
+            print("🔗 Challenge fetched: \(challenge.title), isParticipating: \(challenge.isParticipating ?? false)")
+            #endif
             self.pendingChallenge = challenge
-            self.showJoinConfirmation = true
+
+            // 이미 참여 중인 경우
+            if challenge.isParticipating == true {
+                self.showAlreadyParticipating = true
+            }
+            // 모집 기간인지 확인
+            else if let regStart = challenge.registrationStartDate,
+                    let regEnd = challenge.registrationEndDate {
+                let now = Date()
+                if now >= regStart && now <= regEnd {
+                    // 모집 기간 내 - 참가 가능
+                    self.showJoinConfirmation = true
+                } else {
+                    // 모집 기간 아님
+                    self.showCannotJoin = true
+                }
+            }
+            // 날짜 파싱 실패 시 canJoin 필드로 폴백
+            else if challenge.canJoin == true {
+                self.showJoinConfirmation = true
+            } else {
+                self.showCannotJoin = true
+            }
         } catch {
-            errorMessage = error.localizedDescription
+            #if DEBUG
+            print("🔗 Deep link error: \(error.localizedDescription)")
+            #endif
+            self.deepLinkErrorMessage = error.localizedDescription
+            self.showDeepLinkError = true
         }
     }
 

@@ -109,7 +109,7 @@ struct ChallengeCreateView: View {
 
             // Entry Fee Section
             Section {
-                Stepper("Entry Fee: \(entryFee)M", value: $entryFee, in: 0...10000, step: 50)
+                Stepper("Entry Fee: \(entryFee.formatted(.number))M", value: $entryFee, in: 0...10000, step: 50)
 
                 HStack {
                     Text("Your Balance")
@@ -121,7 +121,7 @@ struct ChallengeCreateView: View {
                 Text("Entry Fee")
             } footer: {
                 if !hasEnoughBalance {
-                    Text("Insufficient balance. You need at least \(entryFee)M to create this challenge.")
+                    Text("Insufficient balance. You need at least \(entryFee.formatted(.number))M to create this challenge.")
                         .foregroundStyle(.red)
                 } else {
                     Text("As the creator, you will automatically join and pay the entry fee.")

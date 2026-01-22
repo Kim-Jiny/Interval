@@ -7,6 +7,21 @@
 
 import Foundation
 
+// MARK: - Number Formatter
+
+private let numberFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.groupingSeparator = ","
+    return formatter
+}()
+
+private extension Int {
+    var formatted: String {
+        numberFormatter.string(from: NSNumber(value: self)) ?? "\(self)"
+    }
+}
+
 // MARK: - Mileage Balance
 
 struct MileageBalance: Codable, Equatable {
@@ -15,15 +30,15 @@ struct MileageBalance: Codable, Equatable {
     let totalSpent: Int
 
     var formattedBalance: String {
-        "\(balance)M"
+        "\(balance.formatted)M"
     }
 
     var formattedTotalEarned: String {
-        "\(totalEarned)M"
+        "\(totalEarned.formatted)M"
     }
 
     var formattedTotalSpent: String {
-        "\(totalSpent)M"
+        "\(totalSpent.formatted)M"
     }
 }
 
@@ -90,14 +105,14 @@ struct MileageTransaction: Identifiable, Codable, Equatable {
 
     var formattedAmount: String {
         if amount >= 0 {
-            return "+\(amount)M"
+            return "+\(amount.formatted)M"
         } else {
-            return "\(amount)M"
+            return "\(amount.formatted)M"
         }
     }
 
     var formattedBalanceAfter: String {
-        "\(balanceAfter)M"
+        "\(balanceAfter.formatted)M"
     }
 
     var createdDate: Date? {

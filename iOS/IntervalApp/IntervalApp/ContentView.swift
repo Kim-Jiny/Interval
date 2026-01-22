@@ -59,6 +59,35 @@ struct ContentView: View {
                 Text(String(format: String(localized: "Do you want to join '%@'? Entry fee: %@", comment: "Join challenge confirmation message"), challenge.title, challenge.formattedEntryFee))
             }
         }
+        // Deep link error alert
+        .alert(String(localized: "Error", comment: "Error alert title"),
+               isPresented: $challengeManager.showDeepLinkError) {
+            Button(String(localized: "OK", comment: "OK button"), role: .cancel) {}
+        } message: {
+            Text(challengeManager.deepLinkErrorMessage ?? String(localized: "Failed to open challenge"))
+        }
+        // Already participating alert
+        .alert(String(localized: "Already Joined", comment: "Already joined alert title"),
+               isPresented: $challengeManager.showAlreadyParticipating) {
+            Button(String(localized: "OK", comment: "OK button"), role: .cancel) {
+                challengeManager.pendingChallenge = nil
+            }
+        } message: {
+            if let challenge = challengeManager.pendingChallenge {
+                Text(String(format: String(localized: "You are already participating in '%@'.", comment: "Already participating message"), challenge.title))
+            }
+        }
+        // Cannot join alert (not in registration period)
+        .alert(String(localized: "Cannot Join", comment: "Cannot join alert title"),
+               isPresented: $challengeManager.showCannotJoin) {
+            Button(String(localized: "OK", comment: "OK button"), role: .cancel) {
+                challengeManager.pendingChallenge = nil
+            }
+        } message: {
+            if let challenge = challengeManager.pendingChallenge {
+                Text(String(format: String(localized: "'%@' is not currently accepting participants.", comment: "Cannot join message"), challenge.title))
+            }
+        }
     }
 }
 

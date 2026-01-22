@@ -126,7 +126,7 @@ struct ChallengeDetailView: View {
         }
         .sheet(isPresented: $showingShareSheet) {
             if let challenge = challengeManager.currentChallenge {
-                let shareUrl = "http://kjiny.shop/Interval/challenge/\(challenge.shareCode)"
+                let shareUrl = "http://kjiny.shop/Interval/challenge/?code=\(challenge.shareCode)"
                 ShareSheet(items: [URL(string: shareUrl)!])
             }
         }
@@ -268,10 +268,10 @@ struct ChallengeDetailView: View {
             Text("\(percentage)%")
                 .foregroundStyle(.secondary)
 
-            Text("\(prizePool * percentage / 100)M")
+            Text("\((prizePool * percentage / 100).formatted(.number))M")
                 .fontWeight(.bold)
                 .foregroundStyle(.orange)
-                .frame(width: 60, alignment: .trailing)
+                .frame(width: 80, alignment: .trailing)
         }
         .padding(.vertical, 4)
     }
@@ -477,7 +477,7 @@ struct ChallengeDetailView: View {
                         Spacer()
 
                         VStack(alignment: .trailing) {
-                            Text("\(ranking.prizeWon)M")
+                            Text(ranking.formattedPrizeWon)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.orange)
                             Text("\(ranking.completionCount) days")
