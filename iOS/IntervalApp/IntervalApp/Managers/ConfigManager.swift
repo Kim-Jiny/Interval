@@ -68,21 +68,50 @@ class ConfigManager: ObservableObject {
         if UserDefaults.standard.string(forKey: Self.apiBaseURLKey) == nil {
             UserDefaults.standard.set(Self.defaultApiBaseURL, forKey: Self.apiBaseURLKey)
             UserDefaults.standard.set(Self.defaultWebBaseURL, forKey: Self.webBaseURLKey)
+            print("⚙️ [Config] Initialized with default URL: \(Self.defaultApiBaseURL)")
+        } else {
+            print("⚙️ [Config] Using cached URL: \(Self.apiBaseURL)")
         }
+    }
+
+    // MARK: - Debug Logging
+
+    /// 현재 설정된 URL 로그 출력
+    nonisolated static func logCurrentConfig() {
+        #if DEBUG
+        print("⚙️ ========== Current Config ==========")
+        print("⚙️ API Base URL: \(apiBaseURL)")
+        print("⚙️ Web Base URL: \(webBaseURL)")
+        print("⚙️ Watch Push URL: \(watchPushURL)")
+        print("⚙️ Live Activity URL: \(liveActivityPushURL)")
+        print("⚙️ ======================================")
+        #endif
     }
 
     // MARK: - Public Methods
 
     /// 앱 시작 시 호출 - 설정 로드
     func loadConfig() async {
+        #if DEBUG
+        print("⚙️ [Config] Loading config...")
+        #endif
+
         // Check if cache is still valid
         if isCacheValid() {
+            #if DEBUG
+            print("⚙️ [Config] Using cached config (still valid)")
+            Self.logCurrentConfig()
+            #endif
             isLoaded = true
             return
         }
 
         // Fetch from GitHub
         await fetchConfig()
+
+        #if DEBUG
+        Self.logCurrentConfig()
+        #endif
     }
 
     /// 강제로 설정 새로고침
@@ -93,8 +122,12 @@ class ConfigManager: ObservableObject {
     // MARK: - Private Methods
 
     private func fetchConfig() async {
+        #if DEBUG
+        print("⚙️ [Config] Fetching from GitHub: \(configURL)")
+        #endif
+
         guard let url = URL(string: configURL) else {
-            print("⚙️ Invalid config URL")
+            print("⚙️ [Config] Invalid config URL")
             isLoaded = true
             return
         }
@@ -104,7 +137,8 @@ class ConfigManager: ObservableObject {
 
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200 else {
-                print("⚙️ Config fetch failed with status: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
+                print("⚙️ [Config] Fetch failed with status: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
+                print("⚙️ [Config] Using fallback URL: \(Self.apiBaseURL)")
                 isLoaded = true
                 return
             }
@@ -116,11 +150,16 @@ class ConfigManager: ObservableObject {
             UserDefaults.standard.set(config.webBaseURL, forKey: Self.webBaseURLKey)
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.configLastFetchKey)
 
-            print("⚙️ Config loaded from GitHub: \(config.apiBaseURL)")
+            #if DEBUG
+            print("⚙️ [Config] ✅ Loaded from GitHub successfully!")
+            print("⚙️ [Config] API: \(config.apiBaseURL)")
+            print("⚙️ [Config] Web: \(config.webBaseURL)")
+            #endif
             isLoaded = true
 
         } catch {
-            print("⚙️ Config fetch error: \(error.localizedDescription)")
+            print("⚙️ [Config] Fetch error: \(error.localizedDescription)")
+            print("⚙️ [Config] Using fallback URL: \(Self.apiBaseURL)")
             isLoaded = true
         }
     }
