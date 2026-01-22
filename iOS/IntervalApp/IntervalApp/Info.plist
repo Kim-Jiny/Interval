@@ -57,6 +57,8 @@
 	<string>ca-app-pub-2707874353926722~9205424565</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>This app uses tracking to provide personalized ads and improve your experience. Your data will be used to deliver relevant advertisements.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>IntervalMate needs access to save your workout completion screenshots to the photo library.</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>

@@ -103,7 +103,7 @@ struct ChallengeCreateView: View {
                 Toggle(String(localized: "Limit Participants"), isOn: $hasMaxParticipants)
 
                 if hasMaxParticipants {
-                    Stepper("Max: \(maxParticipants)", value: $maxParticipants, in: 2...100)
+                    Stepper(String(localized: "Max Participants") + ": \(maxParticipants)", value: $maxParticipants, in: 2...100)
                 }
             } header: {
                 Text("Settings")
@@ -111,7 +111,7 @@ struct ChallengeCreateView: View {
 
             // Entry Fee Section
             Section {
-                Stepper("Entry Fee: \(entryFee.formatted(.number))M", value: $entryFee, in: 0...10000, step: 50)
+                Stepper(String(localized: "Entry Fee") + ": \(entryFee)M", value: $entryFee, in: 0...10000, step: 50)
 
                 HStack {
                     Text("Your Balance")
@@ -167,9 +167,6 @@ struct ChallengeCreateView: View {
             }
         }
         .scrollDismissesKeyboard(.interactively)
-        .onTapGesture {
-            hideKeyboard()
-        }
         .navigationTitle(String(localized: "New Challenge"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

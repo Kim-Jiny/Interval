@@ -1259,7 +1259,7 @@
       }
     },
     "Account" : {
-      "comment" : "Section header for account settings",
+      "comment" : "Account actions dialog title\nSection header for account settings",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1347,6 +1347,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "进行中的挑战"
+          }
+        }
+      }
+    },
+    "Actual" : {
+      "comment" : "Label for actual elapsed time in workout stats",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tatsächlich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実際"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실제"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "实际"
           }
         }
       }
@@ -2582,6 +2623,47 @@
         }
       }
     },
+    "Challenge Mode" : {
+      "comment" : "Label shown when workout is in challenge mode",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Challenge-Modus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modo desafío"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode défi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャレンジモード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지 모드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "挑战模式"
+          }
+        }
+      }
+    },
     "Challenge must start after registration ends." : {
       "comment" : "Error message displayed when the challenge start date is the same as or before the registration end date.",
       "extractionState" : "stale",
@@ -3725,7 +3807,7 @@
       }
     },
     "Delete Account" : {
-      "comment" : "Button to delete account\nDelete account button\nDelete account dialog title",
+      "comment" : "Delete account button\nDelete account dialog title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4126,6 +4208,48 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "完成"
+          }
+        }
+      }
+    },
+    "Duration" : {
+      "comment" : "Label for duration in workout stats",
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dauer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所要時間"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소요 시간"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时长"
           }
         }
       }
@@ -5015,6 +5139,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "数据准备失败。"
+          }
+        }
+      }
+    },
+    "Failed to save image" : {
+      "comment" : "Generic error message when screenshot save fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild konnte nicht gespeichert werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al guardar la imagen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échec de l'enregistrement de l'image"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像の保存に失敗しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 저장 실패"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存图片失败"
           }
         }
       }
@@ -6637,7 +6802,7 @@
       "isCommentAutoGenerated" : true
     },
     "Log In" : {
-      "comment" : "Button to log in\nLog in button",
+      "comment" : "Log in button",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6732,6 +6897,7 @@
     },
     "Log in to share routines and workouts" : {
       "comment" : "Guest user description",
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6778,7 +6944,7 @@
       }
     },
     "Log Out" : {
-      "comment" : "Button to log out\nLog out button\nLog out dialog title",
+      "comment" : "Log out button\nLog out dialog title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7976,47 +8142,6 @@
         }
       }
     },
-    "No Routines Yet" : {
-      "comment" : "Empty state title when user has no routines",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch keine Routinen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay rutinas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas encore de routines"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ルーティンがありません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "루틴이 없습니다"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "还没有例程"
-          }
-        }
-      }
-    },
     "No participants yet" : {
       "comment" : "A message displayed when a challenge has no participants.",
       "localizations" : {
@@ -8060,6 +8185,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂无参与者"
+          }
+        }
+      }
+    },
+    "No Routines Yet" : {
+      "comment" : "Empty state title when user has no routines",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Routinen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay rutinas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore de routines"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ルーティンがありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "루틴이 없습니다"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有例程"
           }
         }
       }
@@ -8523,6 +8689,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "平板支撑挑战"
+          }
+        }
+      }
+    },
+    "Please allow photo library access in Settings to save screenshots." : {
+      "comment" : "Alert message when photo library access is denied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte erlauben Sie den Zugriff auf die Fotomediathek in den Einstellungen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, permite el acceso a la biblioteca de fotos en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veuillez autoriser l'accès à la photothèque dans les réglages."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定からフォトライブラリへのアクセスを許可してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스크린샷을 저장하려면 설정에서 사진 접근을 허용해주세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在设置中允许访问照片库以保存截图。"
           }
         }
       }
@@ -9572,6 +9779,47 @@
         }
       }
     },
+    "Rounds" : {
+      "comment" : "Label for rounds count in workout stats",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rondas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tours"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ラウンド"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "라운드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轮次"
+          }
+        }
+      }
+    },
     "Rounds: %lld" : {
       "localizations" : {
         "de" : {
@@ -10078,6 +10326,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "日程"
+          }
+        }
+      }
+    },
+    "Screenshot Error" : {
+      "comment" : "Alert title when screenshot fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screenshot-Fehler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error de captura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur de capture"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スクリーンショットエラー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스크린샷 오류"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "截图错误"
+          }
+        }
+      }
+    },
+    "Screenshot Saved" : {
+      "comment" : "Alert title when screenshot is saved",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screenshot gespeichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Captura guardada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capture enregistrée"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スクリーンショットを保存しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스크린샷 저장됨"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "截图已保存"
           }
         }
       }
@@ -10676,47 +11006,6 @@
         }
       }
     },
-    "Tap to log in" : {
-      "comment" : "Guest user tap to login",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zum Anmelden tippen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca para iniciar sesión"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez pour vous connecter"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タップしてログイン"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "탭하여 로그인"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "点击登录"
-          }
-        }
-      }
-    },
     "Spent" : {
       "comment" : "Display name for a mileage transaction type when the amount is negative.",
       "localizations" : {
@@ -11301,6 +11590,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "塔巴塔"
+          }
+        }
+      }
+    },
+    "Tap to log in" : {
+      "comment" : "Guest user tap to login",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum Anmelden tippen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca para iniciar sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appuyez pour vous connecter"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タップしてログイン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "탭하여 로그인"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击登录"
+          }
+        }
+      }
+    },
+    "Target" : {
+      "comment" : "Label for target/planned duration in workout stats",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectif"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标"
           }
         }
       }
@@ -12354,6 +12725,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "运动"
+          }
+        }
+      }
+    },
+    "Workout Complete!" : {
+      "comment" : "Title shown on workout completion screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training abgeschlossen!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Entrenamiento completado!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement terminé !"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークアウト完了！"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "운동 완료!"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "锻炼完成！"
+          }
+        }
+      }
+    },
+    "Workout completion image has been saved to your photo library." : {
+      "comment" : "Alert message when screenshot is saved successfully",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Bild wurde in Ihrer Fotomediathek gespeichert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La imagen se ha guardado en tu biblioteca de fotos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'image a été enregistrée dans votre photothèque."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像がフォトライブラリに保存されました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "운동 완료 이미지가 사진 앨범에 저장되었습니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图片已保存到您的照片库。"
           }
         }
       }

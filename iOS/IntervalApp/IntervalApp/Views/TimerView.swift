@@ -10,8 +10,12 @@ import UIKit
 import AVFoundation
 import ActivityKit
 import GoogleMobileAds
+import Photos
 
 struct TimerView: View {
+    // 스크린샷용 광고 숨기기 플래그 (true: 광고 숨김, false: 광고 표시)
+    private let hideAdsForScreenshot = false
+
     let routine: Routine
     let isChallengeMode: Bool
     var onComplete: (() -> Void)?
@@ -19,6 +23,11 @@ struct TimerView: View {
     @StateObject private var timerManager: TimerManager
     @State private var showingExitConfirmation = false
     @State private var bannerHeight: CGFloat = 50
+    @State private var showingScreenshotSaved = false
+    @State private var screenshotError: String?
+    @State private var showingScreenshotError = false
+    @State private var imageToShare: UIImage?
+    @State private var showingShareSheet = false
 
     init(routine: Routine, isChallengeMode: Bool = false, onComplete: (() -> Void)? = nil) {
         self.routine = routine
@@ -32,35 +41,43 @@ struct TimerView: View {
             backgroundColor
                 .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                headerView
+            if timerManager.isCompleted {
+                // 완료 화면
+                completionView
+            } else {
+                // 타이머 화면
+                VStack(spacing: 0) {
+                    headerView
 
-                // 전체 진행 상황
-                overallProgressView
-                    .padding(.top, 16)
+                    // 전체 진행 상황
+                    overallProgressView
+                        .padding(.top, 16)
 
-                Spacer()
+                    Spacer()
 
-                timerDisplay
+                    timerDisplay
 
-                Spacer()
+                    Spacer()
 
-                // 구간 인디케이터
-                intervalIndicator
-                    .padding(.vertical, 16)
+                    // 구간 인디케이터
+                    intervalIndicator
+                        .padding(.vertical, 16)
 
-                intervalInfo
+                    intervalInfo
 
-                Spacer()
+                    Spacer()
 
-                controlButtons
+                    controlButtons
 
-                // 배너 광고
-                BannerAdView()
-                    .frame(height: bannerHeight)
-                    .padding(.top, 16)
+                    // 배너 광고
+                    if !hideAdsForScreenshot {
+                        BannerAdView()
+                            .frame(height: bannerHeight)
+                            .padding(.top, 16)
+                    }
+                }
+                .padding()
             }
-            .padding()
         }
         .alert(String(localized: "End Workout"), isPresented: $showingExitConfirmation) {
             Button(String(localized: "No"), role: .cancel) { }
@@ -71,8 +88,183 @@ struct TimerView: View {
         } message: {
             Text("Do you want to end this workout?")
         }
+        .alert(String(localized: "Screenshot Saved"), isPresented: $showingScreenshotSaved) {
+            Button(String(localized: "OK"), role: .cancel) { }
+        } message: {
+            Text("Workout completion image has been saved to your photo library.", comment: "Alert message when screenshot is saved successfully")
+        }
+        .alert(String(localized: "Screenshot Error"), isPresented: $showingScreenshotError) {
+            Button(String(localized: "OK"), role: .cancel) { }
+        } message: {
+            Text(screenshotError ?? String(localized: "Failed to save image", comment: "Generic error message when screenshot save fails"))
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            if let image = imageToShare {
+                ShareSheet(items: [image])
+            }
+        }
         .onDisappear {
             timerManager.stop()
+        }
+    }
+
+    // MARK: - Completion View
+
+    private var completionView: some View {
+        VStack(spacing: 0) {
+            // 상단 버튼들
+            HStack {
+                Button {
+                    timerManager.stop()
+                    onComplete?()
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title)
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+
+                Spacer()
+
+                HStack(spacing: 12) {
+                    // 저장 버튼
+                    Button {
+                        saveScreenshot()
+                    } label: {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.white.opacity(0.2))
+                            .clipShape(Circle())
+                    }
+
+                    // 공유 버튼
+                    Button {
+                        shareScreenshot()
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.white.opacity(0.2))
+                            .clipShape(Circle())
+                    }
+                }
+            }
+            .padding()
+
+            Spacer()
+
+            // 스크린샷 영역 (광고 제외)
+            WorkoutCompletionCard(routine: routine, isChallengeMode: isChallengeMode, actualElapsedTime: timerManager.formattedActualElapsedTime)
+                .padding(.horizontal)
+
+            Spacer()
+
+            // 완료 버튼
+            Button {
+                timerManager.stop()
+                onComplete?()
+                dismiss()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark")
+                        .font(.title2)
+                    Text("Done")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(.white.opacity(0.2))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .padding(.horizontal)
+
+            // 배너 광고 (스크린샷 시 숨김)
+            if !hideAdsForScreenshot {
+                BannerAdView()
+                    .frame(height: bannerHeight)
+                    .padding(.top, 16)
+                    .padding(.horizontal)
+            }
+        }
+    }
+
+    // MARK: - Screenshot
+
+    private func saveScreenshot() {
+        // 사진 라이브러리 권한 확인
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            DispatchQueue.main.async {
+                if status == .authorized || status == .limited {
+                    captureAndSave()
+                } else {
+                    screenshotError = String(localized: "Please allow photo library access in Settings to save screenshots.")
+                    showingScreenshotError = true
+                }
+            }
+        }
+    }
+
+    private func shareScreenshot() {
+        let image = generateCompletionImage()
+        imageToShare = image
+        showingShareSheet = true
+    }
+
+    private func generateCompletionImage() -> UIImage {
+        // 스크린샷용 뷰 생성 (광고 없이)
+        let screenshotView = WorkoutCompletionCard(routine: routine, isChallengeMode: isChallengeMode, actualElapsedTime: timerManager.formattedActualElapsedTime)
+            .padding(24)
+            .background(
+                LinearGradient(
+                    colors: [Color.green.opacity(0.9), Color.green.opacity(0.7)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+
+        // SwiftUI 뷰를 UIImage로 변환
+        let controller = UIHostingController(rootView: screenshotView)
+        controller.view.backgroundColor = .clear
+
+        // 뷰의 실제 크기 계산
+        let targetWidth: CGFloat = 390
+        let fittingSize = controller.view.systemLayoutSizeFitting(
+            CGSize(width: targetWidth, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+
+        let targetSize = CGSize(width: targetWidth, height: fittingSize.height)
+        controller.view.bounds = CGRect(origin: .zero, size: targetSize)
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        let image = renderer.image { _ in
+            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        }
+
+        return image
+    }
+
+    private func captureAndSave() {
+        let image = generateCompletionImage()
+
+        // 사진 라이브러리에 저장
+        PHPhotoLibrary.shared().performChanges {
+            PHAssetChangeRequest.creationRequestForAsset(from: image)
+        } completionHandler: { success, error in
+            DispatchQueue.main.async {
+                if success {
+                    showingScreenshotSaved = true
+                } else {
+                    screenshotError = error?.localizedDescription ?? String(localized: "Failed to save image")
+                    showingScreenshotError = true
+                }
+            }
         }
     }
 
@@ -340,6 +532,113 @@ struct TimerView: View {
     }
 }
 
+// MARK: - Workout Completion Card (Screenshot용)
+
+struct WorkoutCompletionCard: View {
+    let routine: Routine
+    let isChallengeMode: Bool
+    let actualElapsedTime: String
+
+    private var currentDate: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .short
+        return formatter.string(from: Date())
+    }
+
+    var body: some View {
+        VStack(spacing: 24) {
+            // 완료 아이콘
+            ZStack {
+                Circle()
+                    .fill(.white.opacity(0.2))
+                    .frame(width: 100, height: 100)
+
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 70))
+                    .foregroundStyle(.white)
+            }
+
+            // 완료 메시지
+            VStack(spacing: 8) {
+                Text("Workout Complete!", comment: "Title shown on workout completion screen")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.white)
+
+                if isChallengeMode {
+                    HStack(spacing: 4) {
+                        Image(systemName: "trophy.fill")
+                            .foregroundStyle(.yellow)
+                        Text("Challenge Mode", comment: "Label shown when workout is in challenge mode")
+                            .fontWeight(.semibold)
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.9))
+                }
+            }
+
+            // 루틴 정보 카드
+            VStack(spacing: 16) {
+                Text(routine.name)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.center)
+
+                HStack(spacing: 20) {
+                    statItem(icon: "list.bullet", value: "\(routine.intervals.count)", label: String(localized: "Intervals"))
+                    statItem(icon: "repeat", value: "\(routine.rounds)", label: String(localized: "Rounds", comment: "Label for rounds count in workout stats"))
+                }
+
+                HStack(spacing: 20) {
+                    statItem(icon: "clock", value: routine.formattedTotalDuration, label: String(localized: "Target", comment: "Label for target/planned duration in workout stats"))
+                    statItem(icon: "stopwatch", value: actualElapsedTime, label: String(localized: "Actual", comment: "Label for actual elapsed time in workout stats"))
+                }
+
+                Divider()
+                    .background(Color.secondary.opacity(0.3))
+
+                Text(currentDate)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(.systemBackground))
+            )
+
+            // 앱 브랜딩
+            HStack(spacing: 6) {
+                Image(systemName: "timer")
+                    .foregroundStyle(.white.opacity(0.8))
+                Text("IntervalMate")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white.opacity(0.8))
+            }
+            .font(.footnote)
+            .padding(.bottom, 8)
+        }
+    }
+
+    private func statItem(icon: String, value: String, label: String) -> some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(value)
+                    .font(.headline)
+                    .fontWeight(.bold)
+            }
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
 class TimerManager: ObservableObject {
     private let routine: Routine
     private var timer: DispatchSourceTimer?
@@ -367,6 +666,12 @@ class TimerManager: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var isCompleted: Bool = false
     @Published var isLiveActivityActive: Bool = false
+
+    // 실제 소요 시간 추적
+    private var workoutStartTime: Date?
+    private var totalPausedTime: TimeInterval = 0
+    private var lastPauseTime: Date?
+    @Published var actualElapsedTime: TimeInterval = 0
 
     var currentInterval: WorkoutInterval? {
         guard currentIntervalIndex < routine.intervals.count else { return nil }
@@ -431,6 +736,13 @@ class TimerManager: ObservableObject {
     var formattedTimeRemaining: String {
         let minutes = Int(timeRemaining) / 60
         let seconds = Int(timeRemaining) % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+
+    var formattedActualElapsedTime: String {
+        let total = Int(actualElapsedTime)
+        let minutes = total / 60
+        let seconds = total % 60
         return String(format: "%d:%02d", minutes, seconds)
     }
 
@@ -603,6 +915,17 @@ class TimerManager: ObservableObject {
         }
         isRunning = true
 
+        // 실제 소요 시간 추적 시작
+        if workoutStartTime == nil {
+            workoutStartTime = Date()
+        }
+
+        // 일시정지 후 재시작 시 일시정지 시간 계산
+        if let pauseTime = lastPauseTime {
+            totalPausedTime += Date().timeIntervalSince(pauseTime)
+            lastPauseTime = nil
+        }
+
         // 화면 자동 잠금 비활성화
         UIApplication.shared.isIdleTimerDisabled = true
 
@@ -648,6 +971,9 @@ class TimerManager: ObservableObject {
         timer = nil
         stopBackgroundAudio()
         updateLiveActivity()
+
+        // 일시정지 시간 기록
+        lastPauseTime = Date()
     }
 
     func stop() {
@@ -667,6 +993,12 @@ class TimerManager: ObservableObject {
             timeRemaining = first.duration
         }
         isCompleted = false
+
+        // 실제 소요 시간 초기화
+        workoutStartTime = nil
+        totalPausedTime = 0
+        lastPauseTime = nil
+        actualElapsedTime = 0
     }
 
     func nextIntervalAction() {
@@ -695,6 +1027,11 @@ class TimerManager: ObservableObject {
 
     private func tick() {
         timeRemaining -= 0.1
+
+        // 실제 소요 시간 업데이트
+        if let startTime = workoutStartTime {
+            actualElapsedTime = Date().timeIntervalSince(startTime) - totalPausedTime
+        }
 
         // Update Live Activity every second
         let currentSecond = floor(timeRemaining)
