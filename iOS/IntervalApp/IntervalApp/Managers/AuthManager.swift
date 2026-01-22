@@ -106,6 +106,10 @@ class AuthManager: NSObject, ObservableObject {
 
         self.currentUser = nil
         self.isLoggedIn = false
+
+        // 사용자 관련 데이터 초기화
+        ChallengeManager.shared.clearUserData()
+        MileageManager.shared.clearUserData()
     }
 
     func getAccessToken() -> String? {

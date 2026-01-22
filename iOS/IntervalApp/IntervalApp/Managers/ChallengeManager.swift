@@ -49,6 +49,21 @@ class ChallengeManager: ObservableObject {
 
     private init() {}
 
+    // MARK: - Clear User Data (on logout)
+
+    /// 로그아웃 시 사용자 관련 데이터 초기화
+    func clearUserData() {
+        myChallenges = []
+        currentChallenge = nil
+        currentParticipants = []
+        pendingChallenge = nil
+        showJoinConfirmation = false
+        showDeepLinkError = false
+        deepLinkErrorMessage = nil
+        showAlreadyParticipating = false
+        showCannotJoin = false
+    }
+
     // MARK: - Fetch Public Challenges
 
     func fetchJoinableChallenges(page: Int = 1) async {

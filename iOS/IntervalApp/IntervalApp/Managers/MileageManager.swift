@@ -37,6 +37,19 @@ class MileageManager: ObservableObject {
 
     private init() {}
 
+    // MARK: - Clear User Data (on logout)
+
+    /// 로그아웃 시 사용자 관련 데이터 초기화
+    func clearUserData() {
+        balance = nil
+        transactions = []
+        adRemainingCount = 5
+        currentPage = 1
+        totalPages = 1
+        hasMorePages = false
+        errorMessage = nil
+    }
+
     // MARK: - Fetch Balance
 
     func fetchBalance() async {
