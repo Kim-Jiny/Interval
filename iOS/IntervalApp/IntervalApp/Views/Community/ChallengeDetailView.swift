@@ -25,6 +25,7 @@ struct ChallengeDetailView: View {
     @State private var showingFinalizeAlert = false
     @State private var showingFinalizeResult = false
     @State private var finalizeRankings: [FinalRanking] = []
+    @State private var showingRoutinePreview = false
 
     var body: some View {
         Group {
@@ -157,6 +158,11 @@ struct ChallengeDetailView: View {
             if let challenge = challengeManager.currentChallenge {
                 let shareUrl = "\(ConfigManager.challengeShareURL)\(challenge.shareCode)"
                 ShareSheet(items: [URL(string: shareUrl)!])
+            }
+        }
+        .sheet(isPresented: $showingRoutinePreview) {
+            if let challenge = challengeManager.currentChallenge {
+                routinePreviewSheet(challenge)
             }
         }
         .fullScreenCover(item: $selectedRoutine) { routine in
@@ -418,6 +424,17 @@ struct ChallengeDetailView: View {
                     .foregroundStyle(.orange)
                 Text("Routine")
                     .font(.headline)
+
+                Spacer()
+
+                // Tap hint
+                HStack(spacing: 4) {
+                    Text("View Details")
+                        .font(.caption)
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                }
+                .foregroundStyle(.secondary)
             }
 
             HStack {
@@ -440,6 +457,15 @@ struct ChallengeDetailView: View {
                                     .font(.caption)
                                     .foregroundStyle(.green)
                                 Text("\(routineData.rounds) rounds")
+                                    .font(.caption)
+                            }
+
+                            // Total duration
+                            HStack(spacing: 4) {
+                                Image(systemName: "clock")
+                                    .font(.caption)
+                                    .foregroundStyle(.orange)
+                                Text(formatTotalDuration(routineData))
                                     .font(.caption)
                             }
                         }
@@ -474,6 +500,189 @@ struct ChallengeDetailView: View {
                 .fill(Color(.systemBackground))
                 .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
         )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            showingRoutinePreview = true
+        }
+    }
+
+    // MARK: - Routine Preview Sheet
+
+    private func routinePreviewSheet(_ challenge: Challenge) -> some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Routine Summary Card
+                    VStack(spacing: 16) {
+                        Text(challenge.routineName)
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        if let routineData = challenge.routineData {
+                            HStack(spacing: 24) {
+                                VStack(spacing: 4) {
+                                    Text("\(routineData.intervals.count)")
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.blue)
+                                    Text("Intervals")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                VStack(spacing: 4) {
+                                    Text("\(routineData.rounds)")
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.green)
+                                    Text("Rounds")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                VStack(spacing: 4) {
+                                    Text(formatTotalDuration(routineData))
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.orange)
+                                    Text("Total")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(.systemBackground))
+                            .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    )
+
+                    // Intervals List
+                    if let routineData = challenge.routineData {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Intervals")
+                                .font(.headline)
+                                .padding(.horizontal)
+
+                            VStack(spacing: 8) {
+                                ForEach(Array(routineData.intervals.enumerated()), id: \.offset) { index, interval in
+                                    intervalRow(index: index + 1, interval: interval)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding()
+            }
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Routine Preview")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingRoutinePreview = false
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+        }
+    }
+
+    private func intervalRow(index: Int, interval: ChallengeInterval) -> some View {
+        HStack(spacing: 12) {
+            // Index badge
+            ZStack {
+                Circle()
+                    .fill(intervalTypeColor(interval.type).opacity(0.15))
+                    .frame(width: 36, height: 36)
+                Text("\(index)")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(intervalTypeColor(interval.type))
+            }
+
+            // Interval info
+            VStack(alignment: .leading, spacing: 4) {
+                Text(interval.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+
+                Text(intervalTypeDisplayName(interval.type))
+                    .font(.caption)
+                    .foregroundStyle(intervalTypeColor(interval.type))
+            }
+
+            Spacer()
+
+            // Duration
+            Text(formatIntervalDuration(interval.duration))
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color(.systemGray6))
+                .clipShape(Capsule())
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+        )
+    }
+
+    private func intervalTypeColor(_ type: String) -> Color {
+        switch type {
+        case "workout":
+            return .orange
+        case "rest":
+            return .blue
+        case "warmup":
+            return .green
+        case "cooldown":
+            return .purple
+        default:
+            return .gray
+        }
+    }
+
+    private func intervalTypeDisplayName(_ type: String) -> String {
+        switch type {
+        case "workout":
+            return String(localized: "Workout")
+        case "rest":
+            return String(localized: "Rest")
+        case "warmup":
+            return String(localized: "Warmup")
+        case "cooldown":
+            return String(localized: "Cooldown")
+        default:
+            return type.capitalized
+        }
+    }
+
+    private func formatIntervalDuration(_ seconds: Int) -> String {
+        let minutes = seconds / 60
+        let remainingSeconds = seconds % 60
+        if minutes > 0 {
+            return String(format: "%d:%02d", minutes, remainingSeconds)
+        } else {
+            return "\(seconds)s"
+        }
+    }
+
+    private func formatTotalDuration(_ routineData: RoutineData) -> String {
+        let totalSeconds = routineData.intervals.reduce(0) { $0 + $1.duration } * routineData.rounds
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        if minutes > 0 {
+            return String(format: "%d:%02d", minutes, seconds)
+        } else {
+            return "\(totalSeconds)s"
+        }
     }
 
     // MARK: - Dates Card
