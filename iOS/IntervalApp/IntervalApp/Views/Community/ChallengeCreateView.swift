@@ -27,9 +27,11 @@ struct ChallengeCreateView: View {
     @State private var showingRoutineSelector = false
     @State private var showingShareSheet = false
     @State private var shareUrl: String?
+    @State private var createdChallenge: Challenge?
     @State private var errorMessage: String?
     @State private var showingError = false
     @State private var isCreating = false
+    @State private var showingSuccess = false
 
     var body: some View {
         Form {
@@ -147,7 +149,16 @@ struct ChallengeCreateView: View {
                     }
                 }
                 .disabled(!isValid || isCreating)
+            } footer: {
+                if let message = validationMessage {
+                    Text(message)
+                        .foregroundStyle(.red)
+                }
             }
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .onTapGesture {
+            hideKeyboard()
         }
         .navigationTitle(String(localized: "New Challenge"))
         .navigationBarTitleDisplayMode(.inline)
@@ -163,9 +174,14 @@ struct ChallengeCreateView: View {
                 RoutineSelectorView(selectedRoutine: $selectedRoutine)
             }
         }
-        .sheet(isPresented: $showingShareSheet, onDismiss: {
-            dismiss()
-        }) {
+        .sheet(isPresented: $showingSuccess) {
+            ChallengeCreatedView(
+                challenge: createdChallenge,
+                shareUrl: shareUrl,
+                onDismiss: { dismiss() }
+            )
+        }
+        .sheet(isPresented: $showingShareSheet) {
             if let url = shareUrl {
                 ShareSheet(items: [URL(string: url)!])
             }
@@ -181,6 +197,28 @@ struct ChallengeCreateView: View {
     }
 
     // MARK: - Validation
+
+    private var validationMessage: String? {
+        if title.trimmingCharacters(in: .whitespaces).isEmpty {
+            return String(localized: "Please enter a challenge title.")
+        }
+        if selectedRoutine == nil {
+            return String(localized: "Please select a routine.")
+        }
+        if registrationEndDate <= Date() {
+            return String(localized: "Registration end date must be in the future.")
+        }
+        if challengeStartDate <= registrationEndDate {
+            return String(localized: "Challenge must start after registration ends.")
+        }
+        if challengeEndDate <= challengeStartDate {
+            return String(localized: "Challenge end date must be after start date.")
+        }
+        if !hasEnoughBalance {
+            return String(localized: "Insufficient mileage balance.")
+        }
+        return nil
+    }
 
     private var isValid: Bool {
         !title.trimmingCharacters(in: .whitespaces).isEmpty
@@ -205,7 +243,7 @@ struct ChallengeCreateView: View {
         defer { isCreating = false }
 
         do {
-            let (_, url) = try await challengeManager.createChallenge(
+            let (challenge, url) = try await challengeManager.createChallenge(
                 title: title.trimmingCharacters(in: .whitespaces),
                 description: description.trimmingCharacters(in: .whitespaces).isEmpty ? nil : description,
                 routine: routine,
@@ -217,11 +255,99 @@ struct ChallengeCreateView: View {
                 entryFee: entryFee
             )
 
+            createdChallenge = challenge
             shareUrl = url
-            showingShareSheet = true
+            showingSuccess = true
         } catch {
             errorMessage = error.localizedDescription
             showingError = true
+        }
+    }
+}
+
+// MARK: - Challenge Created View
+
+struct ChallengeCreatedView: View {
+    let challenge: Challenge?
+    let shareUrl: String?
+    let onDismiss: () -> Void
+
+    @State private var showingShareSheet = false
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            // Success Icon
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 80))
+                .foregroundStyle(.green)
+
+            // Title
+            Text("Challenge Created!")
+                .font(.title)
+                .fontWeight(.bold)
+
+            // Challenge Info
+            if let challenge = challenge {
+                VStack(spacing: 8) {
+                    Text(challenge.title)
+                        .font(.headline)
+
+                    HStack(spacing: 16) {
+                        Label(challenge.formattedEntryFee, systemImage: "ticket.fill")
+                        Label(challenge.formattedPrizePool, systemImage: "trophy.fill")
+                            .foregroundStyle(.orange)
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+
+            Text("Share this challenge with friends to invite them!")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+            Spacer()
+
+            // Buttons
+            VStack(spacing: 12) {
+                Button {
+                    showingShareSheet = true
+                } label: {
+                    Label("Share Challenge", systemImage: "square.and.arrow.up")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.orange)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+
+                Button {
+                    onDismiss()
+                } label: {
+                    Text("Done")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color(.secondarySystemBackground))
+                        .foregroundStyle(.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 32)
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            if let url = shareUrl, let shareURL = URL(string: url) {
+                ShareSheet(items: [shareURL])
+            }
         }
     }
 }
@@ -275,6 +401,14 @@ struct RoutineSelectorView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Keyboard Helper
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 
