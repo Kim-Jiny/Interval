@@ -1,4 +1,10 @@
-{                                                                                                                        
-    "api_base_url": "http://kjiny.shop/Interval/api",                                                                      
-    "web_base_url": "http://kjiny.shop/Interval"                                                                           
+{
+    "api_base_url": "http://kjiny.shop/Interval/api",
+    "web_base_url": "http://kjiny.shop/Interval",
+    "ad": {
+        "mileage": 50,
+        "daily_limit": 5,
+        "banner_enable": true,
+        "reward_enable": true
+    }
 }  

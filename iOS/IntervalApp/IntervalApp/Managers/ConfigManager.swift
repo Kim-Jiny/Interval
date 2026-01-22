@@ -18,10 +18,18 @@ class ConfigManager: ObservableObject {
     private static let apiBaseURLKey = "configApiBaseURL"
     private static let webBaseURLKey = "configWebBaseURL"
     private static let configLastFetchKey = "configLastFetchTime"
+    private static let adMileageKey = "configAdMileage"
+    private static let adDailyLimitKey = "configAdDailyLimit"
+    private static let adBannerEnableKey = "configAdBannerEnable"
+    private static let adRewardEnableKey = "configAdRewardEnable"
 
     // Default values
     private static let defaultApiBaseURL = "http://daeqws1.mycafe24.com/Interval/api"
     private static let defaultWebBaseURL = "http://daeqws1.mycafe24.com/Interval"
+    private static let defaultAdMileage = 50
+    private static let defaultAdDailyLimit = 5
+    private static let defaultAdBannerEnable = true
+    private static let defaultAdRewardEnable = true
 
     // Cache duration: 1 hour
     private let cacheDuration: TimeInterval = 3600
@@ -61,6 +69,32 @@ class ConfigManager: ObservableObject {
 
     nonisolated static var routineShareURL: String {
         "\(webBaseURL)/share/?code="
+    }
+
+    // MARK: - Ad Config
+
+    nonisolated static var adMileage: Int {
+        let value = UserDefaults.standard.integer(forKey: adMileageKey)
+        return value > 0 ? value : defaultAdMileage
+    }
+
+    nonisolated static var adDailyLimit: Int {
+        let value = UserDefaults.standard.integer(forKey: adDailyLimitKey)
+        return value > 0 ? value : defaultAdDailyLimit
+    }
+
+    nonisolated static var adBannerEnable: Bool {
+        if UserDefaults.standard.object(forKey: adBannerEnableKey) == nil {
+            return defaultAdBannerEnable
+        }
+        return UserDefaults.standard.bool(forKey: adBannerEnableKey)
+    }
+
+    nonisolated static var adRewardEnable: Bool {
+        if UserDefaults.standard.object(forKey: adRewardEnableKey) == nil {
+            return defaultAdRewardEnable
+        }
+        return UserDefaults.standard.bool(forKey: adRewardEnableKey)
     }
 
     private init() {
@@ -150,10 +184,19 @@ class ConfigManager: ObservableObject {
             UserDefaults.standard.set(config.webBaseURL, forKey: Self.webBaseURLKey)
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.configLastFetchKey)
 
+            // Save ad config
+            if let adConfig = config.ad {
+                UserDefaults.standard.set(adConfig.mileage, forKey: Self.adMileageKey)
+                UserDefaults.standard.set(adConfig.dailyLimit, forKey: Self.adDailyLimitKey)
+                UserDefaults.standard.set(adConfig.bannerEnable, forKey: Self.adBannerEnableKey)
+                UserDefaults.standard.set(adConfig.rewardEnable, forKey: Self.adRewardEnableKey)
+            }
+
             #if DEBUG
             print("⚙️ [Config] ✅ Loaded from GitHub successfully!")
             print("⚙️ [Config] API: \(config.apiBaseURL)")
             print("⚙️ [Config] Web: \(config.webBaseURL)")
+            print("⚙️ [Config] Ad - Mileage: \(Self.adMileage), Banner: \(Self.adBannerEnable), Reward: \(Self.adRewardEnable)")
             #endif
             isLoaded = true
 
@@ -178,9 +221,25 @@ class ConfigManager: ObservableObject {
 struct AppConfig: Codable {
     let apiBaseURL: String
     let webBaseURL: String
+    let ad: AdConfig?
 
     enum CodingKeys: String, CodingKey {
         case apiBaseURL = "api_base_url"
         case webBaseURL = "web_base_url"
+        case ad
+    }
+}
+
+struct AdConfig: Codable {
+    let mileage: Int
+    let dailyLimit: Int
+    let bannerEnable: Bool
+    let rewardEnable: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case mileage
+        case dailyLimit = "daily_limit"
+        case bannerEnable = "banner_enable"
+        case rewardEnable = "reward_enable"
     }
 }

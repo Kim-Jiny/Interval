@@ -28,10 +28,12 @@ struct MileageView: View {
             .listRowBackground(Color.clear)
 
             // Ad Reward Section
-            Section {
-                adRewardButton
-            } header: {
-                Text("Earn Mileage")
+            if ConfigManager.adRewardEnable {
+                Section {
+                    adRewardButton
+                } header: {
+                    Text("Earn Mileage")
+                }
             }
 
             // Summary Section
@@ -140,7 +142,7 @@ struct MileageView: View {
                 if isClaimingReward || adManager.isLoadingRewardedAd {
                     ProgressView()
                 } else if mileageManager.adRemainingCount > 0 {
-                    Text("+50M")
+                    Text("+\(ConfigManager.adMileage)M")
                         .font(.headline)
                         .foregroundStyle(.orange)
                 } else {

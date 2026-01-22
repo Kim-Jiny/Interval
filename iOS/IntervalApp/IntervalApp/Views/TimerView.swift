@@ -70,7 +70,7 @@ struct TimerView: View {
                     controlButtons
 
                     // 배너 광고
-                    if !hideAdsForScreenshot {
+                    if !hideAdsForScreenshot && ConfigManager.adBannerEnable {
                         BannerAdView()
                             .frame(height: bannerHeight)
                             .padding(.top, 16)
@@ -184,7 +184,7 @@ struct TimerView: View {
             .padding(.horizontal)
 
             // 배너 광고 (스크린샷 시 숨김)
-            if !hideAdsForScreenshot {
+            if !hideAdsForScreenshot && ConfigManager.adBannerEnable {
                 BannerAdView()
                     .frame(height: bannerHeight)
                     .padding(.top, 16)
