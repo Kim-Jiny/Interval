@@ -26,46 +26,28 @@ struct HomeView: View {
     // Challenge workout state
     @State private var selectedChallengeForWorkout: ChallengeListItem?
     @State private var challengeRoutine: Routine?
+    @State private var selectedChallengeForDetail: ChallengeListItem?
 
     var body: some View {
         NavigationStack {
-            List {
-                // 참여 중인 챌린지 섹션
-                if !challengeManager.activeChallenges.isEmpty {
-                    Section {
-                        ForEach(challengeManager.activeChallenges) { challenge in
-                            challengeRoutineRow(challenge)
-                        }
-                    } header: {
-                        Label(String(localized: "Active Challenges"), systemImage: "trophy.fill")
-                            .foregroundStyle(.orange)
-                    }
-                }
-
-                // 즐겨찾기 섹션
-                if !routineStore.favoriteRoutines.isEmpty {
-                    Section {
-                        ForEach(routineStore.favoriteRoutines) { routine in
-                            routineRow(routine)
-                        }
-                    } header: {
-                        Label("Favorites", systemImage: "star.fill")
-                            .foregroundStyle(.yellow)
-                    }
-                }
-
-                // 모든 루틴 섹션
-                Section {
-                    ForEach(routineStore.regularRoutines) { routine in
-                        routineRow(routine)
-                    }
-                } header: {
-                    if !routineStore.favoriteRoutines.isEmpty {
-                        Label("Routines", systemImage: "list.bullet")
-                    }
+            Group {
+                if routineStore.routines.isEmpty && challengeManager.activeChallenges.isEmpty {
+                    emptyStateView
+                } else {
+                    routineListView
                 }
             }
-            .listStyle(.insetGrouped)
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.blue.opacity(0.05),
+                        Color(.systemGroupedBackground)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+            )
             .navigationTitle(String(localized: "IntervalMate"))
             .refreshable {
                 if AuthManager.shared.isLoggedIn {
@@ -77,7 +59,9 @@ struct HomeView: View {
                     Button {
                         showingTemplateSelection = true
                     } label: {
-                        Image(systemName: "plus")
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(.blue)
                     }
                 }
             }
@@ -129,6 +113,11 @@ struct HomeView: View {
             .sheet(isPresented: $showingLoginPrompt) {
                 LoginView()
             }
+            .sheet(item: $selectedChallengeForDetail) { challenge in
+                NavigationStack {
+                    ChallengeDetailView(challengeId: challenge.id)
+                }
+            }
             .alert(String(localized: "Share Error", comment: "Share error alert title"), isPresented: $showingShareError) {
                 Button(String(localized: "OK", comment: "OK button"), role: .cancel) {}
             } message: {
@@ -150,6 +139,115 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - Empty State View
+
+    private var emptyStateView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .fill(Color.blue.opacity(0.1))
+                    .frame(width: 120, height: 120)
+
+                Image(systemName: "timer")
+                    .font(.system(size: 50))
+                    .foregroundStyle(.blue)
+            }
+
+            VStack(spacing: 8) {
+                Text("No Routines Yet")
+                    .font(.title2)
+                    .fontWeight(.bold)
+
+                Text("Create your first interval routine to get started!")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+
+            Button {
+                showingTemplateSelection = true
+            } label: {
+                HStack {
+                    Image(systemName: "plus")
+                    Text("Create Routine")
+                }
+                .font(.headline)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(Color.blue)
+                .clipShape(Capsule())
+            }
+
+            Spacer()
+        }
+    }
+
+    // MARK: - Routine List View
+
+    private var routineListView: some View {
+        List {
+            // 참여 중인 챌린지 섹션
+            if !challengeManager.activeChallenges.isEmpty {
+                Section {
+                    ForEach(challengeManager.activeChallenges) { challenge in
+                        challengeRoutineRow(challenge)
+                    }
+                } header: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "trophy.fill")
+                            .foregroundStyle(.orange)
+                        Text(String(localized: "Active Challenges"))
+                            .foregroundStyle(.orange)
+                            .fontWeight(.semibold)
+                    }
+                    .textCase(nil)
+                }
+            }
+
+            // 즐겨찾기 섹션
+            if !routineStore.favoriteRoutines.isEmpty {
+                Section {
+                    ForEach(routineStore.favoriteRoutines) { routine in
+                        routineRow(routine)
+                    }
+                } header: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(.yellow)
+                        Text("Favorites")
+                            .fontWeight(.semibold)
+                    }
+                    .textCase(nil)
+                }
+            }
+
+            // 모든 루틴 섹션
+            if !routineStore.regularRoutines.isEmpty {
+                Section {
+                    ForEach(routineStore.regularRoutines) { routine in
+                        routineRow(routine)
+                    }
+                } header: {
+                    if !routineStore.favoriteRoutines.isEmpty || !challengeManager.activeChallenges.isEmpty {
+                        HStack(spacing: 6) {
+                            Image(systemName: "list.bullet")
+                                .foregroundStyle(.blue)
+                            Text("Routines")
+                                .fontWeight(.semibold)
+                        }
+                        .textCase(nil)
+                    }
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+    }
+
     // 챌린지 운동 시작
     private func startChallengeWorkout(_ challenge: ChallengeListItem) {
         guard let routine = challenge.toRoutine() else { return }
@@ -157,30 +255,59 @@ struct HomeView: View {
         challengeRoutine = routine
     }
 
-    // 챌린지 루틴 행 뷰 (일반 루틴과 동일한 스타일)
+    // 챌린지 루틴 행 뷰
     @ViewBuilder
     private func challengeRoutineRow(_ challenge: ChallengeListItem) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 12) {
+            // Challenge Icon
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.orange.opacity(0.15))
+                    .frame(width: 44, height: 44)
+
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.orange)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
                 Text(challenge.title)
                     .font(.headline)
 
                 if let routineData = challenge.routineData {
-                    HStack(spacing: 16) {
-                        Label("\(routineData.intervals.count) intervals", systemImage: "list.bullet")
-                        Label("\(routineData.rounds) rounds", systemImage: "repeat")
+                    HStack(spacing: 12) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "list.bullet")
+                                .font(.caption2)
+                                .foregroundStyle(.blue)
+                            Text("\(routineData.intervals.count)")
+                                .font(.caption)
+                        }
+                        HStack(spacing: 4) {
+                            Image(systemName: "repeat")
+                                .font(.caption2)
+                                .foregroundStyle(.green)
+                            Text("\(routineData.rounds)")
+                                .font(.caption)
+                        }
 
                         // 총 시간
                         let totalSeconds = routineData.intervals.reduce(0) { $0 + $1.duration } * routineData.rounds
                         let minutes = totalSeconds / 60
                         let seconds = totalSeconds % 60
-                        if minutes > 0 {
-                            Label("\(minutes)m \(seconds)s", systemImage: "clock")
-                        } else {
-                            Label("\(seconds)s", systemImage: "clock")
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.caption2)
+                                .foregroundStyle(.purple)
+                            if minutes > 0 {
+                                Text("\(minutes)m \(seconds)s")
+                                    .font(.caption)
+                            } else {
+                                Text("\(seconds)s")
+                                    .font(.caption)
+                            }
                         }
                     }
-                    .font(.caption)
                     .foregroundStyle(.secondary)
                 } else {
                     Text(challenge.routineName)
@@ -204,8 +331,12 @@ struct HomeView: View {
                     if days == 0 {
                         Text("D-Day")
                             .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.orange)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(Color.orange)
+                            .clipShape(Capsule())
                     } else {
                         Text("D-\(days)")
                             .font(.caption)
@@ -219,6 +350,15 @@ struct HomeView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             startChallengeWorkout(challenge)
+        }
+        // 왼쪽 스와이프 → 챌린지 상세 보기
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            Button {
+                selectedChallengeForDetail = challenge
+            } label: {
+                Label("Detail", systemImage: "info.circle")
+            }
+            .tint(.orange)
         }
     }
 
@@ -294,17 +434,53 @@ struct RoutineRowView: View {
     let routine: Routine
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(routine.name)
-                .font(.headline)
+        HStack(spacing: 12) {
+            // Routine Icon
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.blue.opacity(0.15))
+                    .frame(width: 44, height: 44)
 
-            HStack(spacing: 16) {
-                Label("\(routine.intervals.count) intervals", systemImage: "list.bullet")
-                Label("\(routine.rounds) rounds", systemImage: "repeat")
-                Label(routine.formattedTotalDuration, systemImage: "clock")
+                Image(systemName: "timer")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.blue)
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(routine.name)
+                    .font(.headline)
+
+                HStack(spacing: 12) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "list.bullet")
+                            .font(.caption2)
+                            .foregroundStyle(.blue)
+                        Text("\(routine.intervals.count)")
+                            .font(.caption)
+                    }
+                    HStack(spacing: 4) {
+                        Image(systemName: "repeat")
+                            .font(.caption2)
+                            .foregroundStyle(.green)
+                        Text("\(routine.rounds)")
+                            .font(.caption)
+                    }
+                    HStack(spacing: 4) {
+                        Image(systemName: "clock")
+                            .font(.caption2)
+                            .foregroundStyle(.purple)
+                        Text(routine.formattedTotalDuration)
+                            .font(.caption)
+                    }
+                }
+                .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
         }
         .padding(.vertical, 4)
     }

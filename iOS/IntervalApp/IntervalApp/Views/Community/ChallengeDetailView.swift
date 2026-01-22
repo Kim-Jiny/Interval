@@ -29,12 +29,21 @@ struct ChallengeDetailView: View {
     var body: some View {
         Group {
             if challengeManager.isLoading && challengeManager.currentChallenge == nil {
-                ProgressView()
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.2)
+                        .tint(.orange)
+                    Text("Loading...")
+                        .foregroundStyle(.secondary)
+                }
             } else if let challenge = challengeManager.currentChallenge {
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 16) {
                         // Header Card
                         headerCard(challenge)
+
+                        // Stats Cards
+                        statsCards(challenge)
 
                         // Prize Distribution
                         prizeDistributionCard(challenge)
@@ -53,12 +62,30 @@ struct ChallengeDetailView: View {
                     }
                     .padding()
                 }
+                .background(
+                    LinearGradient(
+                        colors: [
+                            statusColor(challenge).opacity(0.05),
+                            Color(.systemGroupedBackground)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
             } else {
-                VStack(spacing: 12) {
-                    Image(systemName: "exclamationmark.triangle")
-                        .font(.largeTitle)
-                        .foregroundStyle(.secondary)
+                VStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.red.opacity(0.1))
+                            .frame(width: 80, height: 80)
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 36))
+                            .foregroundStyle(.red)
+                    }
                     Text("Challenge not found")
+                        .font(.headline)
+                    Text("This challenge may have been deleted")
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -67,11 +94,13 @@ struct ChallengeDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                if let challenge = challengeManager.currentChallenge {
+                if let _ = challengeManager.currentChallenge {
                     Button {
                         showingShareSheet = true
                     } label: {
-                        Image(systemName: "square.and.arrow.up")
+                        Image(systemName: "square.and.arrow.up.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(.orange)
                     }
                 }
             }
@@ -152,88 +181,155 @@ struct ChallengeDetailView: View {
 
     private func headerCard(_ challenge: Challenge) -> some View {
         VStack(spacing: 16) {
+            // Status & Participation Badge
             HStack {
-                Text(challenge.computedStatus.displayName)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(statusColor(challenge).opacity(0.15))
-                    .foregroundStyle(statusColor(challenge))
-                    .clipShape(Capsule())
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(statusColor(challenge))
+                        .frame(width: 8, height: 8)
+                    Text(challenge.computedStatus.displayName)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(statusColor(challenge).opacity(0.15))
+                .foregroundStyle(statusColor(challenge))
+                .clipShape(Capsule())
 
                 Spacer()
 
                 if challenge.isParticipating == true {
-                    Text("Participating")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.green)
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                        Text("Participating")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundStyle(.green)
                 }
             }
 
-            Text(challenge.title)
-                .font(.title2)
-                .fontWeight(.bold)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            if let description = challenge.description, !description.isEmpty {
-                Text(description)
-                    .font(.body)
-                    .foregroundStyle(.secondary)
+            // Title & Description
+            VStack(alignment: .leading, spacing: 8) {
+                Text(challenge.title)
+                    .font(.title2)
+                    .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .leading)
-            }
 
-            // Stats Row
-            HStack(spacing: 20) {
-                VStack {
-                    Text("\(challenge.participantCount)")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                    Text("Participants")
-                        .font(.caption)
+                if let description = challenge.description, !description.isEmpty {
+                    Text(description)
+                        .font(.body)
                         .foregroundStyle(.secondary)
-                }
-
-                Divider()
-                    .frame(height: 40)
-
-                VStack {
-                    Text(challenge.formattedEntryFee)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                    Text("Entry Fee")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Divider()
-                    .frame(height: 40)
-
-                VStack {
-                    Text(challenge.formattedPrizePool)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.orange)
-                    Text("Prize Pool")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .frame(maxWidth: .infinity)
+
+            // Creator info
+            if let creator = challenge.creatorNickname {
+                HStack(spacing: 6) {
+                    Image(systemName: "person.circle.fill")
+                        .foregroundStyle(.secondary)
+                    Text("Created by \(creator)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: statusColor(challenge).opacity(0.2), radius: 10, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(statusColor(challenge).opacity(0.3), lineWidth: 1)
+        )
+    }
+
+    // MARK: - Stats Cards
+
+    private func statsCards(_ challenge: Challenge) -> some View {
+        HStack(spacing: 12) {
+            // Participants Card
+            statCard(
+                icon: "person.2.fill",
+                iconColor: .blue,
+                value: "\(challenge.participantCount)",
+                label: "Participants",
+                maxValue: challenge.maxParticipants.map { "/\($0)" }
+            )
+
+            // Entry Fee Card
+            statCard(
+                icon: "ticket.fill",
+                iconColor: .purple,
+                value: challenge.formattedEntryFee,
+                label: "Entry Fee",
+                maxValue: nil
+            )
+
+            // Prize Pool Card
+            statCard(
+                icon: "trophy.fill",
+                iconColor: .orange,
+                value: challenge.formattedPrizePool,
+                label: "Prize Pool",
+                maxValue: nil,
+                isHighlighted: true
+            )
+        }
+    }
+
+    private func statCard(icon: String, iconColor: Color, value: String, label: String, maxValue: String?, isHighlighted: Bool = false) -> some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .fill(iconColor.opacity(0.15))
+                    .frame(width: 40, height: 40)
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundStyle(iconColor)
+            }
+
+            HStack(spacing: 2) {
+                Text(value)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(isHighlighted ? .orange : .primary)
+                if let max = maxValue {
+                    Text(max)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: iconColor.opacity(0.1), radius: 5, x: 0, y: 2)
+        )
     }
 
     // MARK: - Prize Distribution Card
 
     private func prizeDistributionCard(_ challenge: Challenge) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Prize Distribution")
-                .font(.headline)
+            HStack {
+                Image(systemName: "gift.fill")
+                    .foregroundStyle(.orange)
+                Text("Prize Distribution")
+                    .font(.headline)
+            }
 
             let prizePool = challenge.totalPrizePool
             let participantCount = challenge.participantCount
@@ -249,52 +345,104 @@ struct ChallengeDetailView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .orange.opacity(0.1), radius: 8, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+        )
     }
 
     private func prizeRow(rank: Int, percentage: Int, prizePool: Int) -> some View {
         HStack {
             HStack(spacing: 8) {
-                Image(systemName: rank == 1 ? "trophy.fill" : (rank == 2 ? "medal.fill" : "medal"))
-                    .foregroundStyle(rank == 1 ? .yellow : (rank == 2 ? .gray : .brown))
-                Text("\(rank)st")
+                ZStack {
+                    Circle()
+                        .fill(rankColor(rank).opacity(0.2))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: rank == 1 ? "trophy.fill" : "medal.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(rankColor(rank))
+                }
+
+                Text(rankText(rank))
+                    .font(.subheadline)
                     .fontWeight(.semibold)
             }
 
             Spacer()
 
             Text("\(percentage)%")
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .frame(width: 40)
 
             Text("\((prizePool * percentage / 100).formatted(.number))M")
+                .font(.subheadline)
                 .fontWeight(.bold)
                 .foregroundStyle(.orange)
-                .frame(width: 80, alignment: .trailing)
+                .frame(width: 70, alignment: .trailing)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func rankColor(_ rank: Int) -> Color {
+        switch rank {
+        case 1: return .yellow
+        case 2: return .gray
+        default: return .brown
+        }
+    }
+
+    private func rankText(_ rank: Int) -> String {
+        switch rank {
+        case 1: return String(localized: "1st")
+        case 2: return String(localized: "2nd")
+        case 3: return String(localized: "3rd")
+        default: return "\(rank)th"
+        }
     }
 
     // MARK: - Routine Card
 
     private func routineCard(_ challenge: Challenge) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Routine")
-                .font(.headline)
+            HStack {
+                Image(systemName: "figure.run")
+                    .foregroundStyle(.orange)
+                Text("Routine")
+                    .font(.headline)
+            }
 
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(challenge.routineName)
                         .font(.subheadline)
                         .fontWeight(.semibold)
 
                     if let routineData = challenge.routineData {
-                        HStack(spacing: 12) {
-                            Label("\(routineData.intervals.count) intervals", systemImage: "list.bullet")
-                            Label("\(routineData.rounds) rounds", systemImage: "repeat")
+                        HStack(spacing: 16) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "list.bullet")
+                                    .font(.caption)
+                                    .foregroundStyle(.blue)
+                                Text("\(routineData.intervals.count) intervals")
+                                    .font(.caption)
+                            }
+                            HStack(spacing: 4) {
+                                Image(systemName: "repeat")
+                                    .font(.caption)
+                                    .foregroundStyle(.green)
+                                Text("\(routineData.rounds) rounds")
+                                    .font(.caption)
+                            }
                         }
-                        .font(.caption)
                         .foregroundStyle(.secondary)
                     }
                 }
@@ -305,68 +453,148 @@ struct ChallengeDetailView: View {
                     Button {
                         startWorkout(challenge)
                     } label: {
-                        Label("Start", systemImage: "play.fill")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
+                        HStack(spacing: 6) {
+                            Image(systemName: "play.fill")
+                            Text("Start")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color.green)
+                        .clipShape(Capsule())
                     }
-                    .buttonStyle(.borderedProminent)
                 }
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        )
     }
 
     // MARK: - Dates Card
 
     private func datesCard(_ challenge: Challenge) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Schedule")
-                .font(.headline)
+            HStack {
+                Image(systemName: "calendar")
+                    .foregroundStyle(.blue)
+                Text("Schedule")
+                    .font(.headline)
+            }
 
-            VStack(spacing: 8) {
-                dateRow(title: "Registration", startDate: challenge.registrationStartDate, endDate: challenge.registrationEndDate)
-                Divider()
-                dateRow(title: "Challenge", startDate: challenge.challengeStartDate, endDate: challenge.challengeEndDate)
+            VStack(spacing: 12) {
+                dateRow(
+                    title: "Registration Period",
+                    icon: "person.badge.plus",
+                    iconColor: .blue,
+                    startDate: challenge.registrationStartDate,
+                    endDate: challenge.registrationEndDate,
+                    isActive: challenge.computedStatus == .registration
+                )
+
+                dateRow(
+                    title: "Challenge Period",
+                    icon: "flame.fill",
+                    iconColor: .orange,
+                    startDate: challenge.challengeStartDate,
+                    endDate: challenge.challengeEndDate,
+                    isActive: challenge.computedStatus == .active
+                )
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        )
     }
 
-    private func dateRow(title: String, startDate: Date?, endDate: Date?) -> some View {
-        HStack {
-            Text(title)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+    private func dateRow(title: String, icon: String, iconColor: Color, startDate: Date?, endDate: Date?, isActive: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.caption)
+                    .foregroundStyle(iconColor)
+                    .frame(width: 20)
 
-            Spacer()
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(isActive ? .primary : .secondary)
+
+                Spacer()
+            }
 
             if let start = startDate, let end = endDate {
-                Text("\(start, style: .date) - \(end, style: .date)")
-                    .font(.subheadline)
+                HStack(spacing: 8) {
+                    Spacer()
+                        .frame(width: 28)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 4) {
+                            Text(formatDateTime(start))
+                                .font(.caption)
+                                .foregroundStyle(isActive ? iconColor : .secondary)
+                            Text("~")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Text(formatDateTime(end))
+                            .font(.caption)
+                            .foregroundStyle(isActive ? iconColor : .secondary)
+                    }
+                }
             }
         }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 12)
+        .background(isActive ? iconColor.opacity(0.1) : Color.clear)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func formatDateTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 
     // MARK: - Participants Section
 
     private var participantsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Leaderboard")
-                .font(.headline)
+            HStack {
+                Image(systemName: "chart.bar.fill")
+                    .foregroundStyle(.purple)
+                Text("Leaderboard")
+                    .font(.headline)
+
+                Spacer()
+
+                Text("\(challengeManager.currentParticipants.count) participants")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
             if challengeManager.currentParticipants.isEmpty {
-                Text("No participants yet")
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                VStack(spacing: 12) {
+                    Image(systemName: "person.3")
+                        .font(.system(size: 32))
+                        .foregroundStyle(.secondary)
+                    Text("No participants yet")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
             } else {
-                LazyVStack(spacing: 8) {
+                VStack(spacing: 8) {
                     ForEach(challengeManager.currentParticipants) { participant in
                         participantRow(participant)
                     }
@@ -374,37 +602,61 @@ struct ChallengeDetailView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .purple.opacity(0.1), radius: 8, x: 0, y: 4)
+        )
     }
 
     private func participantRow(_ participant: ChallengeParticipant) -> some View {
-        HStack {
-            // Rank
-            Text("#\(participant.rank)")
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .frame(width: 30)
+        HStack(spacing: 12) {
+            // Rank Badge
+            ZStack {
+                Circle()
+                    .fill(participant.rank <= 3 ? rankColor(participant.rank).opacity(0.2) : Color(.systemGray5))
+                    .frame(width: 36, height: 36)
+
+                if participant.rank <= 3 {
+                    Image(systemName: participant.rank == 1 ? "trophy.fill" : "medal.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(rankColor(participant.rank))
+                } else {
+                    Text("\(participant.rank)")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                }
+            }
 
             // Name
             Text(participant.nickname ?? "Anonymous")
                 .font(.subheadline)
+                .fontWeight(.medium)
                 .lineLimit(1)
 
             Spacer()
 
             // Stats
-            VStack(alignment: .trailing) {
-                Text("\(participant.completionCount) days")
-                    .font(.caption)
-                    .fontWeight(.semibold)
+            VStack(alignment: .trailing, spacing: 2) {
+                HStack(spacing: 4) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.green)
+                    Text("\(participant.completionCount)")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+
                 Text(participant.formattedAttendanceRate)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 
     // MARK: - Action Buttons
@@ -416,48 +668,99 @@ struct ChallengeDetailView: View {
                 Button {
                     showingFinalizeAlert = true
                 } label: {
-                    Label("Distribute Prizes", systemImage: "trophy.fill")
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Image(systemName: "trophy.fill")
+                        Text("Distribute Prizes")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        LinearGradient(
+                            colors: [.orange, .orange.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.orange)
             }
 
             if !authManager.isLoggedIn {
                 Button {
                     showingLoginPrompt = true
                 } label: {
-                    Text("Login to Join")
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Image(systemName: "person.fill")
+                        Text("Login to Join")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .buttonStyle(.borderedProminent)
             } else if challenge.canJoin == true {
                 Button {
                     showingJoinAlert = true
                 } label: {
-                    Text("Join Challenge (\(challenge.formattedEntryFee))")
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Join Challenge (\(challenge.formattedEntryFee))")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        LinearGradient(
+                            colors: [.blue, .blue.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .buttonStyle(.borderedProminent)
             } else if challenge.canLeave == true {
-                Button(role: .destructive) {
+                Button {
                     showingLeaveAlert = true
                 } label: {
-                    Text("Leave Challenge")
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Image(systemName: "xmark.circle")
+                        Text("Leave Challenge")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.red.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                    )
                 }
-                .buttonStyle(.bordered)
             }
         }
+        .padding(.top, 8)
     }
 
     // MARK: - Finalize Result View
 
     private var finalizeResultView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "trophy.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(.orange)
+        VStack(spacing: 24) {
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .fill(Color.orange.opacity(0.1))
+                    .frame(width: 120, height: 120)
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 50))
+                    .foregroundStyle(.orange)
+            }
 
             Text("Prizes Distributed!")
                 .font(.title)
@@ -465,43 +768,54 @@ struct ChallengeDetailView: View {
 
             VStack(spacing: 12) {
                 ForEach(finalizeRankings) { ranking in
-                    HStack {
-                        HStack(spacing: 8) {
-                            Image(systemName: ranking.rank == 1 ? "trophy.fill" : (ranking.rank == 2 ? "medal.fill" : "medal"))
-                                .foregroundStyle(ranking.rank == 1 ? .yellow : (ranking.rank == 2 ? .gray : .brown))
-                            Text("#\(ranking.rank)")
-                                .fontWeight(.bold)
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(rankColor(ranking.rank).opacity(0.2))
+                                .frame(width: 40, height: 40)
+                            Image(systemName: ranking.rank == 1 ? "trophy.fill" : "medal.fill")
+                                .foregroundStyle(rankColor(ranking.rank))
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
                             Text(ranking.nickname ?? "Anonymous")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Text("\(ranking.completionCount) completions")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
 
                         Spacer()
 
-                        VStack(alignment: .trailing) {
-                            Text(ranking.formattedPrizeWon)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.orange)
-                            Text("\(ranking.completionCount) days")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        Text(ranking.formattedPrizeWon)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.orange)
                     }
                     .padding()
                     .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
-            .padding()
+            .padding(.horizontal)
+
+            Spacer()
 
             Button {
                 showingFinalizeResult = false
             } label: {
                 Text("Done")
+                    .font(.headline)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.orange)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-            .buttonStyle(.borderedProminent)
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom, 32)
         }
-        .padding()
         .navigationTitle("Results")
         .navigationBarTitleDisplayMode(.inline)
     }

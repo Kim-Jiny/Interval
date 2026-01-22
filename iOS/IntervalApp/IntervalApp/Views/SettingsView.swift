@@ -25,7 +25,7 @@ struct SettingsView: View {
     @State private var showingLogoutConfirm = false
     @State private var showingDeleteConfirm = false
     @State private var isDeleting = false
-    @State private var isAccountExpanded = false
+    @State private var showingAccountActions = false
     @State private var showingNicknameEdit = false
     @State private var editingNickname = ""
     @State private var isUpdatingNickname = false
@@ -34,105 +34,32 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                // MARK: - 계정
+                // MARK: - 계정 카드
                 Section {
-                    Button {
-                        withAnimation {
-                            isAccountExpanded.toggle()
-                        }
-                    } label: {
-                        HStack {
-                            if authManager.isLoggedIn, let user = authManager.currentUser {
-                                Image(systemName: "person.crop.circle.fill")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.accentColor)
-
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(user.nickname)
-                                        .font(.headline)
-                                    Text(user.email)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            } else {
-                                Image(systemName: "person.crop.circle.badge.plus")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.gray)
-
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Guest", comment: "Guest user label")
-                                        .font(.headline)
-                                    Text("Log in to share routines and workouts", comment: "Guest user description")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .rotationEffect(.degrees(isAccountExpanded ? 90 : 0))
-                        }
-                        .padding(.vertical, 4)
-                    }
-                    .foregroundColor(.primary)
-
-                    if isAccountExpanded {
-                        if authManager.isLoggedIn {
-                            Button {
-                                editingNickname = authManager.currentUser?.nickname ?? ""
-                                showingNicknameEdit = true
-                            } label: {
-                                HStack {
-                                    Label(String(localized: "Change Nickname", comment: "Button to change nickname"), systemImage: "pencil")
-                                    Spacer()
-                                    if isUpdatingNickname {
-                                        ProgressView()
-                                    }
-                                }
-                            }
-                            .disabled(isUpdatingNickname)
-
-                            Button(role: .destructive) {
-                                showingLogoutConfirm = true
-                            } label: {
-                                Label(String(localized: "Log Out", comment: "Button to log out"), systemImage: "rectangle.portrait.and.arrow.right")
-                            }
-
-                            Button(role: .destructive) {
-                                showingDeleteConfirm = true
-                            } label: {
-                                HStack {
-                                    Label(String(localized: "Delete Account", comment: "Button to delete account"), systemImage: "person.crop.circle.badge.minus")
-                                    if isDeleting {
-                                        Spacer()
-                                        ProgressView()
-                                    }
-                                }
-                            }
-                            .disabled(isDeleting)
-                        } else {
-                            Button {
-                                showingLoginSheet = true
-                            } label: {
-                                Label(String(localized: "Log In", comment: "Button to log in"), systemImage: "person.crop.circle.badge.checkmark")
-                            }
-                        }
-                    }
+                    accountCard
                 } header: {
-                    Text("Account", comment: "Section header for account settings")
+                    HStack(spacing: 6) {
+                        Image(systemName: "person.crop.circle.fill")
+                            .foregroundStyle(.blue)
+                        Text("Account", comment: "Section header for account settings")
+                            .fontWeight(.semibold)
+                    }
+                    .textCase(nil)
                 }
 
                 // MARK: - 알림 설정
                 Section {
                     Toggle(isOn: $pushNotificationEnabled) {
-                        Label {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.red.opacity(0.15))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "bell.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.red)
+                            }
                             Text("Push Notifications", comment: "Push notification toggle label")
-                        } icon: {
-                            Image(systemName: "bell.fill")
-                                .foregroundColor(.red)
                         }
                     }
                     .onChange(of: pushNotificationEnabled) { _, newValue in
@@ -140,33 +67,54 @@ struct SettingsView: View {
                     }
 
                     Toggle(isOn: $vibrationEnabled) {
-                        Label {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.orange.opacity(0.15))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "iphone.radiowaves.left.and.right")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.orange)
+                            }
                             Text("Vibration")
-                        } icon: {
-                            Image(systemName: "iphone.radiowaves.left.and.right")
-                                .foregroundColor(.orange)
                         }
                     }
 
                     Toggle(isOn: $soundEnabled) {
-                        Label {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.blue.opacity(0.15))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "speaker.wave.2.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.blue)
+                            }
                             Text("Sound")
-                        } icon: {
-                            Image(systemName: "speaker.wave.2.fill")
-                                .foregroundColor(.blue)
                         }
                     }
 
                     Toggle(isOn: $backgroundSoundEnabled) {
-                        Label {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.purple.opacity(0.15))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "bell.badge.waveform.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.purple)
+                            }
                             Text("Background Sound")
-                        } icon: {
-                            Image(systemName: "bell.badge.waveform.fill")
-                                .foregroundColor(.purple)
                         }
                     }
                 } header: {
-                    Text("Notifications")
+                    HStack(spacing: 6) {
+                        Image(systemName: "bell.fill")
+                            .foregroundStyle(.red)
+                        Text("Notifications")
+                            .fontWeight(.semibold)
+                    }
+                    .textCase(nil)
                 } footer: {
                     VStack(alignment: .leading, spacing: 4) {
                         if pushPermissionDenied {
@@ -186,13 +134,16 @@ struct SettingsView: View {
                     Button {
                         syncToWatch()
                     } label: {
-                        HStack {
-                            Label {
-                                Text("Sync to Watch", comment: "Button to sync routines to Apple Watch")
-                            } icon: {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.green.opacity(0.15))
+                                    .frame(width: 32, height: 32)
                                 Image(systemName: "applewatch")
+                                    .font(.system(size: 14))
                                     .foregroundColor(.green)
                             }
+                            Text("Sync to Watch", comment: "Button to sync routines to Apple Watch")
 
                             Spacer()
 
@@ -203,23 +154,38 @@ struct SettingsView: View {
                     }
                     .foregroundColor(.primary)
 
-                    HStack {
-                        Label {
-                            Text("Watch Connection", comment: "Label showing Apple Watch connection status")
-                        } icon: {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.purple.opacity(0.15))
+                                .frame(width: 32, height: 32)
                             Image(systemName: "antenna.radiowaves.left.and.right")
+                                .font(.system(size: 14))
                                 .foregroundColor(.purple)
                         }
+                        Text("Watch Connection", comment: "Label showing Apple Watch connection status")
 
                         Spacer()
 
-                        Text(connectivityManager.isWatchReachable
-                             ? String(localized: "Connected", comment: "Watch is connected")
-                             : String(localized: "Not Connected", comment: "Watch is not connected"))
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(connectivityManager.isWatchReachable ? Color.green : Color.gray)
+                                .frame(width: 8, height: 8)
+                            Text(connectivityManager.isWatchReachable
+                                 ? String(localized: "Connected", comment: "Watch is connected")
+                                 : String(localized: "Not Connected", comment: "Watch is not connected"))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 } header: {
-                    Text("Apple Watch", comment: "Section header for Apple Watch settings")
+                    HStack(spacing: 6) {
+                        Image(systemName: "applewatch")
+                            .foregroundStyle(.green)
+                        Text("Apple Watch", comment: "Section header for Apple Watch settings")
+                            .fontWeight(.semibold)
+                    }
+                    .textCase(nil)
                 } footer: {
                     if !connectivityManager.isWatchReachable {
                         Text("Opening the Watch app will automatically connect.", comment: "Help text when watch is not connected")
@@ -228,13 +194,16 @@ struct SettingsView: View {
 
                 // MARK: - 앱 정보
                 Section {
-                    HStack {
-                        Label {
-                            Text("Version")
-                        } icon: {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.gray.opacity(0.15))
+                                .frame(width: 32, height: 32)
                             Image(systemName: "info.circle.fill")
+                                .font(.system(size: 14))
                                 .foregroundColor(.gray)
                         }
+                        Text("Version")
 
                         Spacer()
 
@@ -246,33 +215,58 @@ struct SettingsView: View {
                                     Text(appVersion)
                                     Image(systemName: "arrow.up.circle.fill")
                                 }
-                                .foregroundColor(.accentColor)
+                                .font(.subheadline)
+                                .foregroundColor(.blue)
                             }
                         } else {
                             Text(appVersion)
+                                .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
                     }
 
                     #if DEBUG
-                    HStack {
-                        Label {
-                            Text("Build")
-                        } icon: {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.gray.opacity(0.15))
+                                .frame(width: 32, height: 32)
                             Image(systemName: "hammer.fill")
+                                .font(.system(size: 14))
                                 .foregroundColor(.gray)
                         }
+                        Text("Build")
 
                         Spacer()
 
                         Text(buildNumber)
+                            .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
                     #endif
                 } header: {
-                    Text("App Info")
+                    HStack(spacing: 6) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundStyle(.gray)
+                        Text("App Info")
+                            .fontWeight(.semibold)
+                    }
+                    .textCase(nil)
                 }
             }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.purple.opacity(0.05),
+                        Color(.systemGroupedBackground)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+            )
             .navigationTitle("Settings")
             .task {
                 await updateManager.checkForUpdate()
@@ -317,14 +311,89 @@ struct SettingsView: View {
             } message: {
                 Text("Enter your new nickname (2-20 characters)", comment: "Nickname requirements message")
             }
-            .onChange(of: authManager.isLoggedIn) { _, isLoggedIn in
-                if isLoggedIn {
-                    withAnimation {
-                        isAccountExpanded = false
-                    }
+            .confirmationDialog(String(localized: "Account", comment: "Account actions dialog title"), isPresented: $showingAccountActions, titleVisibility: .visible) {
+                Button(String(localized: "Change Nickname", comment: "Button to change nickname")) {
+                    editingNickname = authManager.currentUser?.nickname ?? ""
+                    showingNicknameEdit = true
                 }
+                Button(String(localized: "Log Out", comment: "Log out button"), role: .destructive) {
+                    showingLogoutConfirm = true
+                }
+                Button(String(localized: "Delete Account", comment: "Delete account button"), role: .destructive) {
+                    showingDeleteConfirm = true
+                }
+                Button(String(localized: "Cancel", comment: "Cancel button"), role: .cancel) { }
             }
         }
+    }
+
+    // MARK: - Account Card
+
+    private var accountCard: some View {
+        Button {
+            if authManager.isLoggedIn {
+                showingAccountActions = true
+            } else {
+                showingLoginSheet = true
+            }
+        } label: {
+            HStack(spacing: 14) {
+                if authManager.isLoggedIn, let user = authManager.currentUser {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.blue, .blue.opacity(0.7)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 50, height: 50)
+
+                        Text(String(user.nickname.prefix(1)).uppercased())
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(user.nickname)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        Text(user.email)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                } else {
+                    ZStack {
+                        Circle()
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(width: 50, height: 50)
+
+                        Image(systemName: "person.fill")
+                            .font(.title2)
+                            .foregroundStyle(.gray)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Guest", comment: "Guest user label")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        Text("Tap to log in", comment: "Guest user tap to login")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 4)
+        }
+        .foregroundColor(.primary)
     }
 
     private func deleteAccount() async {

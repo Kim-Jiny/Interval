@@ -26,6 +26,7 @@ class ChallengeManager: ObservableObject {
 
     // For deep link handling
     @Published var pendingChallenge: Challenge?
+    @Published var showChallengeDetail: Bool = false
     @Published var showJoinConfirmation: Bool = false
     @Published var showDeepLinkError: Bool = false
     @Published var deepLinkErrorMessage: String?
@@ -53,6 +54,7 @@ class ChallengeManager: ObservableObject {
         currentChallenge = nil
         currentParticipants = []
         pendingChallenge = nil
+        showChallengeDetail = false
         showJoinConfirmation = false
         showDeepLinkError = false
         deepLinkErrorMessage = nil
@@ -605,28 +607,8 @@ class ChallengeManager: ObservableObject {
             #endif
             self.pendingChallenge = challenge
 
-            // 이미 참여 중인 경우
-            if challenge.isParticipating == true {
-                self.showAlreadyParticipating = true
-            }
-            // 모집 기간인지 확인
-            else if let regStart = challenge.registrationStartDate,
-                    let regEnd = challenge.registrationEndDate {
-                let now = Date()
-                if now >= regStart && now <= regEnd {
-                    // 모집 기간 내 - 참가 가능
-                    self.showJoinConfirmation = true
-                } else {
-                    // 모집 기간 아님
-                    self.showCannotJoin = true
-                }
-            }
-            // 날짜 파싱 실패 시 canJoin 필드로 폴백
-            else if challenge.canJoin == true {
-                self.showJoinConfirmation = true
-            } else {
-                self.showCannotJoin = true
-            }
+            // 바로 챌린지 상세 페이지 표시
+            self.showChallengeDetail = true
         } catch {
             #if DEBUG
             print("🔗 Deep link error: \(error.localizedDescription)")

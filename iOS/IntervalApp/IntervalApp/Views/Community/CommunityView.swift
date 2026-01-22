@@ -36,6 +36,16 @@ struct CommunityView: View {
                 }
                 .padding(.vertical)
             }
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.orange.opacity(0.05),
+                        Color(.systemGroupedBackground)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
             .navigationTitle(String(localized: "Challenge"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -46,7 +56,9 @@ struct CommunityView: View {
                             showingLoginPrompt = true
                         }
                     } label: {
-                        Image(systemName: "plus")
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(.orange)
                     }
                 }
             }
@@ -96,7 +108,25 @@ struct CommunityView: View {
                 showingLoginPrompt = true
             }
         } label: {
-            HStack {
+            HStack(spacing: 16) {
+                // Mileage Icon
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [.orange, .orange.opacity(0.7)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 50, height: 50)
+
+                    Text("M")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                }
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("My Mileage")
                         .font(.subheadline)
@@ -104,24 +134,32 @@ struct CommunityView: View {
 
                     if authManager.isLoggedIn {
                         Text(mileageManager.balance?.formattedBalance ?? "0M")
-                            .font(.title)
+                            .font(.title2)
                             .fontWeight(.bold)
+                            .foregroundStyle(.primary)
                     } else {
                         Text(String(localized: "Login to view"))
-                            .font(.title3)
+                            .font(.callout)
                             .foregroundStyle(.secondary)
                     }
                 }
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(.secondary)
+                Image(systemName: "chevron.right.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(.orange.opacity(0.3))
             }
             .padding()
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(.systemBackground))
+                    .shadow(color: .orange.opacity(0.15), radius: 10, x: 0, y: 4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
         .padding(.horizontal)
@@ -137,17 +175,25 @@ struct CommunityView: View {
     private var myChallengesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("My Challenges")
-                    .font(.headline)
+                HStack(spacing: 6) {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                    Text("My Challenges")
+                        .font(.headline)
+                }
                 Spacer()
 
                 if challengeManager.myChallenges.count > 5 {
                     Button {
                         showingMyChallenges = true
                     } label: {
-                        Text("More")
-                            .font(.subheadline)
-                            .foregroundStyle(.blue)
+                        HStack(spacing: 4) {
+                            Text("More")
+                                .font(.subheadline)
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                        }
+                        .foregroundStyle(.orange)
                     }
                 }
             }
@@ -163,7 +209,7 @@ struct CommunityView: View {
                     }
                 }
                 .padding(.horizontal)
-                .padding(.top, 8)
+                .padding(.vertical, 4)
             }
         }
     }
@@ -173,25 +219,65 @@ struct CommunityView: View {
     private var joinableChallengesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Public Challenges")
-                    .font(.headline)
+                HStack(spacing: 6) {
+                    Image(systemName: "globe")
+                        .foregroundStyle(.blue)
+                    Text("Public Challenges")
+                        .font(.headline)
+                }
                 Spacer()
             }
             .padding(.horizontal)
 
             if challengeManager.joinableChallenges.isEmpty && !challengeManager.isLoading {
-                VStack(spacing: 12) {
-                    Image(systemName: "trophy")
-                        .font(.system(size: 40))
-                        .foregroundStyle(.secondary)
-                    Text("No challenges available")
-                        .foregroundStyle(.secondary)
-                    Text("Create your own challenge!")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                // Empty State
+                VStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.orange.opacity(0.1))
+                            .frame(width: 80, height: 80)
+
+                        Image(systemName: "trophy.fill")
+                            .font(.system(size: 36))
+                            .foregroundStyle(.orange)
+                    }
+
+                    VStack(spacing: 4) {
+                        Text("No challenges available")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        Text("Create your own challenge!")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Button {
+                        if authManager.isLoggedIn {
+                            showingCreateChallenge = true
+                        } else {
+                            showingLoginPrompt = true
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "plus")
+                            Text("Create Challenge")
+                        }
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Color.orange)
+                        .clipShape(Capsule())
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 40)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.systemBackground))
+                )
+                .padding(.horizontal)
             } else {
                 LazyVStack(spacing: 12) {
                     ForEach(challengeManager.joinableChallenges) { challenge in
@@ -205,9 +291,13 @@ struct CommunityView: View {
             }
 
             if challengeManager.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .tint(.orange)
+                    Spacer()
+                }
+                .padding()
             }
         }
     }
@@ -243,21 +333,25 @@ struct MyChallengeCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 if challenge.needsClaimPrize {
-                    Text("Claim Prize")
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.2))
-                        .foregroundStyle(.orange)
-                        .clipShape(Capsule())
+                    HStack(spacing: 4) {
+                        Image(systemName: "gift.fill")
+                            .font(.caption2)
+                        Text("Claim Prize")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.orange.opacity(0.2))
+                    .foregroundStyle(.orange)
+                    .clipShape(Capsule())
                 } else {
                     Text(currentStatus.displayName)
                         .font(.caption2)
                         .fontWeight(.semibold)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(statusColor.opacity(0.2))
+                        .background(statusColor.opacity(0.15))
                         .foregroundStyle(statusColor)
                         .clipShape(Capsule())
                 }
@@ -269,6 +363,7 @@ struct MyChallengeCard: View {
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .lineLimit(2)
+                .foregroundStyle(.primary)
 
             Text(challenge.routineName)
                 .font(.caption)
@@ -278,30 +373,48 @@ struct MyChallengeCard: View {
             Spacer()
 
             HStack {
-                Image(systemName: "person.2.fill")
-                    .font(.caption2)
-                Text("\(challenge.participantCount)")
-                    .font(.caption)
+                HStack(spacing: 4) {
+                    Image(systemName: "person.2.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Text("\(challenge.participantCount)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
 
                 Spacer()
 
-                Text(challenge.formattedPrizePool)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.orange)
+                HStack(spacing: 2) {
+                    Image(systemName: "trophy.fill")
+                        .font(.caption2)
+                    Text(challenge.formattedPrizePool)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                }
+                .foregroundStyle(.orange)
             }
         }
         .padding()
-        .frame(width: 160, height: 140)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .frame(width: 165, height: 145)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color(.systemBackground))
+                .shadow(color: statusColor.opacity(0.2), radius: 8, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(statusColor.opacity(0.3), lineWidth: 1)
+        )
         .overlay(alignment: .topTrailing) {
             if challenge.needsClaimPrize {
                 Circle()
                     .fill(.orange)
                     .frame(width: 12, height: 12)
-                    .offset(x: -4, y: 4)
+                    .overlay(
+                        Circle()
+                            .stroke(.white, lineWidth: 2)
+                    )
+                    .offset(x: 4, y: -4)
             }
         }
     }

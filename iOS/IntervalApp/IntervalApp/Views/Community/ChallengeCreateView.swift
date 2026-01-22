@@ -82,7 +82,7 @@ struct ChallengeCreateView: View {
 
                 DatePicker(String(localized: "Challenge Starts"),
                           selection: $challengeStartDate,
-                          in: registrationEndDate...,
+                          in: registrationEndDate.addingTimeInterval(60)...,
                           displayedComponents: [.date, .hourAndMinute])
 
                 DatePicker(String(localized: "Challenge Ends"),
@@ -141,14 +141,24 @@ struct ChallengeCreateView: View {
                         Spacer()
                         if isCreating {
                             ProgressView()
+                                .tint(.white)
+                            Text("Creating...")
+                                .fontWeight(.semibold)
+                                .padding(.leading, 8)
                         } else {
                             Text("Create Challenge")
                                 .fontWeight(.semibold)
                         }
                         Spacer()
                     }
+                    .padding(.vertical, 4)
                 }
                 .disabled(!isValid || isCreating)
+                .listRowBackground(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isValid && !isCreating ? Color.orange : Color.gray.opacity(0.3))
+                )
+                .foregroundStyle(isValid && !isCreating ? .white : .secondary)
             } footer: {
                 if let message = validationMessage {
                     Text(message)
@@ -167,8 +177,30 @@ struct ChallengeCreateView: View {
                 Button(String(localized: "Cancel")) {
                     dismiss()
                 }
+                .disabled(isCreating)
             }
         }
+        .overlay {
+            if isCreating {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.white)
+                        Text("Creating Challenge...")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(32)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+            }
+        }
+        .allowsHitTesting(!isCreating)
         .sheet(isPresented: $showingRoutineSelector) {
             NavigationStack {
                 RoutineSelectorView(selectedRoutine: $selectedRoutine)
@@ -208,8 +240,8 @@ struct ChallengeCreateView: View {
         if registrationEndDate <= Date() {
             return String(localized: "Registration end date must be in the future.")
         }
-        if challengeStartDate <= registrationEndDate {
-            return String(localized: "Challenge must start after registration ends.")
+        if challengeStartDate < registrationEndDate.addingTimeInterval(60) {
+            return String(localized: "Challenge must start at least 1 minute after registration ends.")
         }
         if challengeEndDate <= challengeStartDate {
             return String(localized: "Challenge end date must be after start date.")
@@ -224,7 +256,7 @@ struct ChallengeCreateView: View {
         !title.trimmingCharacters(in: .whitespaces).isEmpty
         && selectedRoutine != nil
         && registrationEndDate > Date()
-        && challengeStartDate > registrationEndDate
+        && challengeStartDate >= registrationEndDate.addingTimeInterval(60)
         && challengeEndDate > challengeStartDate
         && hasEnoughBalance
     }
