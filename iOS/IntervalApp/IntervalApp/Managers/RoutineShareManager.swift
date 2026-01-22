@@ -63,11 +63,7 @@ class RoutineShareManager: ObservableObject {
     static let shared = RoutineShareManager()
 
     private var baseURL: String {
-        #if DEBUG
-        return "http://kjiny.shop/Interval/api"
-        #else
-        return "http://kjiny.shop/Interval/api"
-        #endif
+        ConfigManager.shared.apiBaseURL
     }
 
     // 공유받은 루틴 상태

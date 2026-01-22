@@ -126,7 +126,7 @@ struct ChallengeDetailView: View {
         }
         .sheet(isPresented: $showingShareSheet) {
             if let challenge = challengeManager.currentChallenge {
-                let shareUrl = "http://kjiny.shop/Interval/challenge/?code=\(challenge.shareCode)"
+                let shareUrl = "\(ConfigManager.shared.challengeShareURL)\(challenge.shareCode)"
                 ShareSheet(items: [URL(string: shareUrl)!])
             }
         }

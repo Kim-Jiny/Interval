@@ -23,6 +23,10 @@ struct IntervalAppApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(routineStore)
+                .task {
+                    // 앱 시작 시 서버 설정 로드
+                    await ConfigManager.shared.loadConfig()
+                }
                 .onOpenURL { url in
                     // Kakao 로그인 URL 처리
                     if AuthApi.isKakaoTalkLoginUrl(url) {

@@ -1,0 +1,4 @@
+{                                                                                                                        
+    "api_base_url": "http://kjiny.shop/Interval/api",                                                                      
+    "web_base_url": "http://kjiny.shop/Interval"                                                                           
+}  

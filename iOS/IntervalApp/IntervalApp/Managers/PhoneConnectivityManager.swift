@@ -19,11 +19,7 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
 
     // Watch 푸시 서버 URL
     private var watchPushURL: String {
-        #if DEBUG
-        return "http://kjiny.shop/Interval/api/send_watch_push_sandbox.php"
-        #else
-        return "http://kjiny.shop/Interval/api/send_watch_push.php"
-        #endif
+        ConfigManager.shared.watchPushURL
     }
 
     override init() {

@@ -11,13 +11,9 @@ import ActivityKit
 class LiveActivityPushManager {
     static let shared = LiveActivityPushManager()
 
-    // PHP 서버 URL (Debug/Release 분기)
+    // PHP 서버 URL
     private var pushURL: String {
-        #if DEBUG
-        return "http://kjiny.shop/Interval/api/update_live_activity_sandbox.php"
-        #else
-        return "http://kjiny.shop/Interval/api/update_live_activity.php"
-        #endif
+        ConfigManager.shared.liveActivityPushURL
     }
 
     private var currentPushToken: String?

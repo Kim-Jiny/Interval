@@ -13,11 +13,7 @@ class MileageManager: ObservableObject {
 
     // API Base URL
     private var baseURL: String {
-        #if DEBUG
-        return "http://kjiny.shop/Interval/api"
-        #else
-        return "http://kjiny.shop/Interval/api"
-        #endif
+        ConfigManager.shared.apiBaseURL
     }
 
     // Published state
