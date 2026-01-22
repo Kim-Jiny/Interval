@@ -63,7 +63,7 @@ class RoutineShareManager: ObservableObject {
     static let shared = RoutineShareManager()
 
     private var baseURL: String {
-        ConfigManager.shared.apiBaseURL
+        ConfigManager.apiBaseURL
     }
 
     // 공유받은 루틴 상태

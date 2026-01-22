@@ -126,7 +126,7 @@ struct ChallengeDetailView: View {
         }
         .sheet(isPresented: $showingShareSheet) {
             if let challenge = challengeManager.currentChallenge {
-                let shareUrl = "\(ConfigManager.shared.challengeShareURL)\(challenge.shareCode)"
+                let shareUrl = "\(ConfigManager.challengeShareURL)\(challenge.shareCode)"
                 ShareSheet(items: [URL(string: shareUrl)!])
             }
         }

@@ -13,7 +13,7 @@ class LiveActivityPushManager {
 
     // PHP 서버 URL
     private var pushURL: String {
-        ConfigManager.shared.liveActivityPushURL
+        ConfigManager.liveActivityPushURL
     }
 
     private var currentPushToken: String?

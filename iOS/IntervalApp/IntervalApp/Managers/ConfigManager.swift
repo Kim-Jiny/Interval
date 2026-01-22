@@ -12,22 +12,34 @@ class ConfigManager: ObservableObject {
     static let shared = ConfigManager()
 
     // GitHub Raw URL for config JSON
-    private let configURL = "https://raw.githubusercontent.com/kish191919/Interval_App/main/config.json"
+    private let configURL = "https://raw.githubusercontent.com/Kim-Jiny/Interval/refs/heads/main/Data/api.json"
 
     // UserDefaults keys
-    private let configCacheKey = "cachedAppConfig"
-    private let configLastFetchKey = "configLastFetchTime"
+    private static let apiBaseURLKey = "configApiBaseURL"
+    private static let webBaseURLKey = "configWebBaseURL"
+    private static let configLastFetchKey = "configLastFetchTime"
+
+    // Default values
+    private static let defaultApiBaseURL = "http://daeqws1.mycafe24.com/Interval/api"
+    private static let defaultWebBaseURL = "http://daeqws1.mycafe24.com/Interval"
 
     // Cache duration: 1 hour
     private let cacheDuration: TimeInterval = 3600
 
-    // Published config values
-    @Published private(set) var apiBaseURL: String = "http://kjiny.shop/Interval/api"
-    @Published private(set) var webBaseURL: String = "http://kjiny.shop/Interval"
+    // Published config values (for SwiftUI binding)
     @Published private(set) var isLoaded: Bool = false
 
-    // Computed URLs based on config
-    var watchPushURL: String {
+    // MARK: - Thread-safe URL accessors (nonisolated)
+
+    nonisolated static var apiBaseURL: String {
+        UserDefaults.standard.string(forKey: apiBaseURLKey) ?? defaultApiBaseURL
+    }
+
+    nonisolated static var webBaseURL: String {
+        UserDefaults.standard.string(forKey: webBaseURLKey) ?? defaultWebBaseURL
+    }
+
+    nonisolated static var watchPushURL: String {
         #if DEBUG
         return "\(apiBaseURL)/send_watch_push_sandbox.php"
         #else
@@ -35,7 +47,7 @@ class ConfigManager: ObservableObject {
         #endif
     }
 
-    var liveActivityPushURL: String {
+    nonisolated static var liveActivityPushURL: String {
         #if DEBUG
         return "\(apiBaseURL)/update_live_activity_sandbox.php"
         #else
@@ -43,17 +55,20 @@ class ConfigManager: ObservableObject {
         #endif
     }
 
-    var challengeShareURL: String {
+    nonisolated static var challengeShareURL: String {
         "\(webBaseURL)/challenge/?code="
     }
 
-    var routineShareURL: String {
+    nonisolated static var routineShareURL: String {
         "\(webBaseURL)/share/?code="
     }
 
     private init() {
-        // Load cached config on init
-        loadCachedConfig()
+        // Load cached config on init (if not already set)
+        if UserDefaults.standard.string(forKey: Self.apiBaseURLKey) == nil {
+            UserDefaults.standard.set(Self.defaultApiBaseURL, forKey: Self.apiBaseURLKey)
+            UserDefaults.standard.set(Self.defaultWebBaseURL, forKey: Self.webBaseURLKey)
+        }
     }
 
     // MARK: - Public Methods
@@ -96,12 +111,10 @@ class ConfigManager: ObservableObject {
 
             let config = try JSONDecoder().decode(AppConfig.self, from: data)
 
-            // Update values
-            self.apiBaseURL = config.apiBaseURL
-            self.webBaseURL = config.webBaseURL
-
-            // Cache the config
-            cacheConfig(data: data)
+            // Save to UserDefaults (thread-safe storage)
+            UserDefaults.standard.set(config.apiBaseURL, forKey: Self.apiBaseURLKey)
+            UserDefaults.standard.set(config.webBaseURL, forKey: Self.webBaseURLKey)
+            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.configLastFetchKey)
 
             print("⚙️ Config loaded from GitHub: \(config.apiBaseURL)")
             isLoaded = true
@@ -112,28 +125,8 @@ class ConfigManager: ObservableObject {
         }
     }
 
-    private func loadCachedConfig() {
-        guard let data = UserDefaults.standard.data(forKey: configCacheKey) else {
-            return
-        }
-
-        do {
-            let config = try JSONDecoder().decode(AppConfig.self, from: data)
-            self.apiBaseURL = config.apiBaseURL
-            self.webBaseURL = config.webBaseURL
-            print("⚙️ Config loaded from cache: \(config.apiBaseURL)")
-        } catch {
-            print("⚙️ Failed to load cached config: \(error.localizedDescription)")
-        }
-    }
-
-    private func cacheConfig(data: Data) {
-        UserDefaults.standard.set(data, forKey: configCacheKey)
-        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: configLastFetchKey)
-    }
-
     private func isCacheValid() -> Bool {
-        let lastFetch = UserDefaults.standard.double(forKey: configLastFetchKey)
+        let lastFetch = UserDefaults.standard.double(forKey: Self.configLastFetchKey)
         guard lastFetch > 0 else { return false }
 
         let elapsed = Date().timeIntervalSince1970 - lastFetch

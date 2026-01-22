@@ -19,7 +19,7 @@ class PhoneConnectivityManager: NSObject, ObservableObject {
 
     // Watch 푸시 서버 URL
     private var watchPushURL: String {
-        ConfigManager.shared.watchPushURL
+        ConfigManager.watchPushURL
     }
 
     override init() {

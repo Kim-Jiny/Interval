@@ -13,7 +13,7 @@ class ChallengeManager: ObservableObject {
 
     // API Base URL
     private var baseURL: String {
-        ConfigManager.shared.apiBaseURL
+        ConfigManager.apiBaseURL
     }
 
     // Published state

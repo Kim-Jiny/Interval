@@ -47,7 +47,7 @@ class AuthManager: NSObject, ObservableObject {
 
     // API Base URL
     private var baseURL: String {
-        ConfigManager.shared.apiBaseURL
+        ConfigManager.apiBaseURL
     }
 
     // Published 상태
