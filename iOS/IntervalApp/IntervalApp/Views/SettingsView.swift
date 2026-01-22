@@ -192,6 +192,33 @@ struct SettingsView: View {
                     }
                 }
 
+                // MARK: - 지원
+                Section {
+                    NavigationLink {
+                        SupportView()
+                    } label: {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.blue.opacity(0.15))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "questionmark.bubble.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.blue)
+                            }
+                            Text("Support & Feedback")
+                        }
+                    }
+                } header: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "questionmark.bubble.fill")
+                            .foregroundStyle(.blue)
+                        Text("Support")
+                            .fontWeight(.semibold)
+                    }
+                    .textCase(nil)
+                }
+
                 // MARK: - 앱 정보
                 Section {
                     HStack(spacing: 12) {
