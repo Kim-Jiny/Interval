@@ -28,7 +28,7 @@ struct MileageView: View {
             .listRowBackground(Color.clear)
 
             // Ad Reward Section
-            if ConfigManager.adRewardEnable {
+            if ConfigManager.shared.adRewardEnable {
                 Section {
                     adRewardButton
                 } header: {
@@ -142,7 +142,7 @@ struct MileageView: View {
                 if isClaimingReward || adManager.isLoadingRewardedAd {
                     ProgressView()
                 } else if mileageManager.adRemainingCount > 0 {
-                    Text("+\(ConfigManager.adMileage)M")
+                    Text("+\(ConfigManager.shared.adMileage)M")
                         .font(.headline)
                         .foregroundStyle(.orange)
                 } else {

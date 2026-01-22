@@ -7,6 +7,26 @@
 
 import Foundation
 
+// MARK: - Thread-safe URL Storage (클래스 외부)
+private enum ConfigURLStorage {
+    static let lock = NSLock()
+    static var apiBaseURL = "http://daeqws1.mycafe24.com/Interval/api"
+    static var webBaseURL = "http://daeqws1.mycafe24.com/Interval"
+
+    static func get() -> (api: String, web: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        return (apiBaseURL, webBaseURL)
+    }
+
+    static func set(api: String, web: String) {
+        lock.lock()
+        apiBaseURL = api
+        webBaseURL = web
+        lock.unlock()
+    }
+}
+
 @MainActor
 class ConfigManager: ObservableObject {
     static let shared = ConfigManager()
@@ -14,37 +34,23 @@ class ConfigManager: ObservableObject {
     // GitHub Raw URL for config JSON
     private let configURL = "https://raw.githubusercontent.com/Kim-Jiny/Interval/refs/heads/main/Data/api.json"
 
-    // UserDefaults keys
-    private static let apiBaseURLKey = "configApiBaseURL"
-    private static let webBaseURLKey = "configWebBaseURL"
-    private static let configLastFetchKey = "configLastFetchTime"
-    private static let adMileageKey = "configAdMileage"
-    private static let adDailyLimitKey = "configAdDailyLimit"
-    private static let adBannerEnableKey = "configAdBannerEnable"
-    private static let adRewardEnableKey = "configAdRewardEnable"
-
-    // Default values
-    private static let defaultApiBaseURL = "http://daeqws1.mycafe24.com/Interval/api"
-    private static let defaultWebBaseURL = "http://daeqws1.mycafe24.com/Interval"
-    private static let defaultAdMileage = 50
-    private static let defaultAdDailyLimit = 5
-    private static let defaultAdBannerEnable = true
-    private static let defaultAdRewardEnable = true
-
-    // Cache duration: 1 hour
-    private let cacheDuration: TimeInterval = 3600
+    // Ad config (실시간 적용)
+    @Published var adMileage: Int = 50
+    @Published var adDailyLimit: Int = 5
+    @Published var adBannerEnable: Bool = true
+    @Published var adRewardEnable: Bool = true
 
     // Published config values (for SwiftUI binding)
     @Published private(set) var isLoaded: Bool = false
 
-    // MARK: - Thread-safe URL accessors (nonisolated)
+    // MARK: - Thread-safe URL accessors
 
     nonisolated static var apiBaseURL: String {
-        UserDefaults.standard.string(forKey: apiBaseURLKey) ?? defaultApiBaseURL
+        ConfigURLStorage.get().api
     }
 
     nonisolated static var webBaseURL: String {
-        UserDefaults.standard.string(forKey: webBaseURLKey) ?? defaultWebBaseURL
+        ConfigURLStorage.get().web
     }
 
     nonisolated static var watchPushURL: String {
@@ -71,46 +77,12 @@ class ConfigManager: ObservableObject {
         "\(webBaseURL)/share/?code="
     }
 
-    // MARK: - Ad Config
-
-    nonisolated static var adMileage: Int {
-        let value = UserDefaults.standard.integer(forKey: adMileageKey)
-        return value > 0 ? value : defaultAdMileage
-    }
-
-    nonisolated static var adDailyLimit: Int {
-        let value = UserDefaults.standard.integer(forKey: adDailyLimitKey)
-        return value > 0 ? value : defaultAdDailyLimit
-    }
-
-    nonisolated static var adBannerEnable: Bool {
-        if UserDefaults.standard.object(forKey: adBannerEnableKey) == nil {
-            return defaultAdBannerEnable
-        }
-        return UserDefaults.standard.bool(forKey: adBannerEnableKey)
-    }
-
-    nonisolated static var adRewardEnable: Bool {
-        if UserDefaults.standard.object(forKey: adRewardEnableKey) == nil {
-            return defaultAdRewardEnable
-        }
-        return UserDefaults.standard.bool(forKey: adRewardEnableKey)
-    }
-
     private init() {
-        // Load cached config on init (if not already set)
-        if UserDefaults.standard.string(forKey: Self.apiBaseURLKey) == nil {
-            UserDefaults.standard.set(Self.defaultApiBaseURL, forKey: Self.apiBaseURLKey)
-            UserDefaults.standard.set(Self.defaultWebBaseURL, forKey: Self.webBaseURLKey)
-            print("⚙️ [Config] Initialized with default URL: \(Self.defaultApiBaseURL)")
-        } else {
-            print("⚙️ [Config] Using cached URL: \(Self.apiBaseURL)")
-        }
+        print("⚙️ [Config] Initialized with default URL: \(ConfigManager.apiBaseURL)")
     }
 
     // MARK: - Debug Logging
 
-    /// 현재 설정된 URL 로그 출력
     nonisolated static func logCurrentConfig() {
         #if DEBUG
         print("⚙️ ========== Current Config ==========")
@@ -130,17 +102,7 @@ class ConfigManager: ObservableObject {
         print("⚙️ [Config] Loading config...")
         #endif
 
-        // Check if cache is still valid
-        if isCacheValid() {
-            #if DEBUG
-            print("⚙️ [Config] Using cached config (still valid)")
-            Self.logCurrentConfig()
-            #endif
-            isLoaded = true
-            return
-        }
-
-        // Fetch from GitHub
+        // 항상 GitHub에서 최신 설정 가져오기 (광고 설정 실시간 적용)
         await fetchConfig()
 
         #if DEBUG
@@ -179,24 +141,22 @@ class ConfigManager: ObservableObject {
 
             let config = try JSONDecoder().decode(AppConfig.self, from: data)
 
-            // Save to UserDefaults (thread-safe storage)
-            UserDefaults.standard.set(config.apiBaseURL, forKey: Self.apiBaseURLKey)
-            UserDefaults.standard.set(config.webBaseURL, forKey: Self.webBaseURLKey)
-            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.configLastFetchKey)
+            // URL 설정 (thread-safe)
+            ConfigURLStorage.set(api: config.apiBaseURL, web: config.webBaseURL)
 
-            // Save ad config
+            // Save ad config (실시간 적용)
             if let adConfig = config.ad {
-                UserDefaults.standard.set(adConfig.mileage, forKey: Self.adMileageKey)
-                UserDefaults.standard.set(adConfig.dailyLimit, forKey: Self.adDailyLimitKey)
-                UserDefaults.standard.set(adConfig.bannerEnable, forKey: Self.adBannerEnableKey)
-                UserDefaults.standard.set(adConfig.rewardEnable, forKey: Self.adRewardEnableKey)
+                self.adMileage = adConfig.mileage
+                self.adDailyLimit = adConfig.dailyLimit
+                self.adBannerEnable = adConfig.bannerEnable
+                self.adRewardEnable = adConfig.rewardEnable
             }
 
             #if DEBUG
             print("⚙️ [Config] ✅ Loaded from GitHub successfully!")
             print("⚙️ [Config] API: \(config.apiBaseURL)")
             print("⚙️ [Config] Web: \(config.webBaseURL)")
-            print("⚙️ [Config] Ad - Mileage: \(Self.adMileage), Banner: \(Self.adBannerEnable), Reward: \(Self.adRewardEnable)")
+            print("⚙️ [Config] Ad - Mileage: \(self.adMileage), DailyLimit: \(self.adDailyLimit), Banner: \(self.adBannerEnable), Reward: \(self.adRewardEnable)")
             #endif
             isLoaded = true
 
@@ -207,13 +167,6 @@ class ConfigManager: ObservableObject {
         }
     }
 
-    private func isCacheValid() -> Bool {
-        let lastFetch = UserDefaults.standard.double(forKey: Self.configLastFetchKey)
-        guard lastFetch > 0 else { return false }
-
-        let elapsed = Date().timeIntervalSince1970 - lastFetch
-        return elapsed < cacheDuration
-    }
 }
 
 // MARK: - Config Model

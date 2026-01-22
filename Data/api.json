@@ -5,6 +5,6 @@
         "mileage": 30,
         "daily_limit": 7,
         "banner_enable": false,
-        "reward_enable": true
+        "reward_enable": false
     }
 }  
