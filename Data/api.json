@@ -4,7 +4,7 @@
     "ad": {
         "mileage": 50,
         "daily_limit": 5,
-        "banner_enable": true,
+        "banner_enable": false,
         "reward_enable": true
     }
 }  
