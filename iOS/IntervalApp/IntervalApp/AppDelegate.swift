@@ -7,6 +7,7 @@
 
 import UIKit
 import UserNotifications
+import GoogleMobileAds
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
@@ -14,6 +15,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // 푸시 알림 권한 요청 및 등록
         UNUserNotificationCenter.current().delegate = self
         registerForPushNotifications()
+
+        // AdMob 초기화
+        AdManager.shared.configure()
+
         return true
     }
 

@@ -9,15 +9,21 @@ import SwiftUI
 import UIKit
 import AVFoundation
 import ActivityKit
+import GoogleMobileAds
 
 struct TimerView: View {
     let routine: Routine
+    let isChallengeMode: Bool
+    var onComplete: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @StateObject private var timerManager: TimerManager
     @State private var showingExitConfirmation = false
+    @State private var bannerHeight: CGFloat = 50
 
-    init(routine: Routine) {
+    init(routine: Routine, isChallengeMode: Bool = false, onComplete: (() -> Void)? = nil) {
         self.routine = routine
+        self.isChallengeMode = isChallengeMode
+        self.onComplete = onComplete
         _timerManager = StateObject(wrappedValue: TimerManager(routine: routine))
     }
 
@@ -48,6 +54,11 @@ struct TimerView: View {
                 Spacer()
 
                 controlButtons
+
+                // 배너 광고
+                BannerAdView()
+                    .frame(height: bannerHeight)
+                    .padding(.top, 16)
             }
             .padding()
         }
@@ -85,6 +96,7 @@ struct TimerView: View {
             Button {
                 if timerManager.isCompleted {
                     timerManager.stop()
+                    onComplete?()
                     dismiss()
                 } else {
                     showingExitConfirmation = true
@@ -263,40 +275,67 @@ struct TimerView: View {
 
     private var controlButtons: some View {
         HStack(spacing: 40) {
-            Button {
-                timerManager.previousInterval()
-            } label: {
-                Image(systemName: "backward.fill")
-                    .font(.title)
-                    .foregroundStyle(.white)
-                    .frame(width: 60, height: 60)
-            }
-            .disabled(timerManager.currentIntervalIndex == 0 && timerManager.currentRound == 1)
-
-            Button {
-                if timerManager.isRunning {
-                    timerManager.pause()
-                } else {
-                    timerManager.start()
+            // 챌린지 모드가 아닐 때만 이전 버튼 표시
+            if !isChallengeMode {
+                Button {
+                    timerManager.previousInterval()
+                } label: {
+                    Image(systemName: "backward.fill")
+                        .font(.title)
+                        .foregroundStyle(.white)
+                        .frame(width: 60, height: 60)
                 }
-            } label: {
-                Image(systemName: timerManager.isRunning ? "pause.fill" : "play.fill")
-                    .font(.system(size: 50))
+                .disabled(timerManager.currentIntervalIndex == 0 && timerManager.currentRound == 1)
+            }
+
+            // 완료 시 완료 버튼, 그 외에는 재생/일시정지 버튼
+            if timerManager.isCompleted {
+                Button {
+                    timerManager.stop()
+                    onComplete?()
+                    dismiss()
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 40))
+                        Text("Done")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                    }
                     .foregroundStyle(.white)
                     .frame(width: 100, height: 100)
                     .background(.white.opacity(0.2))
                     .clipShape(Circle())
+                }
+            } else {
+                Button {
+                    if timerManager.isRunning {
+                        timerManager.pause()
+                    } else {
+                        timerManager.start()
+                    }
+                } label: {
+                    Image(systemName: timerManager.isRunning ? "pause.fill" : "play.fill")
+                        .font(.system(size: 50))
+                        .foregroundStyle(.white)
+                        .frame(width: 100, height: 100)
+                        .background(.white.opacity(0.2))
+                        .clipShape(Circle())
+                }
             }
 
-            Button {
-                timerManager.nextIntervalAction()
-            } label: {
-                Image(systemName: "forward.fill")
-                    .font(.title)
-                    .foregroundStyle(.white)
-                    .frame(width: 60, height: 60)
+            // 챌린지 모드가 아닐 때만 다음 버튼 표시
+            if !isChallengeMode {
+                Button {
+                    timerManager.nextIntervalAction()
+                } label: {
+                    Image(systemName: "forward.fill")
+                        .font(.title)
+                        .foregroundStyle(.white)
+                        .frame(width: 60, height: 60)
+                }
+                .disabled(timerManager.isCompleted && timerManager.currentIntervalIndex == routine.intervals.count - 1 && timerManager.currentRound == routine.rounds)
             }
-            .disabled(timerManager.isCompleted && timerManager.currentIntervalIndex == routine.intervals.count - 1 && timerManager.currentRound == routine.rounds)
         }
     }
 }

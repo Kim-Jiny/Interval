@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		300AC3E42F20A0A00018FCC9 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 300AC3E32F20A0A00018FCC9 /* GoogleSignIn */; };
 		300AC3E72F20A0B50018FCC9 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 300AC3E62F20A0B50018FCC9 /* KakaoSDK */; };
+		300AC4112F21BA440018FCC9 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 300AC4102F21BA440018FCC9 /* GoogleMobileAds */; };
 		30A7019D2F17A00000109C2D /* IntervalWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 30A701902F17A00000109C2D /* IntervalWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		30A7021E2F18A44E00109C2D /* watchkitapp Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 30A701FE2F18A44C00109C2D /* watchkitapp Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		30A7024A2F18BA6600109C2D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30A702492F18BA6600109C2D /* WidgetKit.framework */; };
@@ -198,6 +199,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				300AC4112F21BA440018FCC9 /* GoogleMobileAds in Frameworks */,
 				300AC3E42F20A0A00018FCC9 /* GoogleSignIn in Frameworks */,
 				300AC3E72F20A0B50018FCC9 /* KakaoSDK in Frameworks */,
 			);
@@ -323,6 +325,7 @@
 			packageProductDependencies = (
 				300AC3E32F20A0A00018FCC9 /* GoogleSignIn */,
 				300AC3E62F20A0B50018FCC9 /* KakaoSDK */,
+				300AC4102F21BA440018FCC9 /* GoogleMobileAds */,
 			);
 			productName = IntervalApp;
 			productReference = 30A7015B2F17933A00109C2D /* IntervalApp.app */;
@@ -540,6 +543,7 @@
 			packageReferences = (
 				300AC3E22F20A0A00018FCC9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				300AC3E52F20A0B50018FCC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				300AC40F2F21BA440018FCC9 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 30A7015C2F17933A00109C2D /* Products */;
@@ -1333,6 +1337,14 @@
 				minimumVersion = 2.27.1;
 			};
 		};
+		300AC40F2F21BA440018FCC9 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1345,6 +1357,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 300AC3E52F20A0B50018FCC9 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDK;
+		};
+		300AC4102F21BA440018FCC9 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 300AC40F2F21BA440018FCC9 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

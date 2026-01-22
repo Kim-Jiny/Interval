@@ -93,6 +93,16 @@ struct IntervalAppApp: App {
             } else {
                 print("🔗 No share code found")
             }
+        case "challenge":
+            if let code = shareCode, !code.isEmpty {
+                print("🔗 Fetching challenge with code: \(code)")
+                Task { @MainActor in
+                    await ChallengeManager.shared.handleDeepLink(shareCode: code)
+                    print("🔗 Challenge deep link handled, showJoinConfirmation: \(ChallengeManager.shared.showJoinConfirmation)")
+                }
+            } else {
+                print("🔗 No share code found for challenge")
+            }
         default:
             print("🔗 Unknown host: \(host ?? "nil")")
         }
