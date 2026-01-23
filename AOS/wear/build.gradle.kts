@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.jiny.interval.wear"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.jiny.interval"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }

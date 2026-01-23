@@ -131,4 +131,91 @@
     <string name="work">Work</string>
     <string name="drag_to_reorder">Drag to reorder</string>
     <string name="delete_interval">Delete interval</string>
+
+    <!-- Community / Challenge -->
+    <string name="challenge">Challenge</string>
+    <string name="my_challenges">My Challenges</string>
+    <string name="joinable_challenges">Joinable Challenges</string>
+    <string name="no_joinable_challenges">No challenges available</string>
+    <string name="my_mileage">My Mileage</string>
+    <string name="login_to_join_challenges">Login to join challenges</string>
+    <string name="entry_fee">Entry Fee</string>
+    <string name="prize_pool">Prize Pool</string>
+    <string name="status_registration">Recruiting</string>
+    <string name="status_active">In Progress</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="challenge_detail">Challenge Detail</string>
+    <string name="participants">Participants</string>
+    <string name="join_challenge">Join Challenge</string>
+    <string name="leave_challenge">Leave Challenge</string>
+    <string name="start_workout">Start Workout</string>
+    <string name="days_remaining">%d days left</string>
+    <string name="rank">Rank</string>
+    <string name="completion_count">Completions</string>
+    <string name="attendance_rate">Attendance</string>
+    <string name="challenge_period">Challenge Period</string>
+    <string name="my_stats">My Stats</string>
+    <string name="no_participants">No participants yet</string>
+    <string name="times">times</string>
+    <string name="join_challenge_confirm">Do you want to join \"%s\"?</string>
+    <string name="your_balance">Your Balance</string>
+    <string name="insufficient_balance">Insufficient mileage balance</string>
+    <string name="join">Join</string>
+    <string name="leave">Leave</string>
+    <string name="leave_challenge_confirm">Are you sure you want to leave this challenge? Entry fee will be refunded.</string>
+
+    <!-- Create Challenge -->
+    <string name="create_challenge">Create Challenge</string>
+    <string name="challenge_title">Title</string>
+    <string name="challenge_title_hint">Enter challenge title</string>
+    <string name="challenge_description">Description</string>
+    <string name="challenge_description_hint">Enter challenge description (optional)</string>
+    <string name="select_routine">Select Routine</string>
+    <string name="no_routines_available">No routines available. Create a routine first.</string>
+    <string name="registration_end_date">Registration End Date</string>
+    <string name="start_date">Start</string>
+    <string name="end_date">End</string>
+    <string name="entry_fee_setting">Entry Fee</string>
+    <string name="public_challenge">Public Challenge</string>
+    <string name="public_challenge_desc">Anyone can find and join this challenge</string>
+    <string name="max_participants">Max Participants</string>
+    <string name="unlimited">Unlimited</string>
+
+    <!-- Share -->
+    <string name="share">Share</string>
+    <string name="share_challenge">Share Challenge</string>
+    <string name="share_challenge_text">Join my challenge \"%1$s\" on Interval!\n\n%2$s</string>
+    <string name="challenge_created">Challenge Created!</string>
+    <string name="challenge_created_message">Your challenge has been created successfully. Share it with friends to invite them!</string>
+
+    <!-- Mileage History -->
+    <string name="mileage_history">Mileage History</string>
+    <string name="current_balance">Current Balance</string>
+    <string name="total_earned">Total Earned</string>
+    <string name="total_spent">Total Spent</string>
+    <string name="transaction_history">Transaction History</string>
+    <string name="no_transactions">No transactions yet</string>
+    <string name="transaction_earn">Earned</string>
+    <string name="transaction_spend">Spent</string>
+    <string name="transaction_prize">Prize Won</string>
+    <string name="transaction_refund">Refund</string>
+    <string name="transaction_admin">Admin</string>
+
+    <!-- Auth / Login -->
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="continue_without_login">Continue without login</string>
+    <string name="login_title">Sign In</string>
+    <string name="login_subtitle">Sign in to sync your routines and join challenges</string>
+    <string name="logging_in">Signing in…</string>
+    <string name="login_failed">Sign in failed</string>
+    <string name="logout_confirm">Are you sure you want to log out?</string>
+    <string name="account">Account</string>
+    <string name="not_logged_in">Not logged in</string>
+    <string name="logged_in_as">Logged in as %s</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_confirm">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="delete_account_success">Account deleted successfully</string>
 </resources>

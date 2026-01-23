@@ -89,6 +89,22 @@ dependencies {
     // Wear OS Data Layer
     implementation(libs.play.services.wearable)
 
+    // Network (Retrofit + OkHttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
+    implementation(libs.gson)
+
+    // Google Sign-In
+    implementation(libs.play.services.auth)
+    implementation(libs.credential.manager)
+    implementation(libs.credential.manager.play)
+    implementation(libs.googleid)
+
+    // Security (Encrypted SharedPreferences)
+    implementation(libs.security.crypto)
+
     // Debug
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

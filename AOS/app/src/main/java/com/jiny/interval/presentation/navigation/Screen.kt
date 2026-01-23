@@ -11,4 +11,14 @@ sealed class Screen(val route: String) {
     }
     data object TemplateSelection : Screen("templates")
     data object Settings : Screen("settings")
+    data object Login : Screen("login")
+    data object Community : Screen("community")
+    data object ChallengeDetail : Screen("challenge/{challengeId}") {
+        fun createRoute(challengeId: Int) = "challenge/$challengeId"
+    }
+    data object MileageHistory : Screen("mileage-history")
+    data object CreateChallenge : Screen("create-challenge")
+    data object ChallengeByCode : Screen("challenge-code/{shareCode}") {
+        fun createRoute(shareCode: String) = "challenge-code/$shareCode"
+    }
 }
