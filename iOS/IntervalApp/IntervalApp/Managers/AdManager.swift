@@ -16,13 +16,13 @@ class AdManager: NSObject, ObservableObject {
     static let shared = AdManager()
 
     // MARK: - Ad Unit IDs
-    #if DEBUG
-    private let bannerAdUnitID = "ca-app-pub-3940256099942544/2934735716"  // 테스트 배너
-    private let rewardedAdUnitID = "ca-app-pub-3940256099942544/1712485313" // 테스트 리워드
-    #else
+//    #if DEBUG
+//    private let bannerAdUnitID = "ca-app-pub-3940256099942544/2934735716"  // 테스트 배너
+//    private let rewardedAdUnitID = "ca-app-pub-3940256099942544/1712485313" // 테스트 리워드
+//    #else
     private let bannerAdUnitID = "ca-app-pub-2707874353926722/6959385230"   // 실제 배너
     private let rewardedAdUnitID = "ca-app-pub-2707874353926722/4555926638" // 실제 리워드
-    #endif
+//    #endif
 
     // MARK: - Published Properties
     @Published var isRewardedAdReady = false

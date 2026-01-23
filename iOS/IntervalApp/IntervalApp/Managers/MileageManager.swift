@@ -22,8 +22,8 @@ class MileageManager: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
 
-    // Ad reward status
-    @Published var adRemainingCount: Int = 5
+    // Ad reward status (ConfigManager에서 실시간 가져옴)
+    @Published var adRemainingCount: Int = 0
     @Published var adDailyLimit: Int = 5
 
     // Pagination
@@ -39,7 +39,8 @@ class MileageManager: ObservableObject {
     func clearUserData() {
         balance = nil
         transactions = []
-        adRemainingCount = 5
+        adRemainingCount = ConfigManager.shared.adDailyLimit  // ConfigManager 기준
+        adDailyLimit = ConfigManager.shared.adDailyLimit
         currentPage = 1
         totalPages = 1
         hasMorePages = false
@@ -191,8 +192,10 @@ class MileageManager: ObservableObject {
             let statusResponse = try JSONDecoder().decode(AdStatusResponse.self, from: data)
 
             if statusResponse.success {
-                self.adRemainingCount = statusResponse.remaining
-                self.adDailyLimit = statusResponse.dailyLimit
+                // ConfigManager의 dailyLimit 사용 (실시간 적용)
+                let configDailyLimit = ConfigManager.shared.adDailyLimit
+                self.adDailyLimit = configDailyLimit
+                self.adRemainingCount = max(0, configDailyLimit - statusResponse.todayCount)
             }
         } catch {
             print("Failed to fetch ad status: \(error)")

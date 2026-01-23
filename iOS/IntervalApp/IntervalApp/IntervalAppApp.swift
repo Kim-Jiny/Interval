@@ -8,11 +8,14 @@
 import SwiftUI
 import KakaoSDKCommon
 import KakaoSDKAuth
+import UserNotifications
 
 @main
 struct IntervalAppApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var routineStore = RoutineStore()
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var splashFinished = false
 
     init() {
         // Kakao SDK 초기화
@@ -21,27 +24,44 @@ struct IntervalAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(routineStore)
-                .task {
-                    // 앱 시작 시 서버 설정 로드
-                    await ConfigManager.shared.loadConfig()
-                }
-                .onOpenURL { url in
-                    // Kakao 로그인 URL 처리
-                    if AuthApi.isKakaoTalkLoginUrl(url) {
-                        _ = AuthController.handleOpenUrl(url: url)
-                        return
+            ZStack {
+                ContentView()
+                    .environmentObject(routineStore)
+                    .task {
+                        // 앱 시작 시 서버 설정 로드
+                        await ConfigManager.shared.loadConfig()
                     }
 
-                    // Google 로그인 URL 처리
-                    if GoogleSignInManager.shared.handle(url) {
-                        return
-                    }
-
-                    // 앱 딥링크 처리 (intervalApp://)
-                    handleDeepLink(url)
+                // 스플래시 비디오 (완료 전까지 표시)
+                if !splashFinished {
+                    SplashView(isFinished: $splashFinished)
+                        .transition(.opacity)
+                        .zIndex(1)
+                        .ignoresSafeArea()
                 }
+            }
+            .animation(.easeOut(duration: 0.3), value: splashFinished)
+            .onOpenURL { url in
+                // Kakao 로그인 URL 처리
+                if AuthApi.isKakaoTalkLoginUrl(url) {
+                    _ = AuthController.handleOpenUrl(url: url)
+                    return
+                }
+
+                // Google 로그인 URL 처리
+                if GoogleSignInManager.shared.handle(url) {
+                    return
+                }
+
+                // 앱 딥링크 처리 (intervalApp://)
+                handleDeepLink(url)
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .active {
+                    // 앱이 활성화되면 배지 초기화
+                    UNUserNotificationCenter.current().setBadgeCount(0)
+                }
+            }
         }
     }
 

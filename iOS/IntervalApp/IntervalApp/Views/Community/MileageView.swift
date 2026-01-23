@@ -132,7 +132,7 @@ struct MileageView: View {
                     Text("Watch Ad & Earn")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                    Text("Remaining: \(mileageManager.adRemainingCount)/\(mileageManager.adDailyLimit) today")
+                    Text("Remaining: \(mileageManager.adRemainingCount)/\(ConfigManager.shared.adDailyLimit) today")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

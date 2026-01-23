@@ -14,6 +14,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
 
+        // 앱 시작 시 배지 초기화
+        clearBadge()
+
         // ATT 요청 → 완료 후 푸시 권한 요청
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             print("📺 Starting ATT + Push flow...")
@@ -24,6 +27,19 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         }
 
         return true
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // 앱이 포그라운드로 올 때 배지 초기화
+        clearBadge()
+    }
+
+    private func clearBadge() {
+        UNUserNotificationCenter.current().setBadgeCount(0) { error in
+            if let error = error {
+                print("❌ Failed to clear badge: \(error)")
+            }
+        }
     }
 
     // MARK: - Push Notifications

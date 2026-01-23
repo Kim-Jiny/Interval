@@ -42,8 +42,9 @@ struct TimerView: View {
                 .ignoresSafeArea()
 
             if timerManager.isCompleted {
-                // 완료 화면
+                // 완료 화면 (다크/라이트 모드 동일하게 표시)
                 completionView
+                    .environment(\.colorScheme, .light)
             } else {
                 // 타이머 화면
                 VStack(spacing: 0) {
@@ -216,8 +217,9 @@ struct TimerView: View {
     }
 
     private func generateCompletionImage() -> UIImage {
-        // 스크린샷용 뷰 생성 (광고 없이)
+        // 스크린샷용 뷰 생성 (광고 없이, 라이트 모드 고정)
         let screenshotView = WorkoutCompletionCard(routine: routine, isChallengeMode: isChallengeMode, actualElapsedTime: timerManager.formattedActualElapsedTime)
+            .environment(\.colorScheme, .light)
             .padding(24)
             .background(
                 LinearGradient(
