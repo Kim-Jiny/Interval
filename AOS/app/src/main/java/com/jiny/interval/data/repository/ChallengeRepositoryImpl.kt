@@ -68,21 +68,28 @@ class ChallengeRepositoryImpl @Inject constructor(
 
     override suspend fun getChallengeByCode(code: String): Result<Pair<Challenge, List<ChallengeParticipant>>> {
         return try {
+            Log.d(TAG, "getChallengeByCode: code=$code")
             val response = challengeApi.getChallengeByCode(code)
-            if (response.isSuccessful && response.body()?.success == true) {
-                val body = response.body()!!
+            val body = response.body()
+            Log.d(TAG, "getChallengeByCode: Response code=${response.code()}, success=${body?.success}")
+
+            if (response.isSuccessful && body?.success == true) {
                 val challengeDto = body.challenge
                 if (challengeDto == null) {
                     return Result.failure(Exception("Challenge not found"))
                 }
-                val challenge = challengeDto.toDomain()
-                val participants = body.participants?.map { it.toDomain() } ?: emptyList()
-                Result.success(Pair(challenge, participants))
+                val challengeId = challengeDto.id ?: 0
+                Log.d(TAG, "getChallengeByCode: Got challenge id=$challengeId, fetching detail...")
+
+                // get.php doesn't return participants, so fetch detail with the ID
+                getChallengeDetail(challengeId)
             } else {
-                val error = response.body()?.error ?: "Challenge not found"
+                val error = body?.error ?: "Challenge not found"
+                Log.e(TAG, "getChallengeByCode: Failed with error: $error")
                 Result.failure(Exception(error))
             }
         } catch (e: Exception) {
+            Log.e(TAG, "getChallengeByCode: Exception", e)
             Result.failure(e)
         }
     }

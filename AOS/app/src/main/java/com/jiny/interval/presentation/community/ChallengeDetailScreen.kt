@@ -69,7 +69,7 @@ import java.util.Locale
 @Composable
 fun ChallengeDetailScreen(
     onNavigateBack: () -> Unit,
-    onStartWorkout: (routineData: String) -> Unit,
+    onStartWorkout: (challengeId: Int) -> Unit,
     onNavigateToLogin: () -> Unit,
     viewModel: ChallengeDetailViewModel = hiltViewModel()
 ) {
@@ -216,7 +216,7 @@ fun ChallengeDetailScreen(
                             }
                         },
                         onLeaveClick = { showLeaveDialog = true },
-                        onStartWorkout = { /* TODO: Start workout with routine data */ },
+                        onStartWorkout = { onStartWorkout(challenge!!.id) },
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }

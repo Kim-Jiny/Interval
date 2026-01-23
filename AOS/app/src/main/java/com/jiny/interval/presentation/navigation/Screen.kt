@@ -21,4 +21,7 @@ sealed class Screen(val route: String) {
     data object ChallengeByCode : Screen("challenge-code/{shareCode}") {
         fun createRoute(shareCode: String) = "challenge-code/$shareCode"
     }
+    data object ChallengeTimer : Screen("challenge-timer/{challengeId}") {
+        fun createRoute(challengeId: Int) = "challenge-timer/$challengeId"
+    }
 }

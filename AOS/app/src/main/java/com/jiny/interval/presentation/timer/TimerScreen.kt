@@ -50,6 +50,7 @@ import com.jiny.interval.presentation.components.IntervalDotsIndicator
 import com.jiny.interval.presentation.components.LinearProgressBar
 import com.jiny.interval.presentation.components.RoundIndicator
 import com.jiny.interval.presentation.components.TimerDisplay
+import com.jiny.interval.presentation.components.WorkoutCompletionScreen
 import com.jiny.interval.presentation.components.toColor
 import com.jiny.interval.util.TimeFormatter
 
@@ -61,6 +62,7 @@ fun TimerScreen(
     val routine by viewModel.routine.collectAsState()
     val timerState by viewModel.timerState.collectAsState()
     val settings by viewModel.settings.collectAsState()
+    val actualElapsedTime by viewModel.actualElapsedTime.collectAsState()
 
     var showExitDialog by remember { mutableStateOf(false) }
 
@@ -76,8 +78,23 @@ fun TimerScreen(
     BackHandler {
         if (timerState.isRunning) {
             showExitDialog = true
+        } else if (timerState.isCompleted) {
+            onNavigateBack()
         } else {
             onNavigateBack()
+        }
+    }
+
+    // Show completion screen when workout is done
+    routine?.let { currentRoutine ->
+        if (timerState.isCompleted) {
+            WorkoutCompletionScreen(
+                routine = currentRoutine,
+                actualElapsedTime = actualElapsedTime,
+                isChallengeMode = false,
+                onDismiss = onNavigateBack
+            )
+            return
         }
     }
 
@@ -155,18 +172,10 @@ fun TimerScreen(
                 Spacer(modifier = Modifier.weight(1f))
 
                 // Timer display
-                if (timerState.isCompleted) {
-                    Text(
-                        text = stringResource(R.string.workout_complete),
-                        style = MaterialTheme.typography.displaySmall,
-                        color = Color.White
-                    )
-                } else {
-                    TimerDisplay(
-                        timeRemaining = timerState.timeRemaining,
-                        textColor = Color.White
-                    )
-                }
+                TimerDisplay(
+                    timeRemaining = timerState.timeRemaining,
+                    textColor = Color.White
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 

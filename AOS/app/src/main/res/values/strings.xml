@@ -12,6 +12,7 @@
     <string name="tab_all">All</string>
     <string name="empty_favorites">No favorite routines yet.\nTap the heart icon on a routine to add it to favorites.</string>
     <string name="empty_routines">No routines yet.\nTap + to create your first routine!</string>
+    <string name="no_active_challenges">No active challenges.\nJoin a challenge from the Challenge tab!</string>
     <string name="start">Start</string>
 
     <!-- Routine Card -->
@@ -45,6 +46,9 @@
     <string name="new_routine">New Routine</string>
     <string name="edit_routine">Edit Routine</string>
     <string name="save">Save</string>
+    <string name="saved_to_gallery">Saved to gallery</string>
+    <string name="failed_to_save">Failed to save</string>
+    <string name="failed_to_share">Failed to share</string>
     <string name="routine_name">Routine Name</string>
     <string name="rounds">Rounds</string>
     <string name="intervals">Intervals</string>

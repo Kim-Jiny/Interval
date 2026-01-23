@@ -45,4 +45,16 @@ object TimeFormatter {
         val tenths = (millis % 1000) / 100
         return String.format("%02d:%02d.%d", minutes, seconds, tenths)
     }
+
+    fun formatMillis(millis: Long): String {
+        val totalSeconds = (millis / 1000).toInt()
+        val hours = totalSeconds / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val secs = totalSeconds % 60
+
+        return when {
+            hours > 0 -> String.format("%d:%02d:%02d", hours, minutes, secs)
+            else -> String.format("%d:%02d", minutes, secs)
+        }
+    }
 }

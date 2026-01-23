@@ -39,6 +39,7 @@ import com.jiny.interval.presentation.home.HomeScreen
 import com.jiny.interval.presentation.navigation.Screen
 import com.jiny.interval.presentation.settings.SettingsScreen
 import com.jiny.interval.presentation.template.TemplateSelectionScreen
+import com.jiny.interval.presentation.timer.ChallengeTimerScreen
 import com.jiny.interval.presentation.timer.TimerScreen
 
 sealed class BottomNavItem(
@@ -153,6 +154,15 @@ fun MainScreen(
                     },
                     onSettingsClick = {
                         navController.navigate(Screen.Settings.route)
+                    },
+                    onChallengeClick = { challengeId ->
+                        navController.navigate(Screen.ChallengeDetail.createRoute(challengeId))
+                    },
+                    onNavigateToLogin = {
+                        navController.navigate(Screen.Login.route)
+                    },
+                    onStartChallengeWorkout = { challengeId ->
+                        navController.navigate(Screen.ChallengeTimer.createRoute(challengeId))
                     }
                 )
             }
@@ -253,8 +263,8 @@ fun MainScreen(
             ) {
                 ChallengeDetailScreen(
                     onNavigateBack = { navController.popBackStack() },
-                    onStartWorkout = { routineData ->
-                        // TODO: Parse routine data and start workout
+                    onStartWorkout = { challengeId ->
+                        navController.navigate(Screen.ChallengeTimer.createRoute(challengeId))
                     },
                     onNavigateToLogin = {
                         navController.navigate(Screen.Login.route)
@@ -277,12 +287,24 @@ fun MainScreen(
             ) {
                 ChallengeDetailScreen(
                     onNavigateBack = { navController.popBackStack() },
-                    onStartWorkout = { routineData ->
-                        // TODO: Parse routine data and start workout
+                    onStartWorkout = { challengeId ->
+                        navController.navigate(Screen.ChallengeTimer.createRoute(challengeId))
                     },
                     onNavigateToLogin = {
                         navController.navigate(Screen.Login.route)
                     }
+                )
+            }
+
+            // Challenge Timer
+            composable(
+                route = Screen.ChallengeTimer.route,
+                arguments = listOf(
+                    navArgument("challengeId") { type = NavType.IntType }
+                )
+            ) {
+                ChallengeTimerScreen(
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }
