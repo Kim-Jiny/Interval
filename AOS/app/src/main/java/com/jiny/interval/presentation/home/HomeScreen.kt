@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -109,18 +110,40 @@ fun HomeScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
-                actions = {
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.settings)
-                        )
+            Column {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.app_name)) },
+                    actions = {
+                        IconButton(onClick = onSettingsClick) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = stringResource(R.string.settings)
+                            )
+                        }
                     }
+                )
+                TabRow(
+                    selectedTabIndex = selectedTab.ordinal
+                ) {
+                    Tab(
+                        selected = selectedTab == HomeTab.CHALLENGE,
+                        onClick = { viewModel.selectTab(HomeTab.CHALLENGE) },
+                        text = { Text(stringResource(R.string.challenge)) }
+                    )
+                    Tab(
+                        selected = selectedTab == HomeTab.FAVORITES,
+                        onClick = { viewModel.selectTab(HomeTab.FAVORITES) },
+                        text = { Text(stringResource(R.string.tab_favorites)) }
+                    )
+                    Tab(
+                        selected = selectedTab == HomeTab.ALL,
+                        onClick = { viewModel.selectTab(HomeTab.ALL) },
+                        text = { Text(stringResource(R.string.tab_all)) }
+                    )
                 }
-            )
+            }
         },
         floatingActionButton = {
             if (selectedTab != HomeTab.CHALLENGE) {
@@ -136,28 +159,9 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
-            TabRow(
-                selectedTabIndex = selectedTab.ordinal
-            ) {
-                Tab(
-                    selected = selectedTab == HomeTab.CHALLENGE,
-                    onClick = { viewModel.selectTab(HomeTab.CHALLENGE) },
-                    text = { Text(stringResource(R.string.challenge)) }
-                )
-                Tab(
-                    selected = selectedTab == HomeTab.FAVORITES,
-                    onClick = { viewModel.selectTab(HomeTab.FAVORITES) },
-                    text = { Text(stringResource(R.string.tab_favorites)) }
-                )
-                Tab(
-                    selected = selectedTab == HomeTab.ALL,
-                    onClick = { viewModel.selectTab(HomeTab.ALL) },
-                    text = { Text(stringResource(R.string.tab_all)) }
-                )
-            }
-
             // Challenge Tab Content
             AnimatedVisibility(
                 visible = selectedTab == HomeTab.CHALLENGE,
@@ -170,7 +174,13 @@ fun HomeScreen(
                     EmptyState(message = stringResource(R.string.no_active_challenges))
                 } else {
                     LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = 8.dp
+                        ),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
@@ -208,7 +218,13 @@ fun HomeScreen(
                 exit = fadeOut()
             ) {
                 LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 8.dp,
+                        bottom = 8.dp
+                    ),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(
@@ -359,7 +375,7 @@ private fun ActiveChallengeCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "오늘 완료",
+                            text = stringResource(R.string.today_completed),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color(0xFF4CAF50)
                         )

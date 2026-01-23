@@ -132,6 +132,9 @@
 
     <!-- Common -->
     <string name="back">Back</string>
+    <string name="today_completed">Completed today</string>
+    <string name="target_time">Target</string>
+    <string name="actual_time">Actual</string>
     <string name="work">Work</string>
     <string name="drag_to_reorder">Drag to reorder</string>
     <string name="delete_interval">Delete interval</string>
@@ -150,6 +153,7 @@
     <string name="status_completed">Completed</string>
     <string name="status_cancelled">Cancelled</string>
     <string name="challenge_detail">Challenge Detail</string>
+    <string name="challenge_not_found">Challenge not found</string>
     <string name="participants">Participants</string>
     <string name="join_challenge">Join Challenge</string>
     <string name="leave_challenge">Leave Challenge</string>

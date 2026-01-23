@@ -12,6 +12,7 @@
     <string name="tab_all">전체</string>
     <string name="empty_favorites">즐겨찾기한 루틴이 없습니다.\n루틴의 하트 아이콘을 눌러 즐겨찾기에 추가하세요.</string>
     <string name="empty_routines">루틴이 없습니다.\n+ 버튼을 눌러 첫 번째 루틴을 만들어보세요!</string>
+    <string name="no_active_challenges">참여 중인 챌린지가 없습니다.\n챌린지 탭에서 챌린지에 참여해보세요!</string>
     <string name="start">시작</string>
 
     <!-- Routine Card -->
@@ -45,6 +46,9 @@
     <string name="new_routine">새 루틴</string>
     <string name="edit_routine">루틴 편집</string>
     <string name="save">저장</string>
+    <string name="saved_to_gallery">갤러리에 저장됨</string>
+    <string name="failed_to_save">저장 실패</string>
+    <string name="failed_to_share">공유 실패</string>
     <string name="routine_name">루틴 이름</string>
     <string name="rounds">라운드</string>
     <string name="intervals">구간</string>
@@ -128,7 +132,98 @@
 
     <!-- Common -->
     <string name="back">뒤로</string>
+    <string name="today_completed">오늘 완료</string>
+    <string name="target_time">목표</string>
+    <string name="actual_time">실제</string>
     <string name="work">운동</string>
     <string name="drag_to_reorder">드래그하여 순서 변경</string>
     <string name="delete_interval">구간 삭제</string>
+
+    <!-- Community / Challenge -->
+    <string name="challenge">챌린지</string>
+    <string name="my_challenges">내 챌린지</string>
+    <string name="joinable_challenges">참여 가능한 챌린지</string>
+    <string name="no_joinable_challenges">참여 가능한 챌린지가 없습니다</string>
+    <string name="my_mileage">내 마일리지</string>
+    <string name="login_to_join_challenges">챌린지에 참여하려면 로그인하세요</string>
+    <string name="entry_fee">참가비</string>
+    <string name="prize_pool">상금</string>
+    <string name="status_registration">모집중</string>
+    <string name="status_active">진행중</string>
+    <string name="status_completed">완료</string>
+    <string name="status_cancelled">취소됨</string>
+    <string name="challenge_detail">챌린지 상세</string>
+    <string name="challenge_not_found">챌린지를 찾을 수 없습니다</string>
+    <string name="participants">참가자</string>
+    <string name="join_challenge">챌린지 참가</string>
+    <string name="leave_challenge">챌린지 탈퇴</string>
+    <string name="start_workout">운동 시작</string>
+    <string name="days_remaining">%d일 남음</string>
+    <string name="rank">순위</string>
+    <string name="completion_count">완료 횟수</string>
+    <string name="attendance_rate">출석률</string>
+    <string name="challenge_period">챌린지 기간</string>
+    <string name="my_stats">내 기록</string>
+    <string name="no_participants">아직 참가자가 없습니다</string>
+    <string name="times">회</string>
+    <string name="join_challenge_confirm">\"%s\"에 참가하시겠습니까?</string>
+    <string name="your_balance">보유 마일리지</string>
+    <string name="insufficient_balance">마일리지가 부족합니다</string>
+    <string name="join">참가</string>
+    <string name="leave">탈퇴</string>
+    <string name="leave_challenge_confirm">챌린지를 탈퇴하시겠습니까? 참가비가 환불됩니다.</string>
+
+    <!-- Create Challenge -->
+    <string name="create_challenge">챌린지 만들기</string>
+    <string name="challenge_title">제목</string>
+    <string name="challenge_title_hint">챌린지 제목을 입력하세요</string>
+    <string name="challenge_description">설명</string>
+    <string name="challenge_description_hint">챌린지 설명을 입력하세요 (선택)</string>
+    <string name="select_routine">루틴 선택</string>
+    <string name="no_routines_available">루틴이 없습니다. 먼저 루틴을 만들어주세요.</string>
+    <string name="registration_end_date">모집 마감일</string>
+    <string name="start_date">시작일</string>
+    <string name="end_date">종료일</string>
+    <string name="entry_fee_setting">참가비 설정</string>
+    <string name="public_challenge">공개 챌린지</string>
+    <string name="public_challenge_desc">누구나 이 챌린지를 찾아 참가할 수 있습니다</string>
+    <string name="max_participants">최대 참가자</string>
+    <string name="unlimited">제한 없음</string>
+
+    <!-- Share -->
+    <string name="share">공유</string>
+    <string name="share_challenge">챌린지 공유</string>
+    <string name="share_challenge_text">인터벌에서 내 챌린지 \"%1$s\"에 참가하세요!\n\n%2$s</string>
+    <string name="challenge_created">챌린지 생성 완료!</string>
+    <string name="challenge_created_message">챌린지가 생성되었습니다. 친구들에게 공유하여 초대하세요!</string>
+
+    <!-- Mileage History -->
+    <string name="mileage_history">마일리지 내역</string>
+    <string name="current_balance">현재 잔액</string>
+    <string name="total_earned">총 적립</string>
+    <string name="total_spent">총 사용</string>
+    <string name="transaction_history">거래 내역</string>
+    <string name="no_transactions">거래 내역이 없습니다</string>
+    <string name="transaction_earn">적립</string>
+    <string name="transaction_spend">사용</string>
+    <string name="transaction_prize">상금</string>
+    <string name="transaction_refund">환불</string>
+    <string name="transaction_admin">관리자</string>
+
+    <!-- Auth / Login -->
+    <string name="login">로그인</string>
+    <string name="logout">로그아웃</string>
+    <string name="sign_in_with_google">Google로 로그인</string>
+    <string name="continue_without_login">로그인 없이 계속</string>
+    <string name="login_title">로그인</string>
+    <string name="login_subtitle">루틴을 동기화하고 챌린지에 참여하려면 로그인하세요</string>
+    <string name="logging_in">로그인 중…</string>
+    <string name="login_failed">로그인 실패</string>
+    <string name="logout_confirm">로그아웃 하시겠습니까?</string>
+    <string name="account">계정</string>
+    <string name="not_logged_in">로그인되지 않음</string>
+    <string name="logged_in_as">%s로 로그인됨</string>
+    <string name="delete_account">계정 삭제</string>
+    <string name="delete_account_confirm">계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</string>
+    <string name="delete_account_success">계정이 삭제되었습니다</string>
 </resources>

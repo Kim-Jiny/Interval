@@ -171,7 +171,7 @@ fun ChallengeDetailScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Challenge not found",
+                    text = stringResource(R.string.challenge_not_found),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

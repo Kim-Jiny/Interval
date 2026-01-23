@@ -337,12 +337,12 @@ fun WorkoutCompletionCard(
                     StatItem(
                         icon = Icons.Default.Timer,
                         value = TimeFormatter.formatDuration(routine.totalDuration),
-                        label = "Target"
+                        label = stringResource(R.string.target_time)
                     )
                     StatItem(
                         icon = Icons.Default.Timer,
                         value = TimeFormatter.formatMillis(actualElapsedTime),
-                        label = "Actual"
+                        label = stringResource(R.string.actual_time)
                     )
                 }
 
