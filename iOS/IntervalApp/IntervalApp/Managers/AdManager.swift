@@ -16,13 +16,13 @@ class AdManager: NSObject, ObservableObject {
     static let shared = AdManager()
 
     // MARK: - Ad Unit IDs
-//    #if DEBUG
-//    private let bannerAdUnitID = "ca-app-pub-3940256099942544/2934735716"  // 테스트 배너
-//    private let rewardedAdUnitID = "ca-app-pub-3940256099942544/1712485313" // 테스트 리워드
-//    #else
+    #if DEBUG
+    private let bannerAdUnitID = "ca-app-pub-3940256099942544/2934735716"  // 테스트 배너
+    private let rewardedAdUnitID = "ca-app-pub-3940256099942544/1712485313" // 테스트 리워드
+    #else
     private let bannerAdUnitID = "ca-app-pub-2707874353926722/6959385230"   // 실제 배너
     private let rewardedAdUnitID = "ca-app-pub-2707874353926722/4555926638" // 실제 리워드
-//    #endif
+    #endif
 
     // MARK: - Published Properties
     @Published var isRewardedAdReady = false
@@ -44,7 +44,20 @@ class AdManager: NSObject, ObservableObject {
         // ATT 권한 요청 후 AdMob 초기화
         requestTrackingAuthorization { [weak self] in
             MobileAds.shared.start { status in
+                print("📺 ========== AdMob Debug Info ==========")
                 print("📺 AdMob SDK initialized")
+                print("📺 Banner Ad Unit ID: \(self?.bannerAdUnitID ?? "nil")")
+                print("📺 Rewarded Ad Unit ID: \(self?.rewardedAdUnitID ?? "nil")")
+
+                // 각 어댑터 상태 출력
+                for (adapterName, adapterStatus) in status.adapterStatusesByClassName {
+                    print("📺 Adapter: \(adapterName)")
+                    print("📺   - State: \(adapterStatus.state.rawValue == 1 ? "Ready" : "Not Ready")")
+                    print("📺   - Latency: \(adapterStatus.latency)ms")
+                    print("📺   - Description: \(adapterStatus.description)")
+                }
+                print("📺 ========================================")
+
                 // 리워드 광고 미리 로드
                 Task { @MainActor in
                     await self?.loadRewardedAd()
@@ -108,7 +121,13 @@ class AdManager: NSObject, ObservableObject {
     // MARK: - Rewarded Ad
 
     func loadRewardedAd() async {
-        guard !isLoadingRewardedAd else { return }
+        guard !isLoadingRewardedAd else {
+            print("📺 Already loading rewarded ad, skipping...")
+            return
+        }
+
+        print("📺 Loading rewarded ad...")
+        print("📺 Ad Unit ID: \(rewardedAdUnitID)")
 
         isLoadingRewardedAd = true
         rewardedAdError = nil
@@ -121,12 +140,17 @@ class AdManager: NSObject, ObservableObject {
             rewardedAd?.fullScreenContentDelegate = self
             isRewardedAdReady = true
             isLoadingRewardedAd = false
-            print("📺 Rewarded ad loaded successfully")
-        } catch {
+            print("📺 ✅ Rewarded ad loaded successfully!")
+            print("📺 Ad response info: \(rewardedAd?.responseInfo.description ?? "nil")")
+        } catch let error as NSError {
             isRewardedAdReady = false
             isLoadingRewardedAd = false
             rewardedAdError = error.localizedDescription
-            print("📺 Failed to load rewarded ad: \(error.localizedDescription)")
+            print("📺 ❌ Failed to load rewarded ad")
+            print("📺 Error code: \(error.code)")
+            print("📺 Error domain: \(error.domain)")
+            print("📺 Error description: \(error.localizedDescription)")
+            print("📺 Error userInfo: \(error.userInfo)")
         }
     }
 

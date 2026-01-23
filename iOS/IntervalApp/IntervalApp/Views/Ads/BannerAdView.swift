@@ -15,9 +15,17 @@ struct BannerAdView: UIViewRepresentable {
         self.adUnitID = AdManager.shared.getBannerAdUnitID()
     }
 
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
     func makeUIView(context: Context) -> BannerView {
         let bannerView = BannerView(adSize: AdSizeBanner)
         bannerView.adUnitID = adUnitID
+        bannerView.delegate = context.coordinator
+
+        print("📺 [Banner] Loading banner ad...")
+        print("📺 [Banner] Ad Unit ID: \(adUnitID)")
 
         // Root view controller 설정
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -27,6 +35,22 @@ struct BannerAdView: UIViewRepresentable {
 
         bannerView.load(Request())
         return bannerView
+    }
+
+    class Coordinator: NSObject, BannerViewDelegate {
+        func bannerViewDidReceiveAd(_ bannerView: BannerView) {
+            print("📺 [Banner] ✅ Banner ad loaded successfully!")
+            print("📺 [Banner] Response info: \(bannerView.responseInfo?.description ?? "nil")")
+        }
+
+        func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
+            let nsError = error as NSError
+            print("📺 [Banner] ❌ Banner ad failed to load")
+            print("📺 [Banner] Error code: \(nsError.code)")
+            print("📺 [Banner] Error domain: \(nsError.domain)")
+            print("📺 [Banner] Error description: \(error.localizedDescription)")
+            print("📺 [Banner] Error userInfo: \(nsError.userInfo)")
+        }
     }
 
     func updateUIView(_ uiView: BannerView, context: Context) {
