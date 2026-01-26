@@ -171,7 +171,7 @@
     <string name="insufficient_balance">마일리지가 부족합니다</string>
     <string name="join">참가</string>
     <string name="leave">탈퇴</string>
-    <string name="leave_challenge_confirm">챌린지를 탈퇴하시겠습니까? 참가비가 환불됩니다.</string>
+    <string name="leave_challenge_confirm">챌린지를 탈퇴하시겠습니까?\n\n주의: 참가비는 환불되지 않습니다.</string>
 
     <!-- Create Challenge -->
     <string name="create_challenge">챌린지 만들기</string>
@@ -226,4 +226,8 @@
     <string name="delete_account">계정 삭제</string>
     <string name="delete_account_confirm">계정을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</string>
     <string name="delete_account_success">계정이 삭제되었습니다</string>
+    <string name="change_nickname">닉네임 변경</string>
+    <string name="nickname">닉네임</string>
+    <string name="nickname_requirements">새 닉네임을 입력하세요 (2-20자)</string>
+    <string name="nickname_update_success">닉네임이 변경되었습니다</string>
 </resources>

@@ -44,6 +44,11 @@ interface AuthRepository {
     suspend fun deleteAccount(): Result<Unit>
 
     /**
+     * Update nickname
+     */
+    suspend fun updateNickname(nickname: String): Result<User>
+
+    /**
      * Check if user is currently logged in
      */
     fun isUserLoggedIn(): Boolean

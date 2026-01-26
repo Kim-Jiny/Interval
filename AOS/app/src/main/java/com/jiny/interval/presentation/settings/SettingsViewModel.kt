@@ -47,6 +47,9 @@ class SettingsViewModel @Inject constructor(
     private val _deleteAccountState = MutableStateFlow<DeleteAccountState>(DeleteAccountState.Idle)
     val deleteAccountState: StateFlow<DeleteAccountState> = _deleteAccountState.asStateFlow()
 
+    private val _updateNicknameState = MutableStateFlow<UpdateNicknameState>(UpdateNicknameState.Idle)
+    val updateNicknameState: StateFlow<UpdateNicknameState> = _updateNicknameState.asStateFlow()
+
     fun updateVibration(enabled: Boolean) {
         viewModelScope.launch {
             updateSettingsUseCase.updateVibration(enabled)
@@ -86,6 +89,28 @@ class SettingsViewModel @Inject constructor(
     fun resetDeleteAccountState() {
         _deleteAccountState.value = DeleteAccountState.Idle
     }
+
+    fun updateNickname(nickname: String) {
+        val trimmed = nickname.trim()
+        if (trimmed.length < 2 || trimmed.length > 20) {
+            _updateNicknameState.value = UpdateNicknameState.Error("Nickname must be 2-20 characters")
+            return
+        }
+
+        viewModelScope.launch {
+            _updateNicknameState.value = UpdateNicknameState.Loading
+
+            val result = authRepository.updateNickname(trimmed)
+            _updateNicknameState.value = result.fold(
+                onSuccess = { UpdateNicknameState.Success },
+                onFailure = { UpdateNicknameState.Error(it.message ?: "Failed to update nickname") }
+            )
+        }
+    }
+
+    fun resetUpdateNicknameState() {
+        _updateNicknameState.value = UpdateNicknameState.Idle
+    }
 }
 
 sealed class DeleteAccountState {
@@ -93,4 +118,11 @@ sealed class DeleteAccountState {
     data object Loading : DeleteAccountState()
     data object Success : DeleteAccountState()
     data class Error(val message: String) : DeleteAccountState()
+}
+
+sealed class UpdateNicknameState {
+    data object Idle : UpdateNicknameState()
+    data object Loading : UpdateNicknameState()
+    data object Success : UpdateNicknameState()
+    data class Error(val message: String) : UpdateNicknameState()
 }

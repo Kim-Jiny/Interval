@@ -129,8 +129,8 @@ class ChallengeDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _isJoining.value = true
             challengeRepository.leaveChallenge(loadedChallengeId)
-                .onSuccess { refundedAmount ->
-                    _message.value = "Left challenge. Refunded: ${refundedAmount}M"
+                .onSuccess {
+                    _message.value = "Successfully left the challenge"
                     loadData()
                 }
                 .onFailure { e ->

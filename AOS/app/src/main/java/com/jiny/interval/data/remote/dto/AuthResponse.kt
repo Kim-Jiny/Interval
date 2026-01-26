@@ -52,3 +52,11 @@ data class RefreshTokenRequest(
     @SerializedName("refresh_token")
     val refreshToken: String
 )
+
+/**
+ * Request body for nickname update
+ */
+data class UpdateNicknameRequest(
+    @SerializedName("nickname")
+    val nickname: String
+)

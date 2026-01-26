@@ -4,6 +4,7 @@ import com.jiny.interval.data.remote.TokenManager
 import com.jiny.interval.data.remote.api.AuthApi
 import com.jiny.interval.data.remote.dto.RefreshTokenRequest
 import com.jiny.interval.data.remote.dto.SocialLoginRequest
+import com.jiny.interval.data.remote.dto.UpdateNicknameRequest
 import com.jiny.interval.domain.model.User
 import com.jiny.interval.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -148,6 +149,49 @@ class AuthRepositoryImpl @Inject constructor(
                 Result.success(Unit)
             } else {
                 val errorMsg = response.body()?.error ?: "Delete account failed"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateNickname(nickname: String): Result<User> {
+        val authHeader = tokenManager.getAuthHeader()
+            ?: return Result.failure(Exception("Not logged in"))
+
+        return try {
+            val response = authApi.updateNickname(
+                token = authHeader,
+                request = UpdateNicknameRequest(nickname = nickname)
+            )
+
+            if (response.isSuccessful && response.body()?.success == true) {
+                val body = response.body()!!
+                val userDto = body.user!!
+
+                // Update user info in storage
+                tokenManager.saveUser(
+                    id = userDto.id,
+                    email = userDto.email,
+                    nickname = userDto.nickname,
+                    profileImage = userDto.profileImage,
+                    provider = tokenManager.userProvider
+                )
+
+                val user = User(
+                    id = userDto.id,
+                    email = userDto.email,
+                    name = userDto.name,
+                    nickname = userDto.nickname,
+                    profileImage = userDto.profileImage,
+                    provider = tokenManager.userProvider
+                )
+
+                _currentUser.value = user
+                Result.success(user)
+            } else {
+                val errorMsg = response.body()?.error ?: "Failed to update nickname"
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {

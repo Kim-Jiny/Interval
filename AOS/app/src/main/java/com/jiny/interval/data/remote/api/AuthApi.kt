@@ -4,6 +4,7 @@ import com.jiny.interval.data.remote.dto.AuthResponse
 import com.jiny.interval.data.remote.dto.RefreshTokenRequest
 import com.jiny.interval.data.remote.dto.SimpleResponse
 import com.jiny.interval.data.remote.dto.SocialLoginRequest
+import com.jiny.interval.data.remote.dto.UpdateNicknameRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -38,4 +39,13 @@ interface AuthApi {
     suspend fun deleteAccount(
         @Header("Authorization") token: String
     ): Response<SimpleResponse>
+
+    /**
+     * Update nickname
+     */
+    @POST("auth/update-nickname.php")
+    suspend fun updateNickname(
+        @Header("Authorization") token: String,
+        @Body request: UpdateNicknameRequest
+    ): Response<AuthResponse>
 }

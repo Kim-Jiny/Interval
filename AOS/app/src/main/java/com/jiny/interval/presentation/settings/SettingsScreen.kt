@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.MusicNote
@@ -28,6 +29,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -61,12 +63,16 @@ fun SettingsScreen(
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
     val currentUser by viewModel.currentUser.collectAsState()
     val deleteAccountState by viewModel.deleteAccountState.collectAsState()
+    val updateNicknameState by viewModel.updateNicknameState.collectAsState()
 
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showDeleteAccountDialog by remember { mutableStateOf(false) }
+    var showNicknameDialog by remember { mutableStateOf(false) }
+    var nicknameInput by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
 
     val deleteSuccessMessage = stringResource(R.string.delete_account_success)
+    val nicknameSuccessMessage = stringResource(R.string.nickname_update_success)
 
     LaunchedEffect(deleteAccountState) {
         when (deleteAccountState) {
@@ -77,6 +83,21 @@ fun SettingsScreen(
             is DeleteAccountState.Error -> {
                 snackbarHostState.showSnackbar((deleteAccountState as DeleteAccountState.Error).message)
                 viewModel.resetDeleteAccountState()
+            }
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(updateNicknameState) {
+        when (updateNicknameState) {
+            is UpdateNicknameState.Success -> {
+                showNicknameDialog = false
+                snackbarHostState.showSnackbar(nicknameSuccessMessage)
+                viewModel.resetUpdateNicknameState()
+            }
+            is UpdateNicknameState.Error -> {
+                snackbarHostState.showSnackbar((updateNicknameState as UpdateNicknameState.Error).message)
+                viewModel.resetUpdateNicknameState()
             }
             else -> {}
         }
@@ -127,6 +148,58 @@ fun SettingsScreen(
         )
     }
 
+    if (showNicknameDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                if (updateNicknameState !is UpdateNicknameState.Loading) {
+                    showNicknameDialog = false
+                }
+            },
+            title = { Text(stringResource(R.string.change_nickname)) },
+            text = {
+                Column {
+                    Text(
+                        text = stringResource(R.string.nickname_requirements),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = nicknameInput,
+                        onValueChange = { nicknameInput = it },
+                        label = { Text(stringResource(R.string.nickname)) },
+                        singleLine = true,
+                        enabled = updateNicknameState !is UpdateNicknameState.Loading,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.updateNickname(nicknameInput) },
+                    enabled = updateNicknameState !is UpdateNicknameState.Loading
+                ) {
+                    if (updateNicknameState is UpdateNicknameState.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(stringResource(R.string.save))
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showNicknameDialog = false },
+                    enabled = updateNicknameState !is UpdateNicknameState.Loading
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -158,6 +231,15 @@ fun SettingsScreen(
                     icon = Icons.Default.AccountCircle,
                     title = currentUser?.displayName ?: "",
                     subtitle = currentUser?.email ?: ""
+                )
+
+                ActionItem(
+                    icon = Icons.Default.Edit,
+                    title = stringResource(R.string.change_nickname),
+                    onClick = {
+                        nicknameInput = currentUser?.nickname ?: ""
+                        showNicknameDialog = true
+                    }
                 )
 
                 ActionItem(
