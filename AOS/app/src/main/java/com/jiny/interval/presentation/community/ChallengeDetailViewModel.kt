@@ -3,6 +3,7 @@ package com.jiny.interval.presentation.community
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jiny.interval.data.remote.ConfigManager
 import com.jiny.interval.domain.model.Challenge
 import com.jiny.interval.domain.model.ChallengeParticipant
 import com.jiny.interval.domain.model.MileageBalance
@@ -23,7 +24,8 @@ class ChallengeDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val challengeRepository: ChallengeRepository,
     private val mileageRepository: MileageRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val configManager: ConfigManager
 ) : ViewModel() {
 
     private val challengeId: Int? = savedStateHandle.get<Int>("challengeId")
@@ -144,5 +146,10 @@ class ChallengeDetailViewModel @Inject constructor(
 
     fun clearMessage() {
         _message.value = null
+    }
+
+    fun getShareUrl(): String {
+        val c = _challenge.value ?: return ""
+        return c.shareUrl ?: "${configManager.challengeShareUrl}${c.shareCode}"
     }
 }

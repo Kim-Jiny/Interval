@@ -1,6 +1,8 @@
 package com.jiny.interval.di
 
 import com.jiny.interval.data.remote.AuthInterceptor
+import com.jiny.interval.data.remote.BaseUrlInterceptor
+import com.jiny.interval.data.remote.ConfigManager
 import com.jiny.interval.data.remote.TokenAuthenticator
 import com.jiny.interval.data.remote.api.AuthApi
 import com.jiny.interval.data.remote.api.ChallengeApi
@@ -20,7 +22,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "http://daeqws1.mycafe24.com/Interval/api/"
+    // Placeholder URL - actual URL is set by BaseUrlInterceptor
+    private const val BASE_URL = "http://placeholder.local/api/"
 
     @Provides
     @Singleton
@@ -35,9 +38,11 @@ object NetworkModule {
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
+        baseUrlInterceptor: BaseUrlInterceptor,
         tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor(baseUrlInterceptor)  // Dynamic URL interceptor first
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .authenticator(tokenAuthenticator)

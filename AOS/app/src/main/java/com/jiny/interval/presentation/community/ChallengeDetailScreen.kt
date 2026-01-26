@@ -88,15 +88,17 @@ fun ChallengeDetailScreen(
     var showLeaveDialog by remember { mutableStateOf(false) }
 
     val shareChallenge: () -> Unit = {
-        challenge?.let { c ->
-            val url = c.shareUrl ?: "http://kjiny.shop/Interval/challenge/?code=${c.shareCode}"
-            val sendIntent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, url)
-                type = "text/plain"
+        challenge?.let {
+            val url = viewModel.getShareUrl()
+            if (url.isNotEmpty()) {
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, url)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                context.startActivity(shareIntent)
             }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            context.startActivity(shareIntent)
         }
     }
 
