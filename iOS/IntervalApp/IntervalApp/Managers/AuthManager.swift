@@ -106,6 +106,7 @@ class AuthManager: NSObject, ObservableObject {
         // 사용자 관련 데이터 초기화
         ChallengeManager.shared.clearUserData()
         MileageManager.shared.clearUserData()
+        WorkoutHistoryManager.shared.clearUserData()
     }
 
     func getAccessToken() -> String? {

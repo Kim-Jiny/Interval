@@ -59,6 +59,8 @@
 	<string>This app uses tracking to provide personalized ads and improve your experience. Your data will be used to deliver relevant advertisements.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>IntervalMate needs access to save your workout completion screenshots to the photo library.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>IntervalMate would like to read your workout history from Health to display in the calendar view.</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>

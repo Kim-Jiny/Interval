@@ -19,6 +19,11 @@ struct ContentView: View {
                     Label("Home", systemImage: "house.fill")
                 }
 
+            CalendarView()
+                .tabItem {
+                    Label("Calendar", systemImage: "calendar")
+                }
+
             CommunityView()
                 .tabItem {
                     Label("Challenge", systemImage: "trophy.fill")

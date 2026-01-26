@@ -1108,6 +1108,9 @@ class TimerManager: ObservableObject {
 
             // Watch에 완료 알림
             PhoneConnectivityManager.shared.sendTimerCompleted()
+
+            // 운동 기록 저장 (로그인된 경우만)
+            saveWorkoutRecord()
         }
     }
 
@@ -1362,6 +1365,44 @@ class TimerManager: ObservableObject {
             isPaused: !isRunning,
             remainingSeconds: Int(ceil(timeRemaining))
         )
+    }
+
+    // MARK: - Workout Record
+
+    /// 운동 기록 저장 (서버에)
+    private func saveWorkoutRecord() {
+        // 루틴 데이터 준비
+        let routineData: [String: Any] = [
+            "intervals": routine.intervals.map { interval in
+                [
+                    "name": interval.name,
+                    "duration": Int(interval.duration),
+                    "type": interval.type.rawValue
+                ]
+            },
+            "rounds": routine.rounds
+        ]
+
+        let routineName = routine.name
+        let duration = Int(actualElapsedTime)
+        let rounds = routine.rounds
+
+        Task { @MainActor in
+            // 로그인된 경우만 저장
+            guard AuthManager.shared.isLoggedIn else { return }
+
+            do {
+                try await WorkoutHistoryManager.shared.recordWorkout(
+                    routineName: routineName,
+                    totalDuration: duration,
+                    roundsCompleted: rounds,
+                    routineData: routineData
+                )
+                print("Workout record saved successfully")
+            } catch {
+                print("Failed to save workout record: \(error)")
+            }
+        }
     }
 }
 
