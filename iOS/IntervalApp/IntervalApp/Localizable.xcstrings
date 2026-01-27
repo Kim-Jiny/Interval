@@ -2432,6 +2432,7 @@
       }
     },
     "Build" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

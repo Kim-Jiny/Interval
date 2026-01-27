@@ -30,7 +30,14 @@ class WorkoutHistoryManager: ObservableObject {
         roundsCompleted: Int,
         routineData: [String: Any]? = nil
     ) async throws {
+        #if DEBUG
+        print("📝 WorkoutHistoryManager.recordWorkout() - routineName: \(routineName), duration: \(totalDuration), rounds: \(roundsCompleted)")
+        #endif
+
         guard let accessToken = AuthManager.shared.getAccessToken() else {
+            #if DEBUG
+            print("❌ WorkoutHistoryManager.recordWorkout() - No access token")
+            #endif
             throw WorkoutHistoryError.notLoggedIn
         }
 
@@ -61,7 +68,7 @@ class WorkoutHistoryManager: ObservableObject {
 
         #if DEBUG
         if let jsonString = String(data: data, encoding: .utf8) {
-            print("Workout Record Response (\(httpResponse.statusCode)): \(jsonString)")
+            print("📝 Workout Record API Response (\(httpResponse.statusCode)): \(jsonString)")
         }
         #endif
 
@@ -123,7 +130,7 @@ class WorkoutHistoryManager: ObservableObject {
 
         #if DEBUG
         if let jsonString = String(data: data, encoding: .utf8) {
-            print("Workout History Response (\(httpResponse.statusCode)): \(jsonString)")
+            print("📅 Workout History API Response (\(httpResponse.statusCode)): \(jsonString)")
         }
         #endif
 

@@ -61,6 +61,8 @@
 	<string>IntervalMate needs access to save your workout completion screenshots to the photo library.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>IntervalMate would like to read your workout history from Health to display in the calendar view.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>IntervalMate may save your workout data to Health to track your fitness progress.</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>

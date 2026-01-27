@@ -250,7 +250,15 @@ struct HomeView: View {
 
     // 챌린지 운동 시작
     private func startChallengeWorkout(_ challenge: ChallengeListItem) {
-        guard let routine = challenge.toRoutine() else { return }
+        guard let routine = challenge.toRoutine() else {
+            #if DEBUG
+            print("❌ startChallengeWorkout - Failed to create routine from challenge: \(challenge.title)")
+            #endif
+            return
+        }
+        #if DEBUG
+        print("🏃 startChallengeWorkout - Starting workout: \(routine.name), intervals: \(routine.intervals.count), rounds: \(routine.rounds)")
+        #endif
         selectedChallengeForWorkout = challenge
         challengeRoutine = routine
     }

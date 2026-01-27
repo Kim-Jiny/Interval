@@ -1387,9 +1387,23 @@ class TimerManager: ObservableObject {
         let duration = Int(actualElapsedTime)
         let rounds = routine.rounds
 
+        #if DEBUG
+        print("📝 saveWorkoutRecord called - routineName: \(routineName), duration: \(duration), rounds: \(rounds)")
+        #endif
+
         Task { @MainActor in
             // 로그인된 경우만 저장
-            guard AuthManager.shared.isLoggedIn else { return }
+            let isLoggedIn = AuthManager.shared.isLoggedIn
+            #if DEBUG
+            print("📝 saveWorkoutRecord - isLoggedIn: \(isLoggedIn)")
+            #endif
+
+            guard isLoggedIn else {
+                #if DEBUG
+                print("📝 saveWorkoutRecord - skipped (not logged in)")
+                #endif
+                return
+            }
 
             do {
                 try await WorkoutHistoryManager.shared.recordWorkout(
@@ -1398,9 +1412,9 @@ class TimerManager: ObservableObject {
                     roundsCompleted: rounds,
                     routineData: routineData
                 )
-                print("Workout record saved successfully")
+                print("📝 Workout record saved successfully: \(routineName)")
             } catch {
-                print("Failed to save workout record: \(error)")
+                print("❌ Failed to save workout record: \(error)")
             }
         }
     }

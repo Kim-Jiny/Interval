@@ -348,7 +348,14 @@ struct ChallengeListItem: Identifiable, Codable, Equatable {
 
     /// Convert to Routine for starting workout
     func toRoutine() -> Routine? {
-        routineData?.toRoutine(name: routineName)
+        #if DEBUG
+        if routineData == nil {
+            print("⚠️ ChallengeListItem.toRoutine() - routineData is nil for challenge: \(title)")
+        } else {
+            print("✅ ChallengeListItem.toRoutine() - routineName: \(routineName), intervals: \(routineData?.intervals.count ?? 0)")
+        }
+        #endif
+        return routineData?.toRoutine(name: routineName)
     }
 
     /// 챌린지가 종료되었지만 상금 분배가 안된 상태 (수령 대기)
