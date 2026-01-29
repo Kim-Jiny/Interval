@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,11 +13,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import com.jiny.interval.R
 import com.jiny.interval.data.remote.GoogleAuthManager
+import com.jiny.interval.data.remote.TokenManager
+import com.jiny.interval.presentation.navigation.Screen
 import com.jiny.interval.presentation.theme.IntervalTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -26,6 +31,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var googleAuthManager: GoogleAuthManager
+
+    @Inject
+    lateinit var tokenManager: TokenManager
 
     // Pending deep link share code
     private val pendingShareCode = mutableStateOf<String?>(null)
@@ -51,6 +59,24 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
+
+                    // Observe force logout event
+                    LaunchedEffect(Unit) {
+                        tokenManager.forceLogoutEvent.collect {
+                            // Show toast and navigate to home
+                            Toast.makeText(
+                                this@MainActivity,
+                                getString(R.string.session_expired),
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                            // Navigate to home and clear back stack
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    }
+
                     MainScreen(
                         navController = navController,
                         googleAuthManager = googleAuthManager,

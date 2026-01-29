@@ -16,4 +16,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "IntervalApp"
 include(":app")
-include(":wear")

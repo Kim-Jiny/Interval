@@ -355,10 +355,19 @@ private fun ChallengeInfoCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Date info
-            DateInfoRow(
-                label = stringResource(R.string.challenge_period),
-                startDate = challenge.challengeStartAt,
-                endDate = challenge.challengeEndAt
+            DateTimeInfoRow(
+                label = stringResource(R.string.registration_end_date),
+                dateTime = challenge.registrationEndAt
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            DateTimeInfoRow(
+                label = stringResource(R.string.start_date),
+                dateTime = challenge.challengeStartAt
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            DateTimeInfoRow(
+                label = stringResource(R.string.end_date),
+                dateTime = challenge.challengeEndAt
             )
         }
     }
@@ -386,26 +395,18 @@ private fun InfoColumn(
 }
 
 @Composable
-private fun DateInfoRow(
+private fun DateTimeInfoRow(
     label: String,
-    startDate: String,
-    endDate: String
+    dateTime: String
 ) {
-    val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+    val displayFormat = SimpleDateFormat("M월 d일 (E) HH:mm", Locale.KOREAN)
     val parseFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
-    val formattedStart = try {
-        val date = parseFormat.parse(startDate)
-        dateFormat.format(date!!)
+    val formattedDateTime = try {
+        val date = parseFormat.parse(dateTime)
+        displayFormat.format(date!!)
     } catch (e: Exception) {
-        startDate.take(10)
-    }
-
-    val formattedEnd = try {
-        val date = parseFormat.parse(endDate)
-        dateFormat.format(date!!)
-    } catch (e: Exception) {
-        endDate.take(10)
+        dateTime
     }
 
     Row(
@@ -419,7 +420,7 @@ private fun DateInfoRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = "$formattedStart ~ $formattedEnd",
+            text = formattedDateTime,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium
         )

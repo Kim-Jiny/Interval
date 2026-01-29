@@ -111,22 +111,135 @@ struct ChallengeCreateView: View {
 
             // Entry Fee Section
             Section {
-                Stepper(String(localized: "Entry Fee") + ": \(entryFee)M", value: $entryFee, in: 0...10000, step: 50)
-
+                // Entry Fee Stepper
                 HStack {
-                    Text("Your Balance")
+                    Label {
+                        Text(String(localized: "Entry Fee"))
+                    } icon: {
+                        Image(systemName: "ticket.fill")
+                            .foregroundStyle(.blue)
+                    }
                     Spacer()
-                    Text(mileageManager.balance?.formattedBalance ?? "0M")
-                        .foregroundStyle(hasEnoughBalance ? .primary : .primary)
+                    HStack(spacing: 16) {
+                        Button {
+                            if entryFee >= 50 { entryFee -= 50 }
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(entryFee >= 50 ? .blue : .gray)
+                        }
+                        .buttonStyle(.plain)
+
+                        Text("\(entryFee)M")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .monospacedDigit()
+                            .frame(minWidth: 70)
+
+                        Button {
+                            if entryFee < 10000 { entryFee += 50 }
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(entryFee < 10000 ? .blue : .gray)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
+                .padding(.vertical, 4)
             } header: {
-                Text("Entry Fee")
+                Text(String(localized: "Entry Fee"))
+            } footer: {
+                Text(String(localized: "Entry fee goes to the prize pool"))
+                    .foregroundStyle(.secondary)
+            }
+
+            // Cost Summary Section
+            Section {
+                // Visual Summary Card
+                VStack(spacing: 0) {
+                    // Creation Fee Row
+                    HStack {
+                        HStack(spacing: 8) {
+                            Text("🎨")
+                            Text(String(localized: "Creation Fee"))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text("300M")
+                            .fontWeight(.medium)
+                    }
+                    .padding(.vertical, 12)
+
+                    Divider()
+
+                    // Entry Fee Row
+                    HStack {
+                        HStack(spacing: 8) {
+                            Text("🎟️")
+                            Text(String(localized: "Entry Fee"))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text("\(entryFee)M")
+                            .fontWeight(.medium)
+                    }
+                    .padding(.vertical, 12)
+
+                    Divider()
+
+                    // Total Row
+                    HStack {
+                        HStack(spacing: 8) {
+                            Text("💰")
+                            Text(String(localized: "Total Required"))
+                                .fontWeight(.semibold)
+                        }
+                        Spacer()
+                        Text("\(totalRequired)M")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.orange)
+                    }
+                    .padding(.vertical, 12)
+                }
+
+                // Balance Card
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(String(localized: "Your Balance"))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(mileageManager.balance?.formattedBalance ?? "0M")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(hasEnoughBalance ? .green : .red)
+                    }
+
+                    Spacer()
+
+                    if hasEnoughBalance {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title)
+                            .foregroundStyle(.green)
+                    } else {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title)
+                            .foregroundStyle(.red)
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(hasEnoughBalance ? Color.green.opacity(0.1) : Color.red.opacity(0.1))
+                )
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            } header: {
+                Text(String(localized: "Cost Summary"))
             } footer: {
                 if !hasEnoughBalance {
-                    Text("Insufficient balance. You need at least \(entryFee.formatted(.number))M to create this challenge.")
+                    Label(String(localized: "Insufficient balance"), systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.red)
-                } else {
-                    Text("As the creator, you will automatically join and pay the entry fee.")
                 }
             }
 
@@ -224,11 +337,9 @@ struct ChallengeCreateView: View {
             await mileageManager.fetchBalance()
         }
         // Auto-update start date when registration end date changes
+        // Auto-update start date when registration end date changes (always set to reg end + 1 min)
         .onChange(of: registrationEndDate) { _, newValue in
-            let minStartDate = newValue.addingTimeInterval(60) // +1 minute
-            if challengeStartDate < minStartDate {
-                challengeStartDate = minStartDate
-            }
+            challengeStartDate = newValue.addingTimeInterval(60) // +1 minute
         }
         // Auto-update end date when start date changes
         .onChange(of: challengeStartDate) { _, newValue in
@@ -272,9 +383,15 @@ struct ChallengeCreateView: View {
         && hasEnoughBalance
     }
 
+    private let creationFee = 300
+
+    private var totalRequired: Int {
+        creationFee + entryFee
+    }
+
     private var hasEnoughBalance: Bool {
         guard let balance = mileageManager.balance?.balance else { return false }
-        return balance >= entryFee
+        return balance >= totalRequired
     }
 
     // MARK: - Create Challenge

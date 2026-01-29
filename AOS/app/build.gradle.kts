@@ -10,12 +10,21 @@ android {
     namespace = "com.jiny.interval"
     compileSdk = 35
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("interval-release.jks")
+            storePassword = "9512042"
+            keyAlias = "interval"
+            keyPassword = "9512042"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.jiny.interval"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,6 +35,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

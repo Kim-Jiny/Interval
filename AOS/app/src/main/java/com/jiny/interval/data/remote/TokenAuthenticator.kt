@@ -66,8 +66,8 @@ class TokenAuthenticator @Inject constructor(
                     }
                 } else {
                     Log.e(TAG, "authenticate: Refresh failed: ${refreshResponse.errorBody()?.string()}")
-                    // Clear tokens on refresh failure
-                    tokenManager.clearAll()
+                    // Force logout on refresh failure
+                    tokenManager.forceLogout()
                     null
                 }
             } catch (e: Exception) {

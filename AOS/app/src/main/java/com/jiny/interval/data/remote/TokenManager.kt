@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,6 +16,9 @@ import javax.inject.Singleton
 class TokenManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    // Force logout event - emitted when token refresh fails
+    private val _forceLogoutEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val forceLogoutEvent = _forceLogoutEvent.asSharedFlow()
     private val masterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
@@ -88,6 +93,15 @@ class TokenManager @Inject constructor(
 
     fun clearAll() {
         sharedPreferences.edit().clear().apply()
+    }
+
+    /**
+     * Clear all tokens and emit force logout event
+     * Called when token refresh fails
+     */
+    fun forceLogout() {
+        clearAll()
+        _forceLogoutEvent.tryEmit(Unit)
     }
 
     fun getAuthHeader(): String? {

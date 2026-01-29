@@ -142,11 +142,10 @@ fun CreateChallengeScreen(
     }
 
     // Auto-update start date when registration end date changes (start = registration end + 1 min)
+    // Auto-update start date when registration end date changes (always set to reg end + 1 min)
     LaunchedEffect(registrationEndDate) {
         val newStartDate = Date(registrationEndDate.time + 60 * 1000) // +1 minute
-        if (challengeStartDate.before(newStartDate)) {
-            viewModel.updateChallengeStartDate(newStartDate)
-        }
+        viewModel.updateChallengeStartDate(newStartDate)
     }
 
     // Auto-update end date when start date changes (end must be after start)
@@ -392,7 +391,11 @@ fun CreateChallengeScreen(
 
                 // Entry Fee
                 item {
+                    val creationFee = 300
+                    val totalRequired = creationFee + entryFee
+
                     GlassSectionCard(title = stringResource(R.string.entry_fee_setting)) {
+                        // Entry Fee Stepper
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
@@ -415,7 +418,7 @@ fun CreateChallengeScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    text = "마일리지",
+                                    text = "참가비",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -428,12 +431,79 @@ fun CreateChallengeScreen(
                             )
                         }
 
-                        if (entryFee > mileageBalance.balance) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Fee breakdown
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "생성비",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = "${creationFee}M",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFFFF9800)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "총 필요 마일리지",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "${totalRequired}M",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "보유 마일리지",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = mileageBalance.formattedBalance,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = if (mileageBalance.balance >= totalRequired)
+                                    Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
+                            )
+                        }
+
+                        if (totalRequired > mileageBalance.balance) {
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 text = "⚠️ " + stringResource(R.string.insufficient_balance),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "💡 생성비는 소모되고, 참가비는 상금풀에 추가됩니다",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center
                             )
@@ -509,7 +579,7 @@ fun CreateChallengeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        enabled = !isLoading && selectedRoutine != null && title.isNotBlank() && entryFee <= mileageBalance.balance,
+                        enabled = !isLoading && selectedRoutine != null && title.isNotBlank() && (entryFee + 300) <= mileageBalance.balance,
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary
@@ -934,8 +1004,8 @@ private fun DateTimePickerBottomSheet(
                         onValueChange = { newHour ->
                             selectedHour = newHour
                             // Adjust minute if needed
-                            if (isToday && newHour == currentHour && selectedMinute <= currentMinute) {
-                                selectedMinute = currentMinute + 1
+                            if (isMinDay && newHour == minDateHour && selectedMinute <= minDateMinute) {
+                                selectedMinute = minDateMinute + 1
                                 if (selectedMinute > 59) {
                                     selectedMinute = 0
                                 }
