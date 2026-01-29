@@ -48,12 +48,7 @@ struct HomeView: View {
                 )
                 .ignoresSafeArea()
             )
-            .navigationTitle(String(localized: "IntervalMate"))
-            .refreshable {
-                if AuthManager.shared.isLoggedIn {
-                    try? await challengeManager.fetchMyChallenges()
-                }
-            }
+            .navigationTitle(greetingText)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -63,6 +58,11 @@ struct HomeView: View {
                             .font(.title3)
                             .foregroundStyle(.blue)
                     }
+                }
+            }
+            .refreshable {
+                if AuthManager.shared.isLoggedIn {
+                    try? await challengeManager.fetchMyChallenges()
                 }
             }
             .sheet(isPresented: $showingTemplateSelection, onDismiss: {
@@ -136,6 +136,20 @@ struct HomeView: View {
                     try? await challengeManager.fetchMyChallenges()
                 }
             }
+        }
+    }
+
+    // MARK: - Greeting
+
+    private var greetingText: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+
+        if hour < 12 {
+            return String(localized: "Good Morning ☕", comment: "Morning greeting shown in home screen title")
+        } else if hour < 17 {
+            return String(localized: "Good Afternoon ☀️", comment: "Afternoon greeting shown in home screen title")
+        } else {
+            return String(localized: "Good Evening 🌙", comment: "Evening greeting shown in home screen title")
         }
     }
 
