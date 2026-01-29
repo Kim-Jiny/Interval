@@ -8,6 +8,9 @@
     <string name="nav_settings">설정</string>
 
     <!-- Home Screen -->
+    <string name="greeting_morning">좋은 아침이에요 ☕</string>
+    <string name="greeting_afternoon">좋은 오후예요 ☀️</string>
+    <string name="greeting_evening">좋은 저녁이에요 🌙</string>
     <string name="tab_favorites">즐겨찾기</string>
     <string name="tab_all">전체</string>
     <string name="empty_favorites">즐겨찾기한 루틴이 없습니다.\n루틴의 하트 아이콘을 눌러 즐겨찾기에 추가하세요.</string>
@@ -188,6 +191,9 @@
     <string name="public_challenge">공개 챌린지</string>
     <string name="public_challenge_desc">누구나 이 챌린지를 찾아 참가할 수 있습니다</string>
     <string name="max_participants">최대 참가자</string>
+    <string name="max_participants_count">%d명</string>
+    <string name="limit_participants">참가 인원 제한</string>
+    <string name="challenge_duration_days">챌린지 기간: %d일</string>
     <string name="unlimited">제한 없음</string>
 
     <!-- Share -->

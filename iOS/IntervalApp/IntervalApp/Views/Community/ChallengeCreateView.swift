@@ -87,7 +87,7 @@ struct ChallengeCreateView: View {
 
                 DatePicker(String(localized: "Challenge Ends"),
                           selection: $challengeEndDate,
-                          in: challengeStartDate...,
+                          in: challengeStartDate.addingTimeInterval(60)...,
                           displayedComponents: [.date, .hourAndMinute])
             } header: {
                 Text("Schedule")
@@ -223,6 +223,20 @@ struct ChallengeCreateView: View {
         .task {
             await mileageManager.fetchBalance()
         }
+        // Auto-update start date when registration end date changes
+        .onChange(of: registrationEndDate) { _, newValue in
+            let minStartDate = newValue.addingTimeInterval(60) // +1 minute
+            if challengeStartDate < minStartDate {
+                challengeStartDate = minStartDate
+            }
+        }
+        // Auto-update end date when start date changes
+        .onChange(of: challengeStartDate) { _, newValue in
+            if challengeEndDate <= newValue {
+                // Set end date to start date + 1 day
+                challengeEndDate = newValue.addingTimeInterval(24 * 60 * 60)
+            }
+        }
     }
 
     // MARK: - Validation
@@ -240,8 +254,8 @@ struct ChallengeCreateView: View {
         if challengeStartDate < registrationEndDate.addingTimeInterval(60) {
             return String(localized: "Challenge must start at least 1 minute after registration ends.")
         }
-        if challengeEndDate <= challengeStartDate {
-            return String(localized: "Challenge end date must be after start date.")
+        if challengeEndDate < challengeStartDate.addingTimeInterval(60) {
+            return String(localized: "Challenge end date must be at least 1 minute after start date.")
         }
         if !hasEnoughBalance {
             return String(localized: "Insufficient mileage balance.")
@@ -254,7 +268,7 @@ struct ChallengeCreateView: View {
         && selectedRoutine != nil
         && registrationEndDate > Date()
         && challengeStartDate >= registrationEndDate.addingTimeInterval(60)
-        && challengeEndDate > challengeStartDate
+        && challengeEndDate >= challengeStartDate.addingTimeInterval(60)
         && hasEnoughBalance
     }
 
