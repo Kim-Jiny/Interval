@@ -44,6 +44,15 @@
     <string name="previous">Previous</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
+    <string name="refresh">Refresh</string>
+    <string name="date_time_format">MMM d (E) HH:mm</string>
+    <string name="creation_fee">Creation Fee</string>
+    <string name="total_required_mileage">Total Required Mileage</string>
+    <string name="creation_fee_note">Creation fee is consumed, entry fee is added to the prize pool.</string>
+    <string name="routine">Routine</string>
+    <string name="total">Total</string>
+    <string name="show_more">Show %d more</string>
+    <string name="show_less">Show less</string>
 
     <!-- Routine Editor -->
     <string name="new_routine">New Routine</string>
@@ -86,6 +95,7 @@
 
     <!-- Template Names -->
     <string name="template_empty">Empty</string>
+    <string name="template_basic_interval">Basic Interval</string>
     <string name="template_tabata">Tabata</string>
     <string name="template_running">Running Intervals</string>
     <string name="template_plank">Plank Challenge</string>

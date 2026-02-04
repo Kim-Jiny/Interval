@@ -12,6 +12,7 @@ class StringProviderImpl @Inject constructor(
 
     // Template Names
     override fun templateEmpty(): String = context.getString(R.string.template_empty)
+    override fun templateBasicInterval(): String = context.getString(R.string.template_basic_interval)
     override fun templateTabata(): String = context.getString(R.string.template_tabata)
     override fun templateRunning(): String = context.getString(R.string.template_running)
     override fun templatePlank(): String = context.getString(R.string.template_plank)

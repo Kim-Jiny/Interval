@@ -2,45 +2,52 @@ package com.jiny.interval.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Theme Colors
-val Primary = Color(0xFF4CAF50)
-val PrimaryVariant = Color(0xFF388E3C)
-val Secondary = Color(0xFF03DAC6)
-val SecondaryVariant = Color(0xFF018786)
+// Light Theme Colors (iOS-inspired, Android-friendly)
+val Primary = Color(0xFF2F7DF6)
+val Secondary = Color(0xFFFF8A3D)
+val Tertiary = Color(0xFF3BCB7A)
 
-val Background = Color(0xFFFAFAFA)
+val Background = Color(0xFFF5F6FA)
 val Surface = Color(0xFFFFFFFF)
-val Error = Color(0xFFB00020)
+val SurfaceVariant = Color(0xFFEEF1F6)
+val Error = Color(0xFFD32F2F)
 
 val OnPrimary = Color(0xFFFFFFFF)
-val OnSecondary = Color(0xFF000000)
-val OnBackground = Color(0xFF212121)
-val OnSurface = Color(0xFF212121)
+val OnSecondary = Color(0xFFFFFFFF)
+val OnBackground = Color(0xFF1B1F24)
+val OnSurface = Color(0xFF1B1F24)
+val OnSurfaceVariant = Color(0xFF6B7280)
 val OnError = Color(0xFFFFFFFF)
 
+val Outline = Color(0xFFE1E6EF)
+
 // Dark Theme Colors
-val PrimaryDark = Color(0xFF81C784)
-val PrimaryVariantDark = Color(0xFF4CAF50)
-val SecondaryDark = Color(0xFF03DAC6)
+val PrimaryDark = Color(0xFF7BB3FF)
+val SecondaryDark = Color(0xFFFFB27A)
+val TertiaryDark = Color(0xFF6FE3A7)
 
-val BackgroundDark = Color(0xFF121212)
-val SurfaceDark = Color(0xFF1E1E1E)
-val ErrorDark = Color(0xFFCF6679)
+val BackgroundDark = Color(0xFF141922)
+val SurfaceDark = Color(0xFF1B212C)
+val SurfaceVariantDark = Color(0xFF252D3A)
+val ErrorDark = Color(0xFFEF6A6A)
 
-val OnPrimaryDark = Color(0xFF000000)
-val OnSecondaryDark = Color(0xFF000000)
-val OnBackgroundDark = Color(0xFFE0E0E0)
-val OnSurfaceDark = Color(0xFFE0E0E0)
-val OnErrorDark = Color(0xFF000000)
+val OnPrimaryDark = Color(0xFF071426)
+val OnSecondaryDark = Color(0xFF1E0C02)
+val OnBackgroundDark = Color(0xFFE9EEF5)
+val OnSurfaceDark = Color(0xFFE9EEF5)
+val OnSurfaceVariantDark = Color(0xFFBAC4D0)
+val OnErrorDark = Color(0xFF220909)
 
-// Interval Type Colors
-val WorkoutColor = Color(0xFF4CAF50)  // Green
-val RestColor = Color(0xFF2196F3)      // Blue
-val WarmupColor = Color(0xFFFF9800)    // Orange
-val CooldownColor = Color(0xFF9C27B0)  // Purple
+val OutlineDark = Color(0xFF323B4B)
+
+// Interval Type Colors (match iOS feel)
+val WorkoutColor = Color(0xFFE94B3C)   // Red
+val RestColor = Color(0xFF2DBE70)      // Green
+val WarmupColor = Color(0xFFFFA31A)    // Orange
+val CooldownColor = Color(0xFF3B82F6)  // Blue
 
 // Additional UI Colors
 val CardBackground = Color(0xFFFFFFFF)
-val CardBackgroundDark = Color(0xFF2D2D2D)
-val DividerColor = Color(0xFFE0E0E0)
-val DividerColorDark = Color(0xFF424242)
+val CardBackgroundDark = Color(0xFF1C212B)
+val DividerColor = Color(0xFFE6EBF4)
+val DividerColorDark = Color(0xFF2A3342)

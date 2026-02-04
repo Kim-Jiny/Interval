@@ -114,7 +114,10 @@ fun CreateChallengeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-    val dateTimeFormat = remember { SimpleDateFormat("M월 d일 (E) HH:mm", Locale.KOREAN) }
+    val dateTimePattern = stringResource(R.string.date_time_format)
+    val dateTimeFormat = remember(dateTimePattern) {
+        SimpleDateFormat(dateTimePattern, Locale.getDefault())
+    }
     var showSuccessDialog by remember { mutableStateOf(false) }
     var hasMaxParticipants by remember { mutableStateOf(maxParticipants != null) }
 
@@ -418,7 +421,7 @@ fun CreateChallengeScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    text = "참가비",
+                                    text = stringResource(R.string.entry_fee),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -441,7 +444,7 @@ fun CreateChallengeScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "생성비",
+                                text = stringResource(R.string.creation_fee),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Text(
@@ -459,7 +462,7 @@ fun CreateChallengeScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "총 필요 마일리지",
+                                text = stringResource(R.string.total_required_mileage),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -477,7 +480,7 @@ fun CreateChallengeScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "보유 마일리지",
+                                text = stringResource(R.string.my_mileage),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Text(
@@ -501,7 +504,7 @@ fun CreateChallengeScreen(
                         } else {
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = "💡 생성비는 소모되고, 참가비는 상금풀에 추가됩니다",
+                                text = "💡 " + stringResource(R.string.creation_fee_note),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.fillMaxWidth(),

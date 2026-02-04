@@ -20,8 +20,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -62,6 +65,13 @@ import com.jiny.interval.R
 import com.jiny.interval.domain.model.Challenge
 import com.jiny.interval.domain.model.ChallengeParticipant
 import com.jiny.interval.domain.model.ChallengeStatus
+import com.jiny.interval.domain.model.ChallengeRoutineData
+import com.jiny.interval.domain.model.ChallengeInterval
+import com.jiny.interval.presentation.theme.CooldownColor
+import com.jiny.interval.presentation.theme.RestColor
+import com.jiny.interval.presentation.theme.WarmupColor
+import com.jiny.interval.presentation.theme.WorkoutColor
+import com.jiny.interval.util.TimeFormatter
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -193,6 +203,15 @@ fun ChallengeDetailScreen(
                     )
                 }
 
+                // Routine Detail Card
+                item {
+                    RoutineDetailCard(
+                        challenge = challenge!!,
+                        onStartWorkout = { onStartWorkout(challenge!!.id) },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
+
                 // My Stats Card (if participating)
                 if (challenge!!.isParticipating == true && challenge!!.myParticipation != null) {
                     item {
@@ -266,7 +285,7 @@ private fun ChallengeInfoCard(
     challenge: Challenge,
     modifier: Modifier = Modifier
 ) {
-    val status = challenge.status
+    val status = challenge.computedStatus
     val (statusColor, statusTextColor) = when (status) {
         ChallengeStatus.REGISTRATION -> Pair(Color(0xFF2196F3), Color.White)
         ChallengeStatus.ACTIVE -> Pair(Color(0xFF4CAF50), Color.White)
@@ -374,6 +393,218 @@ private fun ChallengeInfoCard(
 }
 
 @Composable
+private fun RoutineDetailCard(
+    challenge: Challenge,
+    onStartWorkout: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val routineData = challenge.routineData
+    val totalSeconds = routineData?.let { data ->
+        data.intervals.sumOf { it.duration } * data.rounds
+    }
+    val showStart = challenge.isParticipating == true && challenge.computedStatus == ChallengeStatus.ACTIVE
+    val maxVisibleIntervals = 6
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = stringResource(R.string.routine),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+                if (showStart) {
+                    Button(
+                        onClick = onStartWorkout,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.start))
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = challenge.routineName,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            routineData?.let { data ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    RoutineMetaItem(
+                        icon = Icons.Default.List,
+                        value = "${data.intervals.size}",
+                        label = stringResource(R.string.intervals)
+                    )
+                    RoutineMetaItem(
+                        icon = Icons.Default.Repeat,
+                        value = "${data.rounds}",
+                        label = stringResource(R.string.rounds)
+                    )
+                    totalSeconds?.let {
+                        RoutineMetaItem(
+                            icon = Icons.Default.Schedule,
+                            value = TimeFormatter.formatDuration(it),
+                            label = stringResource(R.string.total)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = stringResource(R.string.intervals),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val hasMany = data.intervals.size > maxVisibleIntervals
+                var expanded by remember(challenge.id, data.intervals.size) { mutableStateOf(false) }
+                val visibleIntervals = if (hasMany && !expanded) {
+                    data.intervals.take(maxVisibleIntervals)
+                } else {
+                    data.intervals
+                }
+
+                visibleIntervals.forEachIndexed { index, interval ->
+                    RoutineIntervalRow(
+                        index = index + 1,
+                        interval = interval
+                    )
+                    if (index != visibleIntervals.lastIndex) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+
+                if (hasMany) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    TextButton(
+                        onClick = { expanded = !expanded },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(
+                            text = if (expanded) stringResource(R.string.show_less)
+                            else stringResource(R.string.show_more, data.intervals.size - maxVisibleIntervals)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RoutineMetaItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    value: String,
+    label: String
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(14.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun RoutineIntervalRow(
+    index: Int,
+    interval: ChallengeInterval
+) {
+    val (color, typeLabel) = when (interval.type.lowercase()) {
+        "workout" -> WorkoutColor to stringResource(R.string.type_workout)
+        "rest" -> RestColor to stringResource(R.string.type_rest)
+        "warmup" -> WarmupColor to stringResource(R.string.type_warmup)
+        "cooldown" -> CooldownColor to stringResource(R.string.type_cooldown)
+        else -> MaterialTheme.colorScheme.onSurfaceVariant to interval.type
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(28.dp)
+                .clip(CircleShape)
+                .background(color.copy(alpha = 0.15f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = index.toString(),
+                style = MaterialTheme.typography.labelSmall,
+                color = color
+            )
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = interval.name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = typeLabel,
+                style = MaterialTheme.typography.labelSmall,
+                color = color
+            )
+        }
+        Text(
+            text = TimeFormatter.formatDuration(interval.duration),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
 private fun InfoColumn(
     label: String,
     value: String,
@@ -399,7 +630,10 @@ private fun DateTimeInfoRow(
     label: String,
     dateTime: String
 ) {
-    val displayFormat = SimpleDateFormat("M월 d일 (E) HH:mm", Locale.KOREAN)
+    val dateTimePattern = stringResource(R.string.date_time_format)
+    val displayFormat = remember(dateTimePattern) {
+        SimpleDateFormat(dateTimePattern, Locale.getDefault())
+    }
     val parseFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     val formattedDateTime = try {
@@ -507,7 +741,7 @@ private fun ActionButtons(
     val isParticipating = challenge.isParticipating == true
     val canJoin = challenge.canJoin == true
     val canLeave = challenge.canLeave == true
-    val isActive = challenge.status == ChallengeStatus.ACTIVE
+    val isActive = challenge.computedStatus == ChallengeStatus.ACTIVE
 
     Column(modifier = modifier.fillMaxWidth()) {
         if (isParticipating && isActive) {

@@ -1,6 +1,9 @@
 package com.jiny.interval.presentation.editor
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -39,11 +43,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jiny.interval.R
 import com.jiny.interval.domain.model.IntervalType
+import com.jiny.interval.presentation.components.BackgroundDecoration
 import com.jiny.interval.presentation.components.IntervalItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,110 +100,126 @@ fun RoutineEditorScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Routine name
-            item {
-                OutlinedTextField(
-                    value = uiState.name,
-                    onValueChange = { viewModel.updateName(it) },
-                    label = { Text(stringResource(R.string.routine_name)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+        val isDarkTheme = isSystemInDarkTheme()
+        val backgroundBrush = Brush.verticalGradient(
+            colors = if (isDarkTheme) {
+                listOf(
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                    MaterialTheme.colorScheme.background
+                )
+            } else {
+                listOf(
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.06f),
+                    MaterialTheme.colorScheme.background
                 )
             }
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundBrush)
+                .padding(paddingValues)
+        ) {
+            BackgroundDecoration()
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    SectionTitle(text = stringResource(R.string.routine_name))
+                    OutlinedTextField(
+                        value = uiState.name,
+                        onValueChange = { viewModel.updateName(it) },
+                        label = { Text(stringResource(R.string.routine_name)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(14.dp)
+                    )
+                }
 
-            // Rounds selector
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                item {
+                    SectionTitle(text = stringResource(R.string.rounds))
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
-                        Text(
-                            text = stringResource(R.string.rounds),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
                         Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(
-                                onClick = { viewModel.decrementRounds() },
-                                enabled = uiState.rounds > 1
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Remove,
-                                    contentDescription = stringResource(R.string.decrease_rounds)
-                                )
-                            }
-
                             Text(
-                                text = "${uiState.rounds}",
-                                style = MaterialTheme.typography.headlineSmall,
-                                modifier = Modifier.width(48.dp),
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                text = stringResource(R.string.rounds),
+                                style = MaterialTheme.typography.titleMedium
                             )
 
-                            IconButton(
-                                onClick = { viewModel.incrementRounds() },
-                                enabled = uiState.rounds < 99
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = stringResource(R.string.increase_rounds)
+                                IconButton(
+                                    onClick = { viewModel.decrementRounds() },
+                                    enabled = uiState.rounds > 1
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Remove,
+                                        contentDescription = stringResource(R.string.decrease_rounds)
+                                    )
+                                }
+
+                                Text(
+                                    text = "${uiState.rounds}",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier.width(48.dp),
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                 )
+
+                                IconButton(
+                                    onClick = { viewModel.incrementRounds() },
+                                    enabled = uiState.rounds < 99
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = stringResource(R.string.increase_rounds)
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            // Intervals header
-            item {
-                Text(
-                    text = stringResource(R.string.intervals),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-
-            // Interval list
-            if (uiState.intervals.isEmpty()) {
                 item {
-                    Text(
-                        text = stringResource(R.string.no_intervals),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    SectionTitle(text = stringResource(R.string.intervals))
+                }
+
+                if (uiState.intervals.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.no_intervals),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                itemsIndexed(
+                    items = uiState.intervals,
+                    key = { _, interval -> interval.id }
+                ) { index, interval ->
+                    IntervalItem(
+                        interval = interval,
+                        onDelete = { viewModel.deleteInterval(index) },
+                        onClick = { viewModel.startEditingInterval(index) }
                     )
                 }
-            }
 
-            itemsIndexed(
-                items = uiState.intervals,
-                key = { _, interval -> interval.id }
-            ) { index, interval ->
-                IntervalItem(
-                    interval = interval,
-                    onDelete = { viewModel.deleteInterval(index) },
-                    onClick = { viewModel.startEditingInterval(index) }
-                )
-            }
-
-            // Bottom spacing for FAB
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
         }
     }
@@ -213,6 +235,19 @@ fun RoutineEditorScreen(
             onDismiss = { viewModel.cancelEditingInterval() }
         )
     }
+}
+
+@Composable
+private fun SectionTitle(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = modifier.padding(bottom = 8.dp)
+    )
 }
 
 @Composable

@@ -1,17 +1,23 @@
 package com.jiny.interval.presentation.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
@@ -37,6 +43,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,11 +54,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jiny.interval.R
+import com.jiny.interval.presentation.components.BackgroundDecoration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -209,52 +220,76 @@ fun SettingsScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Column(
+        val isDarkTheme = isSystemInDarkTheme()
+        val backgroundBrush = Brush.verticalGradient(
+            colors = if (isDarkTheme) {
+                listOf(
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                    MaterialTheme.colorScheme.background
+                )
+            } else {
+                listOf(
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.06f),
+                    MaterialTheme.colorScheme.background
+                )
+            }
+        )
+        Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(backgroundBrush)
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
         ) {
+            BackgroundDecoration()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
             // Account Section
             SectionHeader(title = stringResource(R.string.account))
 
             if (isLoggedIn && currentUser != null) {
-                // Logged in state
-                AccountItem(
-                    icon = Icons.Default.AccountCircle,
-                    title = currentUser?.displayName ?: "",
-                    subtitle = currentUser?.email ?: ""
-                )
+                SectionCard {
+                    // Logged in state
+                    AccountItem(
+                        icon = Icons.Default.AccountCircle,
+                        title = currentUser?.displayName ?: "",
+                        subtitle = currentUser?.email ?: ""
+                    )
 
-                ActionItem(
-                    icon = Icons.Default.Edit,
-                    title = stringResource(R.string.change_nickname),
-                    onClick = {
-                        nicknameInput = currentUser?.nickname ?: ""
-                        showNicknameDialog = true
-                    }
-                )
+                    ActionItem(
+                        icon = Icons.Default.Edit,
+                        title = stringResource(R.string.change_nickname),
+                        onClick = {
+                            nicknameInput = currentUser?.nickname ?: ""
+                            showNicknameDialog = true
+                        }
+                    )
 
-                ActionItem(
-                    icon = Icons.AutoMirrored.Filled.Logout,
-                    title = stringResource(R.string.logout),
-                    onClick = { showLogoutDialog = true }
-                )
+                    ActionItem(
+                        icon = Icons.AutoMirrored.Filled.Logout,
+                        title = stringResource(R.string.logout),
+                        onClick = { showLogoutDialog = true }
+                    )
 
-                ActionItem(
-                    icon = Icons.Default.DeleteForever,
-                    title = stringResource(R.string.delete_account),
-                    onClick = { showDeleteAccountDialog = true },
-                    isDestructive = true,
-                    isLoading = deleteAccountState is DeleteAccountState.Loading
-                )
+                    ActionItem(
+                        icon = Icons.Default.DeleteForever,
+                        title = stringResource(R.string.delete_account),
+                        onClick = { showDeleteAccountDialog = true },
+                        isDestructive = true,
+                        isLoading = deleteAccountState is DeleteAccountState.Loading
+                    )
+                }
             } else {
-                // Not logged in state
-                ActionItem(
-                    icon = Icons.Default.Login,
-                    title = stringResource(R.string.login),
-                    onClick = onNavigateToLogin
-                )
+                SectionCard {
+                    // Not logged in state
+                    ActionItem(
+                        icon = Icons.Default.Login,
+                        title = stringResource(R.string.login),
+                        onClick = onNavigateToLogin
+                    )
+                }
             }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
@@ -262,42 +297,47 @@ fun SettingsScreen(
             // Timer Settings Section
             SectionHeader(title = stringResource(R.string.timer_settings))
 
-            SettingItem(
-                icon = Icons.Default.Vibration,
-                title = stringResource(R.string.vibration),
-                description = stringResource(R.string.vibration_desc),
-                checked = settings.vibrationEnabled,
-                onCheckedChange = { viewModel.updateVibration(it) }
-            )
+            SectionCard {
+                SettingItem(
+                    icon = Icons.Default.Vibration,
+                    title = stringResource(R.string.vibration),
+                    description = stringResource(R.string.vibration_desc),
+                    checked = settings.vibrationEnabled,
+                    onCheckedChange = { viewModel.updateVibration(it) }
+                )
 
-            SettingItem(
-                icon = Icons.Default.RecordVoiceOver,
-                title = stringResource(R.string.voice_guidance),
-                description = stringResource(R.string.voice_guidance_desc),
-                checked = settings.voiceGuidanceEnabled,
-                onCheckedChange = { viewModel.updateVoiceGuidance(it) }
-            )
+                SettingItem(
+                    icon = Icons.Default.RecordVoiceOver,
+                    title = stringResource(R.string.voice_guidance),
+                    description = stringResource(R.string.voice_guidance_desc),
+                    checked = settings.voiceGuidanceEnabled,
+                    onCheckedChange = { viewModel.updateVoiceGuidance(it) }
+                )
 
-            SettingItem(
-                icon = Icons.Default.MusicNote,
-                title = stringResource(R.string.background_sound),
-                description = stringResource(R.string.background_sound_desc),
-                checked = settings.backgroundSoundEnabled,
-                onCheckedChange = { viewModel.updateBackgroundSound(it) }
-            )
+                SettingItem(
+                    icon = Icons.Default.MusicNote,
+                    title = stringResource(R.string.background_sound),
+                    description = stringResource(R.string.background_sound_desc),
+                    checked = settings.backgroundSoundEnabled,
+                    onCheckedChange = { viewModel.updateBackgroundSound(it) }
+                )
+            }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             // About Section
             SectionHeader(title = stringResource(R.string.about))
 
-            AboutItem(
-                icon = Icons.Default.Info,
-                title = stringResource(R.string.version),
-                value = "1.0.0"
-            )
+            SectionCard {
+                AboutItem(
+                    icon = Icons.Default.Info,
+                    title = stringResource(R.string.version),
+                    value = "1.0.0"
+                )
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
+            }
         }
     }
 }
@@ -313,6 +353,33 @@ private fun SectionHeader(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     )
+}
+
+@Composable
+private fun SectionCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val borderColor = MaterialTheme.colorScheme.outline.copy(
+        alpha = if (isSystemInDarkTheme()) 0.9f else 0.6f
+    )
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .shadow(6.dp, RoundedCornerShape(18.dp), clip = false)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(18.dp)
+            ),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+            content()
+        }
+    }
 }
 
 @Composable

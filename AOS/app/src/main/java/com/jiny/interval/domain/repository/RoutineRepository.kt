@@ -7,6 +7,7 @@ interface RoutineRepository {
     fun getAllRoutines(): Flow<List<Routine>>
     fun getFavoriteRoutines(): Flow<List<Routine>>
     suspend fun getRoutineById(id: String): Routine?
+    suspend fun getRoutineCount(): Int
     suspend fun saveRoutine(routine: Routine)
     suspend fun deleteRoutine(id: String)
     suspend fun toggleFavorite(id: String)

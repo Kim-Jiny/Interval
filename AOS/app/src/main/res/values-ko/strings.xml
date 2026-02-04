@@ -44,6 +44,15 @@
     <string name="previous">이전</string>
     <string name="play">재생</string>
     <string name="pause">일시정지</string>
+    <string name="refresh">새로고침</string>
+    <string name="date_time_format">M월 d일 (E) HH:mm</string>
+    <string name="creation_fee">생성비</string>
+    <string name="total_required_mileage">총 필요 마일리지</string>
+    <string name="creation_fee_note">생성비는 소모되고, 참가비는 상금풀에 추가됩니다.</string>
+    <string name="routine">루틴</string>
+    <string name="total">총합</string>
+    <string name="show_more">%d개 더보기</string>
+    <string name="show_less">접기</string>
 
     <!-- Routine Editor -->
     <string name="new_routine">새 루틴</string>
@@ -86,6 +95,7 @@
 
     <!-- Template Names -->
     <string name="template_empty">빈 템플릿</string>
+    <string name="template_basic_interval">기본 인터벌</string>
     <string name="template_tabata">타바타</string>
     <string name="template_running">러닝 인터벌</string>
     <string name="template_plank">플랭크 챌린지</string>

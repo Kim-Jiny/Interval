@@ -18,35 +18,41 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDark,
     secondary = SecondaryDark,
-    tertiary = SecondaryVariant,
+    tertiary = TertiaryDark,
     background = BackgroundDark,
     surface = SurfaceDark,
+    surfaceVariant = SurfaceVariantDark,
     error = ErrorDark,
     onPrimary = OnPrimaryDark,
     onSecondary = OnSecondaryDark,
     onBackground = OnBackgroundDark,
     onSurface = OnSurfaceDark,
-    onError = OnErrorDark
+    onSurfaceVariant = OnSurfaceVariantDark,
+    onError = OnErrorDark,
+    outline = OutlineDark
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Primary,
     secondary = Secondary,
-    tertiary = SecondaryVariant,
+    tertiary = Tertiary,
     background = Background,
     surface = Surface,
+    surfaceVariant = SurfaceVariant,
     error = Error,
     onPrimary = OnPrimary,
     onSecondary = OnSecondary,
     onBackground = OnBackground,
     onSurface = OnSurface,
-    onError = OnError
+    onSurfaceVariant = OnSurfaceVariant,
+    onError = OnError,
+    outline = Outline
 )
 
 @Composable
 fun IntervalTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

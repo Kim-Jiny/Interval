@@ -1,6 +1,7 @@
 package com.jiny.interval.presentation.community
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
@@ -52,6 +54,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,6 +65,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.jiny.interval.R
 import com.jiny.interval.domain.model.ChallengeListItem
 import com.jiny.interval.domain.model.ChallengeStatus
+import com.jiny.interval.presentation.components.BackgroundDecoration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,7 +113,10 @@ fun CommunityScreen(
                 title = { Text(stringResource(R.string.challenge)) },
                 actions = {
                     IconButton(onClick = { viewModel.loadData() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.refresh)
+                        )
                     }
                 }
             )
@@ -119,7 +127,10 @@ fun CommunityScreen(
                     onClick = onNavigateToCreateChallenge,
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Create Challenge")
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(R.string.create_challenge)
+                    )
                 }
             }
         },
@@ -135,29 +146,48 @@ fun CommunityScreen(
                 CircularProgressIndicator()
             }
         } else {
-            LazyColumn(
+            val isDarkTheme = isSystemInDarkTheme()
+            val backgroundBrush = Brush.verticalGradient(
+                colors = if (isDarkTheme) {
+                    listOf(
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                        MaterialTheme.colorScheme.background
+                    )
+                } else {
+                    listOf(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.06f),
+                        MaterialTheme.colorScheme.background
+                    )
+                }
+            )
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(bottom = 80.dp)
+                    .background(backgroundBrush)
+                    .padding(paddingValues)
             ) {
-                // Mileage Balance Card
-                if (isLoggedIn) {
-                    item {
-                        MileageCard(
-                            balance = mileageBalance.formattedBalance,
-                            onClick = onNavigateToMileageHistory,
-                            modifier = Modifier.padding(16.dp)
-                        )
+                BackgroundDecoration()
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 80.dp)
+                ) {
+                    // Mileage Balance Card
+                    if (isLoggedIn) {
+                        item {
+                            MileageCard(
+                                balance = mileageBalance.formattedBalance,
+                                onClick = onNavigateToMileageHistory,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    } else {
+                        item {
+                            LoginPromptCard(
+                                onLoginClick = onNavigateToLogin,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
-                } else {
-                    item {
-                        LoginPromptCard(
-                            onLoginClick = onNavigateToLogin,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
 
                 // My Challenges Section
                 if (isLoggedIn && myChallenges.isNotEmpty()) {
@@ -213,6 +243,7 @@ fun CommunityScreen(
         }
     }
 }
+}
 
 @Composable
 private fun MileageCard(
@@ -220,14 +251,23 @@ private fun MileageCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val borderColor = MaterialTheme.colorScheme.outline.copy(
+        alpha = if (isSystemInDarkTheme()) 0.9f else 0.6f
+    )
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(8.dp, RoundedCornerShape(18.dp), clip = false)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(18.dp)
+            )
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(18.dp)
     ) {
         Row(
             modifier = Modifier
@@ -258,12 +298,22 @@ private fun LoginPromptCard(
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val borderColor = MaterialTheme.colorScheme.outline.copy(
+        alpha = if (isSystemInDarkTheme()) 0.9f else 0.6f
+    )
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(6.dp, RoundedCornerShape(18.dp), clip = false)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(18.dp)
+            ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(18.dp)
     ) {
         Column(
             modifier = Modifier
@@ -302,11 +352,21 @@ private fun MyChallengeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val borderColor = MaterialTheme.colorScheme.outline.copy(
+        alpha = if (isSystemInDarkTheme()) 0.9f else 0.6f
+    )
     Card(
         modifier = modifier
             .width(200.dp)
+            .shadow(6.dp, RoundedCornerShape(16.dp), clip = false)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(16.dp)
+            )
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -379,11 +439,21 @@ private fun ChallengeListCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val borderColor = MaterialTheme.colorScheme.outline.copy(
+        alpha = if (isSystemInDarkTheme()) 0.9f else 0.6f
+    )
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(6.dp, RoundedCornerShape(16.dp), clip = false)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(16.dp)
+            )
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
@@ -445,11 +515,11 @@ private fun StatusBadge(
     status: ChallengeStatus,
     modifier: Modifier = Modifier
 ) {
-    val (backgroundColor, textColor) = when (status) {
-        ChallengeStatus.REGISTRATION -> Pair(Color(0xFF2196F3), Color.White)
-        ChallengeStatus.ACTIVE -> Pair(Color(0xFF4CAF50), Color.White)
-        ChallengeStatus.COMPLETED -> Pair(Color(0xFF9E9E9E), Color.White)
-        ChallengeStatus.CANCELLED -> Pair(Color(0xFFF44336), Color.White)
+    val backgroundColor = when (status) {
+        ChallengeStatus.REGISTRATION -> MaterialTheme.colorScheme.primary
+        ChallengeStatus.ACTIVE -> MaterialTheme.colorScheme.tertiary
+        ChallengeStatus.COMPLETED -> MaterialTheme.colorScheme.onSurfaceVariant
+        ChallengeStatus.CANCELLED -> MaterialTheme.colorScheme.error
     }
 
     val text = when (status) {
@@ -461,14 +531,14 @@ private fun StatusBadge(
 
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
-            .background(backgroundColor)
-            .padding(horizontal = 6.dp, vertical = 2.dp)
+            .clip(RoundedCornerShape(999.dp))
+            .background(backgroundColor.copy(alpha = 0.12f))
+            .padding(horizontal = 8.dp, vertical = 3.dp)
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
-            color = textColor
+            color = backgroundColor
         )
     }
 }

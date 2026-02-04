@@ -25,6 +25,9 @@ interface RoutineDao {
     @Query("SELECT * FROM routines WHERE id = :id")
     suspend fun getRoutineById(id: String): RoutineWithIntervals?
 
+    @Query("SELECT COUNT(*) FROM routines")
+    suspend fun getRoutineCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRoutine(routine: RoutineEntity)
 

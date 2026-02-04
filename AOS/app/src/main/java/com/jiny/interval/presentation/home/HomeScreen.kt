@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -35,8 +38,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -50,7 +51,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -65,6 +69,7 @@ import com.jiny.interval.R
 import com.jiny.interval.domain.model.ChallengeListItem
 import com.jiny.interval.domain.model.ChallengeStatus
 import com.jiny.interval.domain.model.Routine
+import com.jiny.interval.presentation.components.BackgroundDecoration
 import com.jiny.interval.presentation.components.RoutineCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +84,6 @@ fun HomeScreen(
     onStartChallengeWorkout: (Int) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val selectedTab by viewModel.selectedTab.collectAsState()
     val allRoutines by viewModel.allRoutines.collectAsState()
     val favoriteRoutines by viewModel.favoriteRoutines.collectAsState()
     val activeChallenges by viewModel.activeChallenges.collectAsState()
@@ -102,10 +106,9 @@ fun HomeScreen(
 
     var routineToDelete by remember { mutableStateOf<Routine?>(null) }
 
-    val displayedRoutines = when (selectedTab) {
-        HomeTab.CHALLENGE -> emptyList()
-        HomeTab.FAVORITES -> favoriteRoutines
-        HomeTab.ALL -> allRoutines
+    val regularRoutines = remember(allRoutines, favoriteRoutines) {
+        val favoritesSet = favoriteRoutines.map { it.id }.toSet()
+        allRoutines.filterNot { favoritesSet.contains(it.id) }
     }
 
     val greetingText = remember {
@@ -120,69 +123,81 @@ fun HomeScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            Column {
-                TopAppBar(
-                    title = { Text(stringResource(greetingText)) }
-                )
-                TabRow(
-                    selectedTabIndex = selectedTab.ordinal
-                ) {
-                    Tab(
-                        selected = selectedTab == HomeTab.CHALLENGE,
-                        onClick = { viewModel.selectTab(HomeTab.CHALLENGE) },
-                        text = { Text(stringResource(R.string.challenge)) }
-                    )
-                    Tab(
-                        selected = selectedTab == HomeTab.FAVORITES,
-                        onClick = { viewModel.selectTab(HomeTab.FAVORITES) },
-                        text = { Text(stringResource(R.string.tab_favorites)) }
-                    )
-                    Tab(
-                        selected = selectedTab == HomeTab.ALL,
-                        onClick = { viewModel.selectTab(HomeTab.ALL) },
-                        text = { Text(stringResource(R.string.tab_all)) }
-                    )
-                }
-            }
+            TopAppBar(
+                title = { Text(stringResource(greetingText)) }
+            )
         },
         floatingActionButton = {
-            if (selectedTab != HomeTab.CHALLENGE) {
-                FloatingActionButton(onClick = onAddRoutine) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_interval)
-                    )
-                }
+            FloatingActionButton(onClick = onAddRoutine) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_interval)
+                )
             }
         }
     ) { paddingValues ->
-        Column(
+        val showEmpty = activeChallenges.isEmpty() && allRoutines.isEmpty()
+        val isDarkTheme = isSystemInDarkTheme()
+        val backgroundBrush = Brush.verticalGradient(
+            colors = if (isDarkTheme) {
+                listOf(
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                    MaterialTheme.colorScheme.background
+                )
+            } else {
+                listOf(
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.06f),
+                    MaterialTheme.colorScheme.background
+                )
+            }
+        )
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(backgroundBrush)
                 .padding(paddingValues)
         ) {
-            // Challenge Tab Content
+            BackgroundDecoration()
             AnimatedVisibility(
-                visible = selectedTab == HomeTab.CHALLENGE,
+                visible = showEmpty,
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                if (!isLoggedIn) {
-                    LoginPromptContent(onNavigateToLogin = onNavigateToLogin)
-                } else if (activeChallenges.isEmpty()) {
-                    EmptyState(message = stringResource(R.string.no_active_challenges))
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 8.dp,
-                            bottom = 8.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
+                EmptyHomeState(
+                    onAddRoutine = onAddRoutine,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            AnimatedVisibility(
+                visible = !showEmpty,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 8.dp,
+                        bottom = 96.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    if (!isLoggedIn) {
+                        item {
+                            LoginPromptCard(onNavigateToLogin = onNavigateToLogin)
+                        }
+                    }
+
+                    if (isLoggedIn && activeChallenges.isNotEmpty()) {
+                        item {
+                            SectionHeader(
+                                title = stringResource(R.string.challenge),
+                                icon = Icons.Default.EmojiEvents,
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                         items(
                             items = activeChallenges,
                             key = { it.id }
@@ -194,50 +209,49 @@ fun HomeScreen(
                             )
                         }
                     }
-                }
-            }
 
-            // Routines Tab Content (Favorites/All)
-            AnimatedVisibility(
-                visible = selectedTab != HomeTab.CHALLENGE && displayedRoutines.isEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                EmptyState(
-                    message = if (selectedTab == HomeTab.FAVORITES) {
-                        stringResource(R.string.empty_favorites)
-                    } else {
-                        stringResource(R.string.empty_routines)
+                    if (favoriteRoutines.isNotEmpty()) {
+                        item {
+                            SectionHeader(
+                                title = stringResource(R.string.tab_favorites),
+                                icon = Icons.Default.Star,
+                                tint = Color(0xFFFFC107)
+                            )
+                        }
+                        items(
+                            items = favoriteRoutines,
+                            key = { it.id }
+                        ) { routine ->
+                            RoutineCard(
+                                routine = routine,
+                                onClick = { onRoutineClick(routine.id) },
+                                onEdit = { onEditRoutine(routine.id) },
+                                onDelete = { routineToDelete = routine },
+                                onToggleFavorite = { viewModel.toggleFavorite(routine.id) }
+                            )
+                        }
                     }
-                )
-            }
 
-            AnimatedVisibility(
-                visible = selectedTab != HomeTab.CHALLENGE && displayedRoutines.isNotEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 8.dp,
-                        bottom = 8.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(
-                        items = displayedRoutines,
-                        key = { it.id }
-                    ) { routine ->
-                        RoutineCard(
-                            routine = routine,
-                            onClick = { onRoutineClick(routine.id) },
-                            onEdit = { onEditRoutine(routine.id) },
-                            onDelete = { routineToDelete = routine },
-                            onToggleFavorite = { viewModel.toggleFavorite(routine.id) }
-                        )
+                    if (regularRoutines.isNotEmpty()) {
+                        item {
+                            SectionHeader(
+                                title = stringResource(R.string.tab_all),
+                                icon = Icons.Default.PlayArrow,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        items(
+                            items = regularRoutines,
+                            key = { it.id }
+                        ) { routine ->
+                            RoutineCard(
+                                routine = routine,
+                                onClick = { onRoutineClick(routine.id) },
+                                onEdit = { onEditRoutine(routine.id) },
+                                onDelete = { routineToDelete = routine },
+                                onToggleFavorite = { viewModel.toggleFavorite(routine.id) }
+                            )
+                        }
                     }
                 }
             }
@@ -269,26 +283,8 @@ fun HomeScreen(
 }
 
 @Composable
-private fun EmptyState(
-    message: String,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-private fun LoginPromptContent(
-    onNavigateToLogin: () -> Unit,
+private fun EmptyHomeState(
+    onAddRoutine: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -298,16 +294,109 @@ private fun LoginPromptContent(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(60.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = stringResource(R.string.empty_routines).replace("\n", " "),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 32.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.no_active_challenges),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 40.dp)
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(onClick = onAddRoutine) {
+                Text(stringResource(R.string.add_interval))
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoginPromptCard(
+    onNavigateToLogin: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val borderColor = MaterialTheme.colorScheme.outline.copy(
+        alpha = if (isSystemInDarkTheme()) 0.9f else 0.6f
+    )
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(6.dp, RoundedCornerShape(18.dp), clip = false)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(18.dp)
+            ),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = stringResource(R.string.login_to_join_challenges),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Button(onClick = onNavigateToLogin) {
                 Text(stringResource(R.string.login))
             }
         }
+    }
+}
+
+@Composable
+private fun SectionHeader(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    tint: Color,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -318,12 +407,15 @@ private fun ActiveChallengeCard(
     onStartWorkout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val borderColor = MaterialTheme.colorScheme.outline.copy(
+        alpha = if (isSystemInDarkTheme()) 0.9f else 0.6f
+    )
     val status = challenge.computedStatus
-    val (statusColor, statusTextColor) = when (status) {
-        ChallengeStatus.REGISTRATION -> Pair(Color(0xFF2196F3), Color.White)
-        ChallengeStatus.ACTIVE -> Pair(Color(0xFF4CAF50), Color.White)
-        ChallengeStatus.COMPLETED -> Pair(Color(0xFF9E9E9E), Color.White)
-        ChallengeStatus.CANCELLED -> Pair(Color(0xFFF44336), Color.White)
+    val statusColor = when (status) {
+        ChallengeStatus.REGISTRATION -> MaterialTheme.colorScheme.primary
+        ChallengeStatus.ACTIVE -> MaterialTheme.colorScheme.tertiary
+        ChallengeStatus.COMPLETED -> MaterialTheme.colorScheme.onSurfaceVariant
+        ChallengeStatus.CANCELLED -> MaterialTheme.colorScheme.error
     }
 
     val statusText = when (status) {
@@ -336,9 +428,16 @@ private fun ActiveChallengeCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(6.dp, RoundedCornerShape(18.dp), clip = false)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(18.dp)
+            )
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             modifier = Modifier
@@ -353,14 +452,14 @@ private fun ActiveChallengeCard(
                 // Status Badge
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(statusColor)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(statusColor.copy(alpha = 0.12f))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
                         text = statusText,
                         style = MaterialTheme.typography.labelSmall,
-                        color = statusTextColor
+                        color = statusColor
                     )
                 }
 
@@ -370,14 +469,14 @@ private fun ActiveChallengeCard(
                         Icon(
                             Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = Color(0xFF4CAF50),
+                            tint = MaterialTheme.colorScheme.tertiary,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = stringResource(R.string.today_completed),
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF4CAF50)
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                     }
                 }

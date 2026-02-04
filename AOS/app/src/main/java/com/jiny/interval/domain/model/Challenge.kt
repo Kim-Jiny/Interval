@@ -134,6 +134,27 @@ data class Challenge(
 
     val formattedPrizePool: String
         get() = "${formatNumber(totalPrizePool)}M"
+
+    val challengeStartDate: Date?
+        get() = parseDate(challengeStartAt)
+
+    val challengeEndDate: Date?
+        get() = parseDate(challengeEndAt)
+
+    val computedStatus: ChallengeStatus
+        get() {
+            val regEndDate = parseDate(registrationEndAt) ?: return status
+            val startDate = challengeStartDate ?: return status
+            val endDate = challengeEndDate ?: return status
+            val now = Date()
+
+            return when {
+                now.after(endDate) -> ChallengeStatus.COMPLETED
+                now.after(startDate) -> ChallengeStatus.ACTIVE
+                now.before(regEndDate) -> ChallengeStatus.REGISTRATION
+                else -> ChallengeStatus.REGISTRATION
+            }
+        }
 }
 
 /**

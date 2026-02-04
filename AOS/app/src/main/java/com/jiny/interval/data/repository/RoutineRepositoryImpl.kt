@@ -30,6 +30,10 @@ class RoutineRepositoryImpl @Inject constructor(
         return routineDao.getRoutineById(id)?.toDomain()
     }
 
+    override suspend fun getRoutineCount(): Int {
+        return routineDao.getRoutineCount()
+    }
+
     override suspend fun saveRoutine(routine: Routine) {
         val updatedRoutine = routine.copy(updatedAt = System.currentTimeMillis())
         routineDao.saveRoutineWithIntervals(

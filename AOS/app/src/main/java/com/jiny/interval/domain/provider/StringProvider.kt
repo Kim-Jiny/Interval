@@ -3,6 +3,7 @@ package com.jiny.interval.domain.provider
 interface StringProvider {
     // Template Names
     fun templateEmpty(): String
+    fun templateBasicInterval(): String
     fun templateTabata(): String
     fun templateRunning(): String
     fun templatePlank(): String

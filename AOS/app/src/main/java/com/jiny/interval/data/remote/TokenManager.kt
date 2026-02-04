@@ -1,11 +1,14 @@
 package com.jiny.interval.data.remote
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import java.security.KeyStore
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,22 +19,9 @@ import javax.inject.Singleton
 class TokenManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    // Force logout event - emitted when token refresh fails
-    private val _forceLogoutEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-    val forceLogoutEvent = _forceLogoutEvent.asSharedFlow()
-    private val masterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
-
-    private val sharedPreferences = EncryptedSharedPreferences.create(
-        context,
-        "interval_secure_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
     companion object {
+        private const val TAG = "TokenManager"
+        private const val PREFS_NAME = "interval_secure_prefs"
         private const val KEY_ACCESS_TOKEN = "access_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
         private const val KEY_USER_ID = "user_id"
@@ -39,6 +29,57 @@ class TokenManager @Inject constructor(
         private const val KEY_USER_NICKNAME = "user_nickname"
         private const val KEY_USER_PROFILE_IMAGE = "user_profile_image"
         private const val KEY_USER_PROVIDER = "user_provider"
+    }
+
+    // Force logout event - emitted when token refresh fails
+    private val _forceLogoutEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val forceLogoutEvent = _forceLogoutEvent.asSharedFlow()
+
+    private val sharedPreferences: SharedPreferences = createEncryptedPreferences()
+
+    private fun createEncryptedPreferences(): SharedPreferences {
+        return try {
+            EncryptedSharedPreferences.create(
+                context,
+                PREFS_NAME,
+                buildMasterKey(),
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        } catch (e: Exception) {
+            Log.w(TAG, "Encrypted prefs error. Clearing and recreating.", e)
+            recoverEncryptedPreferences()
+            runCatching {
+                EncryptedSharedPreferences.create(
+                    context,
+                    PREFS_NAME,
+                    buildMasterKey(),
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                )
+            }.getOrElse { fallbackError ->
+                Log.e(TAG, "Failed to recreate encrypted prefs. Using fallback.", fallbackError)
+                context.getSharedPreferences("${PREFS_NAME}_fallback", Context.MODE_PRIVATE)
+            }
+        }
+    }
+
+    private fun buildMasterKey(): MasterKey {
+        return MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+    }
+
+    private fun recoverEncryptedPreferences() {
+        runCatching {
+            context.deleteSharedPreferences(PREFS_NAME)
+        }
+        runCatching {
+            val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+            if (keyStore.containsAlias(MasterKey.DEFAULT_MASTER_KEY_ALIAS)) {
+                keyStore.deleteEntry(MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+            }
+        }
     }
 
     var accessToken: String?
