@@ -15,6 +15,9 @@ struct ChallengeDetailView: View {
     @ObservedObject private var challengeManager = ChallengeManager.shared
     @ObservedObject private var authManager = AuthManager.shared
 
+    @AppStorage("pushNotificationEnabled") private var pushNotificationEnabled = true
+    @AppStorage("challengePushEnabled") private var challengePushEnabled = true
+
     @State private var showingJoinAlert = false
     @State private var showingLeaveAlert = false
     @State private var showingLoginPrompt = false
@@ -26,6 +29,8 @@ struct ChallengeDetailView: View {
     @State private var showingFinalizeResult = false
     @State private var finalizeRankings: [FinalRanking] = []
     @State private var showingRoutinePreview = false
+    @State private var showingDisableNotificationConfirm = false
+    @State private var showingNotificationSettingsAlert = false
 
     var body: some View {
         Group {
@@ -94,7 +99,26 @@ struct ChallengeDetailView: View {
         .navigationTitle(challengeManager.currentChallenge?.title ?? "Challenge")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if let challenge = challengeManager.currentChallenge, challenge.isParticipating == true {
+                    let canUseChallengePush = pushNotificationEnabled && challengePushEnabled
+                    let perChallengeEnabled = challenge.notificationEnabled ?? true
+                    let isEnabled = canUseChallengePush && perChallengeEnabled
+                    Button {
+                        if !canUseChallengePush {
+                            showingNotificationSettingsAlert = true
+                        } else if perChallengeEnabled {
+                            showingDisableNotificationConfirm = true
+                        } else {
+                            Task { await updateChallengeNotification(enabled: true) }
+                        }
+                    } label: {
+                        Image(systemName: isEnabled ? "bell.fill" : "bell.slash.fill")
+                            .font(.title3)
+                            .foregroundStyle(isEnabled ? .orange : .gray)
+                    }
+                }
+
                 if let _ = challengeManager.currentChallenge {
                     Button {
                         showingShareSheet = true
@@ -146,6 +170,19 @@ struct ChallengeDetailView: View {
         } message: {
             Text("Challenge has ended. Distribute prizes based on final rankings?")
         }
+        .alert("알림을 끄시겠습니까?", isPresented: $showingDisableNotificationConfirm) {
+            Button(String(localized: "Cancel"), role: .cancel) {}
+            Button(String(localized: "Turn Off"), role: .destructive) {
+                Task { await updateChallengeNotification(enabled: false) }
+            }
+        } message: {
+            Text("이 챌린지의 알림을 끕니다.")
+        }
+        .alert("챌린지 알림", isPresented: $showingNotificationSettingsAlert) {
+            Button(String(localized: "OK"), role: .cancel) {}
+        } message: {
+            Text("설정에서 챌린지 알림을 켜주세요.")
+        }
         .sheet(isPresented: $showingFinalizeResult) {
             NavigationStack {
                 finalizeResultView
@@ -180,6 +217,15 @@ struct ChallengeDetailView: View {
                     }
                 }
             }
+        }
+    }
+
+    private func updateChallengeNotification(enabled: Bool) async {
+        do {
+            try await challengeManager.updateChallengeNotification(challengeId: challengeId, enabled: enabled)
+        } catch {
+            errorMessage = error.localizedDescription
+            showingError = true
         }
     }
 

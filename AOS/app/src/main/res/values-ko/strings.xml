@@ -53,6 +53,21 @@
     <string name="total">총합</string>
     <string name="show_more">%d개 더보기</string>
     <string name="show_less">접기</string>
+    <string name="nav_calendar">캘린더</string>
+    <string name="calendar">캘린더</string>
+    <string name="this_month">이번 달</string>
+    <string name="app_workouts">앱 운동</string>
+    <string name="workout_days">운동 일수</string>
+    <string name="total_time_format">총 %s</string>
+    <string name="login_to_view_calendar">운동 캘린더를 보려면 로그인하세요</string>
+    <string name="no_workouts_recorded">기록된 운동이 없습니다</string>
+    <string name="delete_record">운동 기록 삭제</string>
+    <string name="delete_record_confirm">"%s" 기록을 삭제하시겠습니까?</string>
+    <string name="date_format_day">M월 d일 (E)</string>
+    <string name="health_workouts">건강 운동</string>
+    <string name="health_workout_label">건강 운동 기록</string>
+    <string name="health_connect_permission">기기 운동을 보려면 Health Connect 연결이 필요합니다.</string>
+    <string name="health_connect_grant">건강 데이터 권한 허용</string>
 
     <!-- Routine Editor -->
     <string name="new_routine">새 루틴</string>

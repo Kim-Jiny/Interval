@@ -5,11 +5,13 @@ import com.jiny.interval.data.repository.ChallengeRepositoryImpl
 import com.jiny.interval.data.repository.MileageRepositoryImpl
 import com.jiny.interval.data.repository.RoutineRepositoryImpl
 import com.jiny.interval.data.repository.SettingsRepositoryImpl
+import com.jiny.interval.data.repository.WorkoutRepositoryImpl
 import com.jiny.interval.domain.repository.AuthRepository
 import com.jiny.interval.domain.repository.ChallengeRepository
 import com.jiny.interval.domain.repository.MileageRepository
 import com.jiny.interval.domain.repository.RoutineRepository
 import com.jiny.interval.domain.repository.SettingsRepository
+import com.jiny.interval.domain.repository.WorkoutRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -49,4 +51,10 @@ abstract class RepositoryModule {
     abstract fun bindMileageRepository(
         mileageRepositoryImpl: MileageRepositoryImpl
     ): MileageRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWorkoutRepository(
+        workoutRepositoryImpl: WorkoutRepositoryImpl
+    ): WorkoutRepository
 }

@@ -13,6 +13,7 @@ sealed class Screen(val route: String) {
     data object Settings : Screen("settings")
     data object Login : Screen("login")
     data object Community : Screen("community")
+    data object Calendar : Screen("calendar")
     data object ChallengeDetail : Screen("challenge/{challengeId}") {
         fun createRoute(challengeId: Int) = "challenge/$challengeId"
     }

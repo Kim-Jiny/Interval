@@ -10,6 +10,7 @@ import UserNotifications
 
 struct SettingsView: View {
     @AppStorage("pushNotificationEnabled") private var pushNotificationEnabled = true
+    @AppStorage("challengePushEnabled") private var challengePushEnabled = true
     @AppStorage("vibrationEnabled") private var vibrationEnabled = true
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("backgroundSoundEnabled") private var backgroundSoundEnabled = true
@@ -64,6 +65,25 @@ struct SettingsView: View {
                     }
                     .onChange(of: pushNotificationEnabled) { _, newValue in
                         handlePushNotificationToggle(newValue)
+                    }
+
+                    Toggle(isOn: $challengePushEnabled) {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.orange.opacity(0.15))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "bell.badge.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.orange)
+                            }
+                            Text("Challenge Notifications", comment: "Challenge notification toggle label")
+                        }
+                    }
+                    .disabled(!pushNotificationEnabled || pushPermissionDenied)
+                    .opacity((!pushNotificationEnabled || pushPermissionDenied) ? 0.5 : 1.0)
+                    .onChange(of: challengePushEnabled) { _, newValue in
+                        handleChallengePushNotificationToggle(newValue)
                     }
 
                     Toggle(isOn: $vibrationEnabled) {
@@ -502,6 +522,7 @@ struct SettingsView: View {
                 // 권한이 거부된 상태면 토글도 꺼진 상태로
                 if settings.authorizationStatus == .denied {
                     pushNotificationEnabled = false
+                    challengePushEnabled = false
                 }
             }
         }
@@ -537,6 +558,19 @@ struct SettingsView: View {
         }
     }
 
+    private func handleChallengePushNotificationToggle(_ enabled: Bool) {
+        #if DEBUG
+        print("🏁 Challenge push toggle changed to: \(enabled)")
+        #endif
+
+        // 전역 푸시가 꺼져 있거나 권한 거부 상태면 무시
+        if !pushNotificationEnabled || pushPermissionDenied {
+            return
+        }
+
+        syncChallengePushSettingToServer(enabled: enabled)
+    }
+
     private func syncPushSettingToServer(enabled: Bool) {
         guard authManager.isLoggedIn else {
             #if DEBUG
@@ -558,6 +592,32 @@ struct SettingsView: View {
             } catch {
                 #if DEBUG
                 print("🔔 Failed to sync push setting: \(error)")
+                #endif
+            }
+        }
+    }
+
+    private func syncChallengePushSettingToServer(enabled: Bool) {
+        guard authManager.isLoggedIn else {
+            #if DEBUG
+            print("🏁 Skip challenge push sync - not logged in")
+            #endif
+            return
+        }
+
+        #if DEBUG
+        print("🏁 Syncing challenge push setting to server: \(enabled)")
+        #endif
+
+        Task {
+            do {
+                try await authManager.updateChallengePushSetting(enabled: enabled)
+                #if DEBUG
+                print("🏁 Challenge push setting synced successfully: \(enabled)")
+                #endif
+            } catch {
+                #if DEBUG
+                print("🏁 Failed to sync challenge push setting: \(error)")
                 #endif
             }
         }

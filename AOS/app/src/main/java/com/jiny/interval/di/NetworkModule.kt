@@ -7,6 +7,7 @@ import com.jiny.interval.data.remote.TokenAuthenticator
 import com.jiny.interval.data.remote.api.AuthApi
 import com.jiny.interval.data.remote.api.ChallengeApi
 import com.jiny.interval.data.remote.api.MileageApi
+import com.jiny.interval.data.remote.api.WorkoutApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,5 +79,11 @@ object NetworkModule {
     @Singleton
     fun provideMileageApi(retrofit: Retrofit): MileageApi {
         return retrofit.create(MileageApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutApi(retrofit: Retrofit): WorkoutApi {
+        return retrofit.create(WorkoutApi::class.java)
     }
 }

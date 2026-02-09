@@ -329,6 +329,44 @@ class AuthManager: NSObject, ObservableObject {
         }
     }
 
+    /// 챌린지 푸시 알림 설정 업데이트
+    func updateChallengePushSetting(enabled: Bool, isRetry: Bool = false) async throws {
+        guard let accessToken = getAccessToken() else {
+            throw AuthError.notLoggedIn
+        }
+
+        let url = URL(string: "\(baseURL)/auth/update-challenge-push-setting.php")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        let body: [String: Any] = ["challengePushEnabled": enabled]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw AuthError.networkError
+        }
+
+        #if DEBUG
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("🏁 Update Challenge Push Setting Response (\(httpResponse.statusCode)): \(jsonString)")
+        }
+        #endif
+
+        if httpResponse.statusCode == 401 && !isRetry {
+            try await refreshTokenIfNeeded()
+            try await updateChallengePushSetting(enabled: enabled, isRetry: true)
+            return
+        }
+
+        if httpResponse.statusCode != 200 {
+            throw AuthError.serverError("Failed to update challenge push setting")
+        }
+    }
+
     /// 토큰 갱신
     func refreshTokenIfNeeded() async throws {
         guard let refreshToken = getRefreshToken() else {

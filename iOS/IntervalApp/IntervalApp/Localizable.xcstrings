@@ -2444,7 +2444,6 @@
       }
     },
     "Build" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3296,6 +3295,9 @@
           }
         }
       }
+    },
+    "Challenge Notifications" : {
+      "comment" : "Challenge notification toggle label"
     },
     "Challenge Starts" : {
       "comment" : "A label for the date and time when a challenge starts.",
@@ -14488,6 +14490,9 @@
         }
       }
     },
+    "Turn Off" : {
+
+    },
     "Type" : {
       "localizations" : {
         "de" : {
@@ -15892,6 +15897,18 @@
           }
         }
       }
+    },
+    "설정에서 챌린지 알림을 켜주세요." : {
+
+    },
+    "알림을 끄시겠습니까?" : {
+
+    },
+    "이 챌린지의 알림을 끕니다." : {
+
+    },
+    "챌린지 알림" : {
+
     }
   },
   "version" : "1.1"

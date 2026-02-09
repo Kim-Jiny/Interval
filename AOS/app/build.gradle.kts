@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.jiny.interval"
-    compileSdk = 35
+    compileSdk = 36
 
     signingConfigs {
         create("release") {
@@ -23,9 +23,9 @@ android {
     defaultConfig {
         applicationId = "com.jiny.interval"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 2
-        versionName = "1.0.0"
+        targetSdk = 36
+        versionCode = 3
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -119,6 +119,9 @@ dependencies {
 
     // Security (Encrypted SharedPreferences)
     implementation(libs.security.crypto)
+
+    // Health Connect
+    implementation(libs.health.connect)
 
     // Debug
     debugImplementation(libs.androidx.ui.tooling)

@@ -5,7 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.outlined.FitnessCenter
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -34,6 +36,7 @@ import com.jiny.interval.presentation.community.ChallengeDetailScreen
 import com.jiny.interval.presentation.community.CommunityScreen
 import com.jiny.interval.presentation.community.CreateChallengeScreen
 import com.jiny.interval.presentation.community.MileageHistoryScreen
+import com.jiny.interval.presentation.calendar.CalendarScreen
 import com.jiny.interval.presentation.editor.RoutineEditorScreen
 import com.jiny.interval.presentation.home.HomeScreen
 import com.jiny.interval.presentation.navigation.Screen
@@ -62,6 +65,13 @@ sealed class BottomNavItem(
         unselectedIcon = Icons.Outlined.People
     )
 
+    data object Calendar : BottomNavItem(
+        route = Screen.Calendar.route,
+        titleResId = R.string.nav_calendar,
+        selectedIcon = Icons.Filled.CalendarMonth,
+        unselectedIcon = Icons.Outlined.CalendarMonth
+    )
+
     data object Settings : BottomNavItem(
         route = Screen.Settings.route,
         titleResId = R.string.nav_settings,
@@ -72,6 +82,7 @@ sealed class BottomNavItem(
 
 private val bottomNavItems = listOf(
     BottomNavItem.Home,
+    BottomNavItem.Calendar,
     BottomNavItem.Challenge,
     BottomNavItem.Settings
 )
@@ -80,6 +91,7 @@ private val bottomNavItems = listOf(
 private val bottomNavRoutes = listOf(
     Screen.Home.route,
     Screen.Community.route,
+    Screen.Calendar.route,
     Screen.Settings.route
 )
 
@@ -136,10 +148,11 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
+        val navModifier = Modifier.padding(paddingValues)
         NavHost(
             navController = navController,
             startDestination = Screen.Home.route,
-            modifier = Modifier.padding(paddingValues)
+            modifier = navModifier
         ) {
             composable(Screen.Home.route) {
                 HomeScreen(
@@ -243,6 +256,12 @@ fun MainScreen(
                     onNavigateToMileageHistory = {
                         navController.navigate(Screen.MileageHistory.route)
                     }
+                )
+            }
+
+            composable(Screen.Calendar.route) {
+                CalendarScreen(
+                    onNavigateToLogin = { navController.navigate(Screen.Login.route) }
                 )
             }
 

@@ -233,6 +233,60 @@ class ChallengeManager: ObservableObject {
         }
     }
 
+    // MARK: - Update Challenge Notification
+
+    func updateChallengeNotification(challengeId: Int, enabled: Bool, isRetry: Bool = false) async throws {
+        guard let accessToken = AuthManager.shared.getAccessToken() else {
+            throw ChallengeError.notLoggedIn
+        }
+
+        let url = URL(string: "\(baseURL)/challenges/update-notification.php")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        let body: [String: Any] = [
+            "challengeId": challengeId,
+            "enabled": enabled
+        ]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw ChallengeError.networkError
+        }
+
+        #if DEBUG
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("🔔 Update Challenge Notification Response (\(httpResponse.statusCode)): \(jsonString)")
+        }
+        #endif
+
+        if httpResponse.statusCode == 401 && !isRetry {
+            try await AuthManager.shared.refreshTokenIfNeeded()
+            try await updateChallengeNotification(challengeId: challengeId, enabled: enabled, isRetry: true)
+            return
+        }
+
+        struct UpdateResponse: Codable {
+            let success: Bool
+            let enabled: Bool?
+            let error: String?
+        }
+
+        let updateResponse = try JSONDecoder().decode(UpdateResponse.self, from: data)
+        if httpResponse.statusCode != 200 || !updateResponse.success {
+            throw ChallengeError.serverError(updateResponse.error ?? "Failed to update notification")
+        }
+
+        if var challenge = self.currentChallenge, challenge.id == challengeId {
+            challenge.notificationEnabled = enabled
+            self.currentChallenge = challenge
+        }
+    }
+
     // MARK: - Create Challenge
 
     func createChallenge(

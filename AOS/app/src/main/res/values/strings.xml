@@ -53,6 +53,21 @@
     <string name="total">Total</string>
     <string name="show_more">Show %d more</string>
     <string name="show_less">Show less</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="calendar">Calendar</string>
+    <string name="this_month">This Month</string>
+    <string name="app_workouts">App Workouts</string>
+    <string name="workout_days">Workout Days</string>
+    <string name="total_time_format">Total %s</string>
+    <string name="login_to_view_calendar">Log in to view your workout calendar</string>
+    <string name="no_workouts_recorded">No workouts recorded</string>
+    <string name="delete_record">Delete Workout</string>
+    <string name="delete_record_confirm">Are you sure you want to delete "%s"?</string>
+    <string name="date_format_day">MMM d (E)</string>
+    <string name="health_workouts">Health Workouts</string>
+    <string name="health_workout_label">Health Workout</string>
+    <string name="health_connect_permission">Connect Health Connect to show device workouts.</string>
+    <string name="health_connect_grant">Grant Health Access</string>
 
     <!-- Routine Editor -->
     <string name="new_routine">New Routine</string>

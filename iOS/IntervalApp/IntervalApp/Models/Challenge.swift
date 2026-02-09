@@ -83,6 +83,7 @@ struct Challenge: Identifiable, Codable, Equatable {
     let canLeave: Bool?
     let myRank: Int?
     let myParticipation: ParticipationStats?
+    var notificationEnabled: Bool?
     let totalDays: Int?
     let createdAt: String
 
