@@ -170,18 +170,18 @@ struct ChallengeDetailView: View {
         } message: {
             Text("Challenge has ended. Distribute prizes based on final rankings?")
         }
-        .alert("알림을 끄시겠습니까?", isPresented: $showingDisableNotificationConfirm) {
+        .alert(String(localized: "알림을 끄시겠습니까?"), isPresented: $showingDisableNotificationConfirm) {
             Button(String(localized: "Cancel"), role: .cancel) {}
             Button(String(localized: "Turn Off"), role: .destructive) {
                 Task { await updateChallengeNotification(enabled: false) }
             }
         } message: {
-            Text("이 챌린지의 알림을 끕니다.")
+            Text(String(localized: "이 챌린지의 알림을 끕니다."))
         }
-        .alert("챌린지 알림", isPresented: $showingNotificationSettingsAlert) {
+        .alert(String(localized: "챌린지 알림"), isPresented: $showingNotificationSettingsAlert) {
             Button(String(localized: "OK"), role: .cancel) {}
         } message: {
-            Text("설정에서 챌린지 알림을 켜주세요.")
+            Text(String(localized: "설정에서 챌린지 알림을 켜주세요."))
         }
         .sheet(isPresented: $showingFinalizeResult) {
             NavigationStack {

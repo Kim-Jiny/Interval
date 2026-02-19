@@ -2444,6 +2444,7 @@
       }
     },
     "Build" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -14491,7 +14492,20 @@
       }
     },
     "Turn Off" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn Off"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끄기"
+          }
+        }
+      }
     },
     "Type" : {
       "localizations" : {
@@ -15899,16 +15913,68 @@
       }
     },
     "설정에서 챌린지 알림을 켜주세요." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enable challenge notifications in Settings."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정에서 챌린지 알림을 켜주세요."
+          }
+        }
+      }
     },
     "알림을 끄시겠습니까?" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off notifications?"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림을 끄시겠습니까?"
+          }
+        }
+      }
     },
     "이 챌린지의 알림을 끕니다." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will turn off notifications for this challenge."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 챌린지의 알림을 끕니다."
+          }
+        }
+      }
     },
     "챌린지 알림" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Challenge Notifications"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지 알림"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"
